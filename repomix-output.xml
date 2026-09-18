@@ -40,14 +40,22 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
+.github/
+  workflows/
+    ci.yml
+.husky/
+  commit-msg
+  pre-commit
 public/
   favicon.ico
 src/
   index.html
   main.ts
   styles.scss
+.commitlintrc.json
 .editorconfig
 .gitignore
+.lintstagedrc.json
 .prettierrc
 .stylelintrc.json
 angular.json
@@ -60,6 +68,68 @@ tsconfig.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path=".github/workflows/ci.yml">
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Strict Typecheck
+        run: pnpm typecheck
+
+      - name: Check formatting (Prettier)
+        run: pnpm -w format:check
+
+      - name: Lint (ESLint & Stylelint)
+        run: pnpm -w lint
+
+      - name: Build Application
+        run: pnpm -w build:prod
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+</file>
+
+<file path=".husky/commit-msg">
+pnpm exec commitlint --edit "$1"
+</file>
+
+<file path=".husky/pre-commit">
+pnpm  lint-staged
+pnpm  typecheck
+</file>
 
 <file path="src/index.html">
 <!doctype html>
@@ -102,6 +172,22 @@ bootstrapApplication(AppComponent).catch((err) => console.error(err));
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+</file>
+
+<file path=".commitlintrc.json">
+{
+  "extends": ["@commitlint/config-conventional"],
+  "rules": {
+    "type-enum": [
+      2,
+      "always",
+      ["build", "ci", "docs", "feat", "fix", "perf", "refactor", "revert", "style", "test", "chore"]
+    ],
+    "subject-case": [2, "never", ["sentence-case", "start-case", "pascal-case", "upper-case"]],
+    "subject-empty": [2, "never"],
+    "type-empty": [2, "never"]
+  }
 }
 </file>
 
@@ -176,6 +262,15 @@ pnpm-debug.log*
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+</file>
+
+<file path=".lintstagedrc.json">
+{
+  "*.ts": ["eslint --fix", "prettier --write"],
+  "*.html": ["eslint --fix", "prettier --write"],
+  "*.{scss,css}": ["stylelint --fix", "prettier --write"],
+  "*.{json,md,yml,yaml}": ["prettier --write"]
+}
 </file>
 
 <file path=".prettierrc">
@@ -460,7 +555,6 @@ Desktop.ini
 
 <file path="eslint.config.ts">
 import fsdPlugin from '@conarti/eslint-plugin-feature-sliced';
-import { fixupPluginRules } from '@eslint/compat';
 import eslint from '@eslint/js';
 import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
@@ -474,9 +568,6 @@ export default tseslint.config(
             ...tseslint.configs.stylistic,
             ...angular.configs.tsRecommended,
         ],
-        plugins: {
-            'feature-sliced': fixupPluginRules(fsdPlugin),
-        },
         processor: angular.processInlineTemplates as any,
         rules: {
             '@angular-eslint/directive-selector': [
@@ -508,11 +599,18 @@ export default tseslint.config(
                 },
             ],
             '@typescript-eslint/no-explicit-any': 'warn',
-
-            /* Правила FSD */
-            'feature-sliced/layers-slices': ['error', { allowTypeImports: true }],
-            'feature-sliced/absolute-relative': 'error',
-            'feature-sliced/public-api': 'error',
+        },
+    },
+    // Интегрируем FSD-плагин как отдельный Flat Config объект.
+    // Вызов функции без параметров инициализирует встроенную Flat-конфигурацию плагина.
+    {
+        files: ['**/*.ts'],
+        ...fsdPlugin(),
+        rules: {
+            // Переопределяем префиксы правил, так как плагин сам регистрирует свое имя
+            '@conarti/feature-sliced/layers-slices': ['error', { allowTypeImports: true }],
+            '@conarti/feature-sliced/absolute-relative': 'error',
+            '@conarti/feature-sliced/public-api': 'error',
         },
     },
     {
@@ -524,52 +622,6 @@ export default tseslint.config(
         },
     },
 );
-</file>
-
-<file path="package.json">
-{
-  "name": "course",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@11.7.0",
-  "scripts": {
-    "start:dev": "ng serve"
-  },
-  "dependencies": {
-    "@angular/common": "^22.1.7",
-    "@angular/compiler": "^22.1.7",
-    "@angular/core": "^22.1.7",
-    "@angular/forms": "^22.1.7",
-    "@angular/platform-browser": "^22.1.7",
-    "@angular/router": "^22.1.7",
-    "rxjs": "^7.8.2",
-    "tslib": "^2.8.1"
-  },
-  "devDependencies": {
-    "@angular-eslint/builder": "^22.5.0",
-    "@angular/build": "^22.1.8",
-    "@angular/cli": "^22.1.8",
-    "@angular/compiler-cli": "^22.1.7",
-    "@conarti/eslint-plugin-feature-sliced": "^2.0.0",
-    "@eslint/compat": "^2.1.1",
-    "@eslint/js": "^10.0.1",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-    "angular-eslint": "^22.5.0",
-    "eslint": "^10.10.0",
-    "jiti": "^2.7.0",
-    "prettier": "^3.9.7",
-    "repomix": "^1.18.0",
-    "stylelint": "^17.15.0",
-    "stylelint-config-standard-scss": "^17.0.0",
-    "stylelint-order": "^8.1.1",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.70.0"
-  }
-}
 </file>
 
 <file path="pnpm-workspace.yaml">
@@ -660,6 +712,69 @@ allowBuilds:
       "path": "./tsconfig.app.json"
     }
   ]
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "course",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@11.7.0",
+  "scripts": {
+    "ng": "ng",
+    "start:dev": "ng serve",
+    "build:prod": "ng build",
+    "watch:dev": "ng build --watch --configuration development",
+    "lint": "pnpm lint:ts && pnpm lint:styles",
+    "lint:ts": "ng lint",
+    "lint:ts:fix": "ng lint --fix",
+    "lint:styles": "stylelint \"src/**/*.{css,scss}\"",
+    "lint:styles:fix": "stylelint \"src/**/*.{css,scss}\" --fix",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "prepare": "husky",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "repomix": "npx repomix"
+  },
+  "dependencies": {
+    "@angular/common": "^22.1.7",
+    "@angular/compiler": "^22.1.7",
+    "@angular/core": "^22.1.7",
+    "@angular/forms": "^22.1.7",
+    "@angular/platform-browser": "^22.1.7",
+    "@angular/router": "^22.1.7",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@angular-eslint/builder": "^22.5.0",
+    "@angular/build": "^22.1.8",
+    "@angular/cli": "^22.1.8",
+    "@angular/compiler-cli": "^22.1.7",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "@conarti/eslint-plugin-feature-sliced": "^2.0.0",
+    "@eslint/compat": "^2.1.1",
+    "@eslint/js": "^10.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "angular-eslint": "^22.5.0",
+    "eslint": "^10.10.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.7.0",
+    "lint-staged": "^17.5.1",
+    "prettier": "^3.9.7",
+    "repomix": "^1.18.0",
+    "stylelint": "^17.15.0",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-order": "^8.1.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.70.0"
+  }
 }
 </file>
 
