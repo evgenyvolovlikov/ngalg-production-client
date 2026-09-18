@@ -1,0 +1,666 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  favicon.ico
+src/
+  index.html
+  main.ts
+  styles.scss
+.editorconfig
+.gitignore
+.prettierrc
+.stylelintrc.json
+angular.json
+eslint.config.ts
+package.json
+pnpm-workspace.yaml
+tsconfig.app.json
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Client</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>
+</file>
+
+<file path="src/main.ts">
+import { ApplicationConfig, ChangeDetectionStrategy, Component } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+
+export const appConfig: ApplicationConfig = {
+    providers: [],
+};
+
+@Component({
+    selector: 'app-root',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `<div>Hello World</div>`,
+    imports: [],
+})
+export class AppComponent {}
+
+bootstrapApplication(AppComponent).catch((err) => console.error(err));
+</file>
+
+<file path="src/styles.scss">
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+</file>
+
+<file path=".editorconfig">
+# https://editorconfig.org
+корень = правда
+
+# --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ---
+[*]
+кодировка = utf-8
+конец_строки = lf
+Insert_final_newline = правда
+обрезка_trailing_whitespace = правда
+indent_style = вкладка
+tab_width = 4
+
+# --- МАРКДАУН ---
+[*.md]
+обрезка_trailing_whitespace = ложь
+
+# --- СКРИПТЫ И СИСТЕМНЫЕ ФАЙЛЫ ---
+[*.sh]
+конец_строки = lf
+
+# --- МАКЕФАЙЛЫ ---
+[{Makefile,*.mk}]
+</file>
+
+<file path=".gitignore">
+# --- Сборка, кэш и компиляция ---
+/dist/
+/tmp/
+/out-tsc/
+/.angular/
+.tsbuildinfo
+.sass-cache/
+
+# --- Зависимости ---
+node_modules/
+.pnpm-store/
+
+# --- Логи и отчеты тестов ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+/coverage/
+
+# --- Переменные окружения и секреты ---
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# --- IDE (JetBrains / Visual Studio) ---
+.idea/
+*.suo
+*.sln
+*.sw?
+
+# --- VS Code (Только командные конфиги, без персонального мусора) ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# --- Системные файлы ---
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+</file>
+
+<file path=".prettierrc">
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "printWidth": 100,
+  "tabWidth": 4,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "htmlWhitespaceSensitivity": "css",
+  "singleAttributePerLine": false,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+
+  "importOrder": [
+    "^@angular/(.*)$",
+    "^@nestjs/(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^@app/(.*)$",
+    "^@pages/(.*)$",
+    "^@widgets/(.*)$",
+    "^@features/(.*)$",
+    "^@entities/(.*)$",
+    "^@shared/(.*)$",
+    "^[./]"
+  ],
+
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderParserPlugins": ["typescript", "decorators-legacy"],
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular",
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": ["*.json", "*.jsonc"],
+      "options": {
+        "parser": "json",
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.yaml", "*.yml"],
+      "options": {
+        "parser": "yaml",
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.md",
+      "options": {
+        "parser": "markdown",
+        "tabWidth": 2,
+        "proseWrap": "always"
+      }
+    }
+  ]
+}
+</file>
+
+<file path=".stylelintrc.json">
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "order/properties-order": [
+      [
+        "position",
+        "top",
+        "right",
+        "bottom",
+        "left",
+        "z-index",
+
+        "display",
+        "flex",
+        "flex-direction",
+        "flex-wrap",
+        "flex-grow",
+        "flex-shrink",
+        "flex-basis",
+        "grid",
+        "grid-template-columns",
+        "grid-template-rows",
+        "grid-template-areas",
+        "grid-column",
+        "grid-row",
+        "gap",
+        "row-gap",
+        "column-gap",
+        "justify-content",
+        "justify-items",
+        "justify-self",
+        "align-items",
+        "align-content",
+        "align-self",
+
+        "width",
+        "min-width",
+        "max-width",
+        "height",
+        "min-height",
+        "max-height",
+
+        "margin",
+        "margin-top",
+        "margin-right",
+        "margin-bottom",
+        "margin-left",
+        "padding",
+        "padding-top",
+        "padding-right",
+        "padding-bottom",
+        "padding-left",
+
+        "background",
+        "background-color",
+        "background-image",
+        "border",
+        "border-radius",
+        "box-shadow",
+        "opacity",
+
+        "font-family",
+        "font-size",
+        "font-weight",
+        "line-height",
+        "color",
+        "text-align",
+
+        "transition",
+        "animation",
+        "cursor"
+      ],
+      {
+        "unspecified": "bottom",
+        "emptyLineBeforeUnspecified": "never"
+      }
+    ],
+
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["host", "host-context"]
+      }
+    ],
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": ["ng-deep"]
+      }
+    ],
+
+    "declaration-no-important": true,
+    "max-nesting-depth": 4,
+    "color-named": "never",
+    "declaration-block-no-redundant-longhand-properties": true,
+    "no-empty-source": null,
+
+    "declaration-property-unit-allowed-list": {
+      "font-size": ["px", "rem", "em"],
+      "margin": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+      "padding": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+      "width": ["px", "rem", "%", "vw", "vh", "dvh", "em", "fr"],
+      "height": ["px", "rem", "%", "vh", "vw", "dvh", "em", "fr"]
+    },
+
+    "selector-class-pattern": "^[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+    "scss/selector-no-redundant-nesting-selector": null,
+    "scss/at-mixin-pattern": null,
+    "scss/at-if-no-null": null
+  }
+}
+</file>
+
+<file path="angular.json">
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "pnpm",
+    "analytics": false
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "ngalg": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss",
+          "changeDetection": "OnPush",
+          "displayBlock": true,
+          "skipTests": false
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/ngalg",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "styles": ["src/styles.scss"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": {
+                "scripts": true,
+                "styles": true
+              },
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "ngalg:build:production"
+            },
+            "development": {
+              "buildTarget": "ngalg:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+          }
+        }
+      }
+    }
+  }
+}
+</file>
+
+<file path="eslint.config.ts">
+import fsdPlugin from '@conarti/eslint-plugin-feature-sliced';
+import { fixupPluginRules } from '@eslint/compat';
+import eslint from '@eslint/js';
+import angular from 'angular-eslint';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+    {
+        files: ['**/*.ts'],
+        extends: [
+            eslint.configs.recommended,
+            ...tseslint.configs.recommended,
+            ...tseslint.configs.stylistic,
+            ...angular.configs.tsRecommended,
+        ],
+        plugins: {
+            'feature-sliced': fixupPluginRules(fsdPlugin),
+        },
+        processor: angular.processInlineTemplates as any,
+        rules: {
+            '@angular-eslint/directive-selector': [
+                'error',
+                {
+                    type: 'attribute',
+                    prefix: 'app',
+                    style: 'camelCase',
+                },
+            ],
+            '@angular-eslint/component-selector': [
+                'error',
+                {
+                    type: ['element', 'attribute'],
+                    prefix: 'app',
+                    style: 'kebab-case',
+                },
+            ],
+            '@angular-eslint/prefer-standalone': 'error',
+            '@angular-eslint/component-class-suffix': 'error',
+            '@angular-eslint/directive-class-suffix': 'error',
+            '@typescript-eslint/explicit-function-return-type': [
+                'error',
+                {
+                    allowExpressions: true,
+                    allowTypedFunctionExpressions: true,
+                    allowHigherOrderFunctions: true,
+                    allowDirectConstAssertionInArrowFunctions: true,
+                },
+            ],
+            '@typescript-eslint/no-explicit-any': 'warn',
+
+            /* Правила FSD */
+            'feature-sliced/layers-slices': ['error', { allowTypeImports: true }],
+            'feature-sliced/absolute-relative': 'error',
+            'feature-sliced/public-api': 'error',
+        },
+    },
+    {
+        files: ['**/*.html'],
+        extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
+        rules: {
+            '@angular-eslint/template/no-negated-async': 'error',
+            '@angular-eslint/template/prefer-control-flow': 'error',
+        },
+    },
+);
+</file>
+
+<file path="package.json">
+{
+  "name": "course",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@11.7.0",
+  "scripts": {
+    "start:dev": "ng serve"
+  },
+  "dependencies": {
+    "@angular/common": "^22.1.7",
+    "@angular/compiler": "^22.1.7",
+    "@angular/core": "^22.1.7",
+    "@angular/forms": "^22.1.7",
+    "@angular/platform-browser": "^22.1.7",
+    "@angular/router": "^22.1.7",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@angular-eslint/builder": "^22.5.0",
+    "@angular/build": "^22.1.8",
+    "@angular/cli": "^22.1.8",
+    "@angular/compiler-cli": "^22.1.7",
+    "@conarti/eslint-plugin-feature-sliced": "^2.0.0",
+    "@eslint/compat": "^2.1.1",
+    "@eslint/js": "^10.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "angular-eslint": "^22.5.0",
+    "eslint": "^10.10.0",
+    "jiti": "^2.7.0",
+    "prettier": "^3.9.7",
+    "repomix": "^1.18.0",
+    "stylelint": "^17.15.0",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-order": "^8.1.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.70.0"
+  }
+}
+</file>
+
+<file path="pnpm-workspace.yaml">
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true
+  unrs-resolver: true
+</file>
+
+<file path="tsconfig.app.json">
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": []
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts", "src/**/*.ts", "eslint.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}
+</file>
+
+<file path="tsconfig.json">
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": ["es2022", "dom", "dom.iterable"],
+
+    /* Строгость типов */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+
+    /* Совместимость и безопасность */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+
+    /* Декораторы Angular */
+    "experimentalDecorators": true,
+    "importHelpers": true,
+
+    /* Path Aliases (FSD Архитектура) */
+    "rootDir": ".",
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@widgets/*": ["./src/widgets/*"],
+      "@features/*": ["./src/features/*"],
+      "@entities/*": ["./src/entities/*"],
+      "@shared/*": ["./src/shared/*"]
+    }
+  },
+
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictAttributeTypes": true,
+    "strictOutputEventTypes": true,
+    "strictNullInputTypes": true,
+    "extendedDiagnostics": {
+      "defaultCategory": "error"
+    }
+  },
+
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}
+</file>
+
+</files>

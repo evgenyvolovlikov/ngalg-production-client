@@ -1,0 +1,112 @@
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "order/properties-order": [
+      [
+        "position",
+        "top",
+        "right",
+        "bottom",
+        "left",
+        "z-index",
+
+        "display",
+        "flex",
+        "flex-direction",
+        "flex-wrap",
+        "flex-grow",
+        "flex-shrink",
+        "flex-basis",
+        "grid",
+        "grid-template-columns",
+        "grid-template-rows",
+        "grid-template-areas",
+        "grid-column",
+        "grid-row",
+        "gap",
+        "row-gap",
+        "column-gap",
+        "justify-content",
+        "justify-items",
+        "justify-self",
+        "align-items",
+        "align-content",
+        "align-self",
+
+        "width",
+        "min-width",
+        "max-width",
+        "height",
+        "min-height",
+        "max-height",
+
+        "margin",
+        "margin-top",
+        "margin-right",
+        "margin-bottom",
+        "margin-left",
+        "padding",
+        "padding-top",
+        "padding-right",
+        "padding-bottom",
+        "padding-left",
+
+        "background",
+        "background-color",
+        "background-image",
+        "border",
+        "border-radius",
+        "box-shadow",
+        "opacity",
+
+        "font-family",
+        "font-size",
+        "font-weight",
+        "line-height",
+        "color",
+        "text-align",
+
+        "transition",
+        "animation",
+        "cursor"
+      ],
+      {
+        "unspecified": "bottom",
+        "emptyLineBeforeUnspecified": "never"
+      }
+    ],
+
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["host", "host-context"]
+      }
+    ],
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": ["ng-deep"]
+      }
+    ],
+
+    "declaration-no-important": true,
+    "max-nesting-depth": 4,
+    "color-named": "never",
+    "declaration-block-no-redundant-longhand-properties": true,
+    "no-empty-source": null,
+
+    "declaration-property-unit-allowed-list": {
+      "font-size": ["px", "rem", "em"],
+      "margin": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+      "padding": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+      "width": ["px", "rem", "%", "vw", "vh", "dvh", "em", "fr"],
+      "height": ["px", "rem", "%", "vh", "vw", "dvh", "em", "fr"]
+    },
+
+    "selector-class-pattern": "^[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+    "scss/selector-no-redundant-nesting-selector": null,
+    "scss/at-mixin-pattern": null,
+    "scss/at-if-no-null": null
+  }
+}

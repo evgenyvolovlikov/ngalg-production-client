@@ -1,0 +1,22 @@
+# https://editorconfig.org
+корень = правда
+
+# --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ---
+[*]
+кодировка = utf-8
+конец_строки = lf
+Insert_final_newline = правда
+обрезка_trailing_whitespace = правда
+indent_style = вкладка
+tab_width = 4
+
+# --- МАРКДАУН ---
+[*.md]
+обрезка_trailing_whitespace = ложь
+
+# --- СКРИПТЫ И СИСТЕМНЫЕ ФАЙЛЫ ---
+[*.sh]
+конец_строки = lf
+
+# --- МАКЕФАЙЛЫ ---
+[{Makefile,*.mk}]
