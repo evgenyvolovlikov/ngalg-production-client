@@ -8,9 +8,20 @@
   "license": "ISC",
   "packageManager": "pnpm@11.7.0",
   "scripts": {
+    "ng": "ng",
     "start:dev": "ng serve",
+    "build:prod": "ng build",
+    "watch:dev": "ng build --watch --configuration development",
+    "lint": "pnpm lint:ts && pnpm lint:styles",
+    "lint:ts": "ng lint",
+    "lint:ts:fix": "ng lint --fix",
+    "lint:styles": "stylelint \"src/**/*.{css,scss}\"",
+    "lint:styles:fix": "stylelint \"src/**/*.{css,scss}\" --fix",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "prepare": "husky",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "prepare": "husky"
+    "repomix": "npx repomix"
   },
   "dependencies": {
     "@angular/common": "^22.1.7",
