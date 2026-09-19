@@ -46,12 +46,52 @@ The content is organized as follows:
 .husky/
   commit-msg
   pre-commit
+leetcode/
+  search/
+    binary-search.ts
+    linary-search.ts
+  1-two-sum.ts
+  11-container-with-most-water.ts
+  217-contains-duplicate.ts
+  3-longest-substring-withour-repeating-characters.ts
+  42-trapping-rainwater.ts
+  844-backspace-compare.ts
+  big-o.ts
 public/
+  fonts/
+    geist-mono/
+      GeistMono-Medium.woff2
+      GeistMono-Regular.woff2
+    geist-sans/
+      Geist-Bold.woff2
+      Geist-Medium.woff2
+      Geist-Regular.woff2
   favicon.ico
 src/
+  app/
+    providers/
+      app.config.ts
+    routes/
+      app.routes.ts
+    ui/
+      app.component.ts
+  pages/
+    course-page/
+      course-page.component.html
+      course-page.component.scss
+      course-page.component.ts
+      index.ts
+  shared/
+    config/
+      index.ts
+      routes.config.ts
+  styles/
+    _font-faces.scss
+    _reset.scss
+    _tokens.scss
   index.html
-  main.ts
-  styles.scss
+  index.scss
+  index.ts
 .commitlintrc.json
 .editorconfig
 .gitignore
@@ -69,57 +109,130 @@ tsconfig.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path=".github/workflows/ci.yml">
-name: CI
+<file path="leetcode/3-longest-substring-withour-repeating-characters.ts">
+// Input: s = 'abcabcbb';
+// Output: 3;
 
-on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+// Input: s = 'bbbbb';
+// Output: 1;
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+// Решение 1:
+function longestSubstring(s: string): number {
+	let maxLength = 0;
+	for (let p1 = 0; p1 < s.length; ++p1) {
+		const obj: Record<string, boolean> = {};
+		let longestLength = 0;
+		for (let p2 = p1; p2 < s.length; ++p2) {
+			if (!obj[s[p2]]) {
+				obj[s[p2]] = true;
+				longestLength++;
 
-jobs:
-  validate-and-build:
-    runs-on: ubuntu-latest
+				maxLength = Math.max(maxLength, longestLength);
+			} else {
+				break;
+			}
+		}
+	}
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+	return maxLength;
+}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+const input = 'abcabcbb';
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'pnpm'
+longestSubstring(input);
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+// Время: O(n^2)
+// Память: O(m)
 
-      - name: Strict Typecheck
-        run: pnpm typecheck
+// Решение 2:
+// 1. Создание переменных макс длины, хранилище Set, левый указатель left
+// 2. Инициализация цикла, внутри цикла - текущее значение в Set
+// 3. Вложенный цикл while где рекурсивно проверяется текущего элемента цикла
+// (currentSymbol)
+// 4. После удаления текущего символа элемента в цикле, добавляем его в конец
+// 5. Длина текущего окна рассчитывается как: right - left + 1
 
-      - name: Check formatting (Prettier)
-        run: pnpm -w format:check
+// Input: s = 'abcabcbb';
+function longestSubstring_2(s: string): number {
+	let longestLength = 0;
+	const seen = new Set();
+	let left = 0;
 
-      - name: Lint (ESLint & Stylelint)
-        run: pnpm -w lint
+	for (let right = 0; right < s.length; ++right) {
+		const currentSymbol = s[right];
+		while (seen.has(currentSymbol)) {
+			seen.delete(s[left]);
+			left++;
+		}
 
-      - name: Build Application
-        run: pnpm -w build:prod
+		seen.add(currentSymbol);
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist
-          retention-days: 7
+		longestLength = Math.max(longestLength, right - left + 1);
+	}
+
+	return longestLength;
+}
+
+// Время: O(n)
+// Память: O(m)
+
+const input_2 = 'abcab';
+
+longestSubstring_2(input_2);
+</file>
+
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
+
+import { RouteSegments } from '@shared/config';
+
+export const APP_ROUTES: Routes = [
+	{
+		path: RouteSegments.COURSE,
+		loadComponent: () => import('@pages/course-page').then((c) => c.CoursePageComponent),
+	},
+
+	{
+		path: RouteSegments.WILDCARD,
+		redirectTo: RouteSegments.COURSE,
+	},
+];
+</file>
+
+<file path="src/pages/course-page/course-page.component.html">
+<div>Course Page</div>
+</file>
+
+<file path="src/pages/course-page/course-page.component.scss">
+
+</file>
+
+<file path="src/pages/course-page/course-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+	selector: 'app-course-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './course-page.component.html',
+	styleUrl: './course-page.component.scss',
+})
+export class CoursePageComponent {}
+</file>
+
+<file path="src/pages/course-page/index.ts">
+export * from './course-page.component';
+</file>
+
+<file path="src/shared/config/index.ts">
+export * from './routes.config';
+</file>
+
+<file path="src/shared/config/routes.config.ts">
+export const RouteSegments = {
+	COURSE: 'course',
+	WILDCARD: '**',
+} as const;
 </file>
 
 <file path=".husky/commit-msg">
@@ -131,89 +244,744 @@ pnpm  lint-staged
 pnpm  typecheck
 </file>
 
-<file path="src/index.html">
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Client</title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  </head>
-  <body>
-    <app-root></app-root>
-  </body>
-</html>
-</file>
+<file path="leetcode/search/binary-search.ts">
+const binarySearch = (array: number[], target: number): number => {
+	let start = 0;
+	let end = array.length - 1;
 
-<file path="src/main.ts">
-import { ApplicationConfig, ChangeDetectionStrategy, Component } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
+	while (start <= end) {
+		const middle = Math.floor((start + end) / 2);
 
-export const appConfig: ApplicationConfig = {
-    providers: [],
+		if (array[middle] === target) {
+			return middle;
+		} else if (array[middle] < target) {
+			start = middle + 1;
+		} else {
+			end = middle - 1;
+		}
+	}
+
+	return -1;
 };
 
+binarySearch([1, 2, 3, 4, 5], 4);
+
+// Время: O(log n)
+// Память: O(1)
+</file>
+
+<file path="leetcode/search/linary-search.ts">
+const linarySearch = (array: number[], target: number): number => {
+	// Вариант 1:
+	for (let p1 = 0; p1 < array.length; ++p1) {
+		if (array[p1] === target) {
+			return p1;
+		}
+	}
+
+	// Вариант 2:
+	for (const [index, elem] of array.entries()) {
+		if (elem === target) {
+			return index;
+		}
+	}
+
+	return -1;
+};
+
+linarySearch([1, 2, 3, 4, 5], 4);
+
+// Время: O(n)
+// Память: O(1)
+</file>
+
+<file path="leetcode/1-two-sum.ts">
+// O(1) — константное время, не зависит от размера данных
+// O(log n) — логарифмическая сложность, типична для бинарного поиска
+// O(n) — линейная сложность, один проход по данным
+// O(n log n) — типична для эффективных сортировок
+// O(n^2) — вложенные циклы по одним и тем же данным
+
+// https://leetcode.com/problems/two-sum/description
+
+// Решение 1:
+const twoSum = (array: number[], target: number): number[] => {
+	for (let p1 = 0; p1 < array.length; ++p1) {
+		for (let p2 = p1 + 1; p1 < array.length; ++p2) {
+			if (array[p1] + array[p2] === target) {
+				return [p1, p2];
+			}
+		}
+	}
+
+	return [];
+};
+
+twoSum([1, 2, 3, 4, 5], 9);
+
+// Время: O(n^2)
+// Память: O(1)
+
+// Решение 2:
+const twoSum_2 = (array: number[], target: number): number[] => {
+	const numsObj: Record<number, number> = {};
+
+	for (let p1 = 0; p1 < array.length; ++p1) {
+		if (numsObj[array[p1]] >= 0) {
+			return [numsObj[array[p1]], p1];
+		} else {
+			const complement = target - array[p1];
+			numsObj[complement] = p1;
+		}
+	}
+
+	return [];
+};
+
+twoSum_2([1, 2, 3, 4, 5], 9);
+
+// Время: O(n)
+// Память: O(n)
+
+// Решение 3:
+const twoSum_3 = (array: number[], target: number): number[] => {
+	const mapObj = new Map();
+
+	for (let p1 = 0; p1 < array.length; ++p1) {
+		if (mapObj.has(array[p1])) {
+			return [mapObj.get(array[p1]), p1];
+		}
+
+		const complement = target - array[p1];
+		mapObj.set(complement, p1);
+	}
+
+	return [];
+};
+
+twoSum_3([1, 2, 3, 4, 5], 9);
+
+// Время: O(n)
+// Память: O(n)
+</file>
+
+<file path="leetcode/11-container-with-most-water.ts">
+// https://leetcode.com/problems/container-with-most-water
+
+// 1. Инициализировать необходимые переменные: maxArea
+// 2. Пройтись по массиву 1 итерация
+// 3. Создать вложенный цикл проходиться по слудующим элементам + 1
+// 4. Внутри вложенного цикла вычислить высоту (currentHeight) чтобы вычилить минимальную высоту для того чтобы вода не была выше границы через Max.min, ширину (width), и площадь (currentArea), формулу площади: S = H * W
+// 5. Внутри вложенного цикла сравнить переменную через Math.max(maxArea, area)
+
+// Решение 1:
+function maxArea(heights: number[]): number {
+	let maxArea = 0;
+	for (let p1 = 0; p1 < heights.length; ++p1) {
+		for (let p2 = p1 + 1; p2 < heights.length; ++p2) {
+			const currentHeight = Math.min(heights[p1], heights[p2]);
+			const width = p2 - p1;
+			const currentArea = currentHeight * width;
+
+			maxArea = Math.max(maxArea, currentArea);
+		}
+	}
+
+	return maxArea;
+}
+
+// Время: O(n^2)
+// Память: O(1)
+
+const input = [1, 8, 6, 2, 5, 4, 8, 3, 7];
+
+maxArea(input);
+
+// Решение 2:
+
+// 1. Создать переменные maxArea, left, right
+// 2. создать цикл while пока right > left
+// 3. Инициализировать прееменные currentHeight (высчитать минимальное значение двух текущих
+// элементов высоты), и переменную width (высчитать right - left)
+// и переменную area (currentHeight * width)
+// 4. Проверить текущую переменную maxArea: Math.max(maxArea, area)
+// 5. Поставить учловие чтобы обновлять счётчики left и right (right > left) left++...
+// else right--
+// 6. Возвратить переменную maxArea
+
+function maxArea_2(heights: number[]): number {
+	let maxArea = 0;
+	let left = 0;
+	let right = heights.length - 1;
+
+	while (left < right) {
+		const currentHeight = Math.min(heights[left], heights[right]);
+		const width = right - left;
+
+		const area = currentHeight * width;
+		maxArea = Math.max(maxArea, area);
+
+		if (heights[left] < heights[right]) {
+			left++;
+		} else {
+			right--;
+		}
+	}
+
+	return maxArea;
+}
+
+// Время: O(n)
+// Память: O(1)
+
+const input_2 = [1, 8, 6, 2, 5, 4, 8, 3, 7];
+
+maxArea_2(input_2);
+</file>
+
+<file path="leetcode/217-contains-duplicate.ts">
+// 217. https://leetcode.com/problems/contains-duplicate/description/
+
+// Решение 1:
+function containsDuplicate(nums: number[]): boolean {
+	const duplicatesSet = new Set();
+
+	for (const elem of nums) {
+		if (duplicatesSet.has(elem)) {
+			return true;
+		}
+		duplicatesSet.add(elem);
+	}
+
+	return false;
+}
+
+containsDuplicate([1, 2, 3, 4, 5, 5]);
+
+// Время: O(n)
+// Память: O(n)
+</file>
+
+<file path="leetcode/42-trapping-rainwater.ts">
+// https://leetcode.com/problems/trapping-rain-water
+
+// Input: height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
+// Output: 6;
+
+// Решение 1:
+function trap(heights: number[]): number {
+	let totalWater = 0;
+
+	for (let p = 0; p < heights.length; ++p) {
+		let leftP = p;
+		let rightP = p;
+
+		let maxLeft = 0;
+		let maxRight = 0;
+
+		while (leftP >= 0) {
+			maxLeft = Math.max(maxLeft, heights[leftP]);
+			--leftP;
+		}
+
+		while (rightP < heights.length) {
+			maxRight = Math.max(maxRight, heights[rightP]);
+			++rightP;
+		}
+
+		const currentWater = Math.min(maxLeft, maxRight) - heights[p];
+		if (currentWater >= 0) {
+			totalWater += currentWater;
+		}
+	}
+
+	return totalWater;
+}
+
+// Время: O(n^2)
+// Память: O(1)
+
+const input = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
+
+trap(input);
+
+// Решение 2:
+function trap_2(heights: number[]): number {
+	let total = 0,
+		left = 0,
+		right = heights.length - 1,
+		maxLeft = 0,
+		maxRight = 0;
+
+	// for (let p = 0; p < heights.length; ++p) {}
+	while (left < right) {
+		if (heights[left] < heights[right]) {
+			if (heights[left] > maxLeft) {
+				maxLeft = heights[left];
+			} else {
+				total += maxLeft - heights[left];
+			}
+			left++;
+		} else {
+			if (heights[right] > maxRight) {
+				maxRight = heights[right];
+			} else {
+				total += maxRight - heights[right];
+			}
+			right--;
+		}
+	}
+
+	return total;
+}
+
+// Время: O(n)
+// Память: O(1)
+
+const input_2 = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
+
+trap_2(input_2);
+
+export {};
+</file>
+
+<file path="leetcode/844-backspace-compare.ts">
+// https://leetcode.com/problems/backspace-string-compare
+
+// Input: s = "ab#c", t = "ad#c"
+// Output: true
+
+// Input: s = "ab##", t = "c#d#"
+// Output: true
+
+// Решение 1:
+function buildString(s: string): string[] {
+	const array: string[] = [];
+
+	for (const elem of s) {
+		if (elem !== '#') {
+			array.push(elem);
+		} else {
+			array.pop();
+		}
+	}
+
+	return array;
+}
+
+function backspaceCompare(s: string, t: string): boolean {
+	const finalS: string[] = buildString(s);
+	const finalT: string[] = buildString(t);
+
+	if (finalS.length !== finalT.length) return false;
+
+	for (let p = 0; p < finalS.length; ++p) {
+		if (finalS[p] !== finalT[p]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+backspaceCompare('ab#c', 'ad#c');
+
+// Время: O(n + m)
+// Память: O(n + m)
+
+// Решение 2:
+
+function backspaceCompare_2(s: string, t: string): boolean {
+	let p1 = s.length - 1;
+	let p2 = t.length - 1;
+
+	while (p1 >= 0 || p2 >= 0) {
+		if (s[p1] === '#' || t[p2] === '#') {
+			if (s[p1] === '#') {
+				let backCount = 2;
+				while (backCount > 0) {
+					p1--;
+					backCount--;
+
+					if (s[p1] === '#') {
+						backCount = backCount + 2;
+					}
+				}
+			}
+
+			if (t[p2] === '#') {
+				let backCount = 2;
+				while (backCount > 0) {
+					p2--;
+					backCount--;
+
+					if (t[p2] === '#') {
+						backCount = backCount + 2;
+					}
+				}
+			}
+		} else {
+			if (s[p1] !== t[p2]) {
+				return false;
+			} else {
+				p1--;
+				p2--;
+			}
+		}
+	}
+
+	return true;
+}
+
+backspaceCompare_2('ab#c', 'ad#c');
+
+// Время: O(n + m)
+// Память: O(1)
+</file>
+
+<file path="leetcode/big-o.ts">
+// O(1) — константное время, не зависит от размера данных
+// O(log n) — логарифмическая сложность, типична для бинарного поиска
+// O(n) — линейная сложность, один проход по данным
+// O(n log n) — типична для эффективных сортировок
+// O(n^2) — вложенные циклы по одним и тем же данным
+</file>
+
+<file path="src/app/providers/app.config.ts">
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { APP_ROUTES } from '../routes/app.routes';
+
+export const appConfig: ApplicationConfig = {
+	providers: [provideRouter(APP_ROUTES)],
+};
+</file>
+
+<file path="src/app/ui/app.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<div>Hello World</div>`,
-    imports: [],
+	selector: 'app-root',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<router-outlet />`,
+	imports: [RouterOutlet],
 })
 export class AppComponent {}
-
-bootstrapApplication(AppComponent).catch((err) => console.error(err));
 </file>
 
-<file path="src/styles.scss">
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+<file path="src/styles/_font-faces.scss">
+// FONT FACES
+@font-face {
+	font-family: 'Geist Sans';
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+	src: url('/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Geist Sans';
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+	src: url('/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Geist Sans';
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+	src: url('/fonts/geist-sans/Geist-Bold.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Geist Mono';
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+	src: url('/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Geist Mono';
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+	src: url('/fonts/geist-mono/GeistMono-Medium.woff2') format('woff2');
+}
+
+:root {
+	--font-family-sans:
+		'Geist Sans', -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, helvetica, arial,
+		sans-serif;
+	--font-family-mono:
+		'Geist Mono', ui-monospace, sfmono-regular, 'Roboto Mono', menlo, monaco, consolas,
+		monospace;
 }
 </file>
 
-<file path=".commitlintrc.json">
-{
-  "extends": ["@commitlint/config-conventional"],
-  "rules": {
-    "type-enum": [
-      2,
-      "always",
-      ["build", "ci", "docs", "feat", "fix", "perf", "refactor", "revert", "style", "test", "chore"]
-    ],
-    "subject-case": [2, "never", ["sentence-case", "start-case", "pascal-case", "upper-case"]],
-    "subject-empty": [2, "never"],
-    "type-empty": [2, "never"]
-  }
+<file path="src/styles/_reset.scss">
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	height: 100%;
+	scroll-behavior: smooth;
+	scrollbar-gutter: stable;
+	text-size-adjust: 100%;
+	tab-size: 4;
+}
+
+body {
+	min-height: 100%;
+	background-color: var(--bg-main);
+	font-family: var(--font-family-sans);
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-base);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
+	font-synthesis: none;
+	text-rendering: optimizelegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-x: clip;
+}
+
+ul[class],
+ol[class] {
+	list-style: none;
+}
+
+a {
+	color: inherit;
+	transition:
+		color var(--transition-fast),
+		opacity var(--transition-fast);
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a:not([class]) {
+	text-decoration: underline;
+	text-decoration-skip-ink: auto;
+	text-underline-offset: 3px;
+}
+
+a:not([class]):hover {
+	text-decoration: none;
+}
+
+img,
+picture,
+video,
+canvas {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+svg {
+	display: inline-block;
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
+	fill: currentcolor;
+}
+
+input,
+button,
+textarea,
+select {
+	background: transparent;
+	border: none;
+	color: inherit;
+	font: inherit;
+	appearance: none;
+}
+
+textarea {
+	resize: vertical;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	margin: 0;
+	appearance: none;
+}
+
+input[type='number'] {
+	appearance: textfield;
+}
+
+button,
+[role='button'] {
+	cursor: pointer;
+	user-select: none;
+	touch-action: manipulation;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+	opacity: var(--opacity-disabled);
+	cursor: not-allowed;
+}
+
+:focus {
+	outline: none;
+}
+
+:focus-visible {
+	border-radius: inherit;
+	box-shadow: var(--focus-ring, 0 0 0 4px rgb(99 102 241 / 15%));
+	outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html:focus-within {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-iteration-count: 1 !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		transition-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		scroll-behavior: auto !important;
+	}
 }
 </file>
 
-<file path=".editorconfig">
-# https://editorconfig.org
-корень = правда
+<file path="src/styles/_tokens.scss">
+:root {
+	/* --- БАЗОВЫЕ ЦВЕТА И ФОНЫ --- */
+	--bg-main: #f6f9fc;
+	--bg-card: #fff;
+	--bg-code: #0f172a;
 
-# --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ---
-[*]
-кодировка = utf-8
-конец_строки = lf
-Insert_final_newline = правда
-обрезка_trailing_whitespace = правда
-indent_style = вкладка
-tab_width = 4
+	/* --- ТЕКСТ --- */
+	--text-primary: #1e293b;
+	--text-secondary: #64748b;
+	--text-muted: #94a3b8;
+	--text-on-dark: #f8fafc;
 
-# --- МАРКДАУН ---
-[*.md]
-обрезка_trailing_whitespace = ложь
+	/* --- БРЕНД И АКЦЕНТЫ --- */
+	--brand-primary: #6366f1;
+	--brand-hover: #4f46e5;
+	--brand-light: #eef2ff;
 
-# --- СКРИПТЫ И СИСТЕМНЫЕ ФАЙЛЫ ---
-[*.sh]
-конец_строки = lf
+	/* --- СТАТУСЫ И ТЕСТЫ --- */
+	--status-success: #10b981;
+	--status-success-bg: #ecfdf5;
+	--status-error: #ef4444;
+	--status-error-bg: #fef2f2;
+	--status-warning: #f59e0b;
+	--status-warning-bg: #fffbeb;
 
-# --- МАКЕФАЙЛЫ ---
-[{Makefile,*.mk}]
+	/* --- ГРАНИЦЫ И РАЗДЕЛИТЕЛИ --- */
+	--border-light: #e2e8f0;
+	--border-focus: #a5b4fc;
+
+	/* --- ЭФФЕКТЫ ОБЪЕМА --- */
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 5%), 0 2px 4px -1px rgb(0 0 0 / 3%);
+
+	/* --- РАЗМЕР ШРИФТОВ --- */
+	--font-size-xs: 0.75rem;
+	--font-size-sm: 0.875rem;
+	--font-size-base: 1rem;
+	--font-size-lg: 1.125rem;
+	--font-size-xl: 1.25rem;
+	--font-size-xxl: 1.5rem;
+	--font-size-xxxl: 2rem;
+
+	/* --- ВЫСОТА СТРОКИ --- */
+	--line-height-none: 1;
+	--line-height-tight: 1.25;
+	--line-height-normal: 1.4;
+	--line-height-base: 1.5;
+	--line-height-relaxed: 1.6;
+	--line-height-loose: 1.75;
+
+	/* --- НАЧЕРТАНИЕ ШРИФТОВ --- */
+	--font-weight-regular: 400;
+	--font-weight-medium: 500;
+	--font-weight-bold: 700;
+
+	/* --- ЮНИТЫ (Отступы) --- */
+	--unit-1: 0.25rem;
+	--unit-2: 0.5rem;
+	--unit-3: 0.75rem;
+	--unit-4: 1rem;
+	--unit-5: 1.25rem;
+	--unit-6: 1.5rem;
+	--unit-8: 2rem;
+	--unit-10: 2.5rem;
+	--unit-12: 3rem;
+	--unit-16: 4rem;
+
+	/* --- СКРУГЛЕНИЯ --- */
+	--radius-xs: 2px;
+	--radius-sm: 4px;
+	--radius-md: 8px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-full: 9999px;
+
+	/* --- СЛОИ --- */
+	--z-negative: -1;
+	--z-elevate: 1;
+	--z-dropdown: 1000;
+	--z-sticky: 1020;
+	--z-fixed: 1030;
+	--z-modal-backdrop: 1040;
+	--z-modal: 1050;
+	--z-popover: 1060;
+	--z-tooltip: 1070;
+	--z-toast: 1080;
+
+	/* --- АНИМАЦИЯ --- */
+	--transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* --- ПРОЗРАЧНОСТЬ --- */
+	--opacity-disabled: 0.5;
+	--opacity-hover: 0.8;
+}
+</file>
+
+<file path="src/index.scss">
+@use './styles/tokens';
+@use './styles/font-faces';
+@use './styles/reset';
+</file>
+
+<file path="src/index.ts">
+import { bootstrapApplication } from '@angular/platform-browser';
+
+import { appConfig } from './app/providers/app.config';
+import { AppComponent } from './app/ui/app.component';
+
+bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
 </file>
 
 <file path=".gitignore">
@@ -264,292 +1032,488 @@ ehthumbs.db
 Desktop.ini
 </file>
 
+<file path=".github/workflows/ci.yml">
+name: CI
+
+on:
+    push:
+        branches: [main, master]
+    pull_request:
+        branches: [main, master]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    validate-and-build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Strict Typecheck
+              run: pnpm typecheck
+
+            - name: Check formatting (Prettier)
+              run: pnpm -w format:check
+
+            - name: Lint (ESLint & Stylelint)
+              run: pnpm -w lint
+
+            - name: Build Application
+              run: pnpm -w build:prod
+
+            - name: Upload Build Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: dist
+                  path: dist
+                  retention-days: 7
+</file>
+
+<file path="src/index.html">
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Client</title>
+		<base href="/" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/x-icon" href="favicon.ico" />
+	</head>
+	<body>
+		<app-root></app-root>
+	</body>
+</html>
+</file>
+
+<file path=".commitlintrc.json">
+{
+	"extends": ["@commitlint/config-conventional"],
+	"rules": {
+		"type-enum": [
+			2,
+			"always",
+			[
+				"build",
+				"ci",
+				"docs",
+				"feat",
+				"fix",
+				"perf",
+				"refactor",
+				"revert",
+				"style",
+				"test",
+				"chore"
+			]
+		],
+		"subject-case": [2, "never", ["sentence-case", "start-case", "pascal-case", "upper-case"]],
+		"subject-empty": [2, "never"],
+		"type-empty": [2, "never"]
+	}
+}
+</file>
+
+<file path=".editorconfig">
+# https://editorconfig.org
+root = true
+
+# --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ---
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = tab
+tab_width = 4
+
+# --- МАРКДАУН ---
+[*.md]
+trim_trailing_whitespace = false
+
+# --- СКРИПТЫ И СИСТЕМНЫЕ ФАЙЛЫ ---
+[*.sh]
+end_of_line = lf
+
+# --- МАКЕФАЙЛЫ ---
+[{Makefile,*.mk}]
+</file>
+
 <file path=".lintstagedrc.json">
 {
-  "*.ts": ["eslint --fix", "prettier --write"],
-  "*.html": ["eslint --fix", "prettier --write"],
-  "*.{scss,css}": ["stylelint --fix", "prettier --write"],
-  "*.{json,md,yml,yaml}": ["prettier --write"]
+	"*.ts": ["eslint --fix", "prettier --write"],
+	"*.html": ["eslint --fix", "prettier --write"],
+	"*.{scss,css}": ["stylelint --fix", "prettier --write"],
+	"*.{json,md,yml,yaml}": ["prettier --write"]
 }
 </file>
 
 <file path=".prettierrc">
 {
-  "$schema": "https://json.schemastore.org/prettierrc",
-  "printWidth": 100,
-  "tabWidth": 4,
-  "useTabs": false,
-  "semi": true,
-  "singleQuote": true,
-  "quoteProps": "as-needed",
-  "trailingComma": "all",
-  "bracketSpacing": true,
-  "bracketSameLine": false,
-  "arrowParens": "always",
-  "endOfLine": "lf",
-  "htmlWhitespaceSensitivity": "css",
-  "singleAttributePerLine": false,
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+	"$schema": "https://json.schemastore.org/prettierrc",
+	"printWidth": 100,
+	"tabWidth": 4,
+	"useTabs": true,
+	"semi": true,
+	"singleQuote": true,
+	"quoteProps": "as-needed",
+	"trailingComma": "all",
+	"bracketSpacing": true,
+	"bracketSameLine": false,
+	"arrowParens": "always",
+	"endOfLine": "lf",
+	"htmlWhitespaceSensitivity": "css",
+	"singleAttributePerLine": false,
+	"plugins": ["@trivago/prettier-plugin-sort-imports"],
 
-  "importOrder": [
-    "^@angular/(.*)$",
-    "^@nestjs/(.*)$",
-    "<THIRD_PARTY_MODULES>",
-    "^@app/(.*)$",
-    "^@pages/(.*)$",
-    "^@widgets/(.*)$",
-    "^@features/(.*)$",
-    "^@entities/(.*)$",
-    "^@shared/(.*)$",
-    "^[./]"
-  ],
+	"importOrder": [
+		"^@angular/(.*)$",
+		"^@nestjs/(.*)$",
+		"<THIRD_PARTY_MODULES>",
+		"^@app/(.*)$",
+		"^@pages/(.*)$",
+		"^@widgets/(.*)$",
+		"^@features/(.*)$",
+		"^@entities/(.*)$",
+		"^@shared/(.*)$",
+		"^[./]"
+	],
 
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
-  "importOrderParserPlugins": ["typescript", "decorators-legacy"],
-  "overrides": [
-    {
-      "files": "*.html",
-      "options": {
-        "parser": "angular",
-        "printWidth": 120,
-        "tabWidth": 2,
-        "singleQuote": false
-      }
-    },
-    {
-      "files": ["*.json", "*.jsonc"],
-      "options": {
-        "parser": "json",
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": ["*.yaml", "*.yml"],
-      "options": {
-        "parser": "yaml",
-        "tabWidth": 2
-      }
-    },
-    {
-      "files": "*.md",
-      "options": {
-        "parser": "markdown",
-        "tabWidth": 2,
-        "proseWrap": "always"
-      }
-    }
-  ]
+	"importOrderSeparation": true,
+	"importOrderSortSpecifiers": true,
+	"importOrderParserPlugins": ["typescript", "decorators-legacy"],
+	"overrides": [
+		{
+			"files": "*.html",
+			"options": {
+				"parser": "angular",
+				"printWidth": 120,
+				"singleQuote": false
+			}
+		},
+		{
+			"files": ["*.json", "*.jsonc"],
+			"options": {
+				"parser": "json"
+			}
+		},
+		{
+			"files": ["*.yaml", "*.yml"],
+			"options": {
+				"parser": "yaml"
+			}
+		},
+		{
+			"files": "*.md",
+			"options": {
+				"parser": "markdown",
+				"proseWrap": "always"
+			}
+		}
+	]
 }
 </file>
 
 <file path=".stylelintrc.json">
 {
-  "extends": ["stylelint-config-standard-scss"],
-  "plugins": ["stylelint-order"],
-  "rules": {
-    "order/properties-order": [
-      [
-        "position",
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "z-index",
+	"extends": ["stylelint-config-standard-scss"],
+	"plugins": ["stylelint-order"],
+	"rules": {
+		"order/properties-order": [
+			[
+				"position",
+				"top",
+				"right",
+				"bottom",
+				"left",
+				"z-index",
 
-        "display",
-        "flex",
-        "flex-direction",
-        "flex-wrap",
-        "flex-grow",
-        "flex-shrink",
-        "flex-basis",
-        "grid",
-        "grid-template-columns",
-        "grid-template-rows",
-        "grid-template-areas",
-        "grid-column",
-        "grid-row",
-        "gap",
-        "row-gap",
-        "column-gap",
-        "justify-content",
-        "justify-items",
-        "justify-self",
-        "align-items",
-        "align-content",
-        "align-self",
+				"display",
+				"flex",
+				"flex-direction",
+				"flex-wrap",
+				"flex-grow",
+				"flex-shrink",
+				"flex-basis",
+				"grid",
+				"grid-template-columns",
+				"grid-template-rows",
+				"grid-template-areas",
+				"grid-column",
+				"grid-row",
+				"gap",
+				"row-gap",
+				"column-gap",
+				"justify-content",
+				"justify-items",
+				"justify-self",
+				"align-items",
+				"align-content",
+				"align-self",
 
-        "width",
-        "min-width",
-        "max-width",
-        "height",
-        "min-height",
-        "max-height",
+				"width",
+				"min-width",
+				"max-width",
+				"height",
+				"min-height",
+				"max-height",
 
-        "margin",
-        "margin-top",
-        "margin-right",
-        "margin-bottom",
-        "margin-left",
-        "padding",
-        "padding-top",
-        "padding-right",
-        "padding-bottom",
-        "padding-left",
+				"margin",
+				"margin-top",
+				"margin-right",
+				"margin-bottom",
+				"margin-left",
+				"padding",
+				"padding-top",
+				"padding-right",
+				"padding-bottom",
+				"padding-left",
 
-        "background",
-        "background-color",
-        "background-image",
-        "border",
-        "border-radius",
-        "box-shadow",
-        "opacity",
+				"background",
+				"background-color",
+				"background-image",
+				"border",
+				"border-radius",
+				"box-shadow",
+				"opacity",
 
-        "font-family",
-        "font-size",
-        "font-weight",
-        "line-height",
-        "color",
-        "text-align",
+				"font-family",
+				"font-size",
+				"font-weight",
+				"line-height",
+				"color",
+				"text-align",
 
-        "transition",
-        "animation",
-        "cursor"
-      ],
-      {
-        "unspecified": "bottom",
-        "emptyLineBeforeUnspecified": "never"
-      }
-    ],
+				"transition",
+				"animation",
+				"cursor"
+			],
+			{
+				"unspecified": "bottom",
+				"emptyLineBeforeUnspecified": "never"
+			}
+		],
 
-    "selector-pseudo-class-no-unknown": [
-      true,
-      {
-        "ignorePseudoClasses": ["host", "host-context"]
-      }
-    ],
-    "selector-pseudo-element-no-unknown": [
-      true,
-      {
-        "ignorePseudoElements": ["ng-deep"]
-      }
-    ],
+		"selector-pseudo-class-no-unknown": [
+			true,
+			{
+				"ignorePseudoClasses": ["host", "host-context"]
+			}
+		],
+		"selector-pseudo-element-no-unknown": [
+			true,
+			{
+				"ignorePseudoElements": ["ng-deep"]
+			}
+		],
 
-    "declaration-no-important": true,
-    "max-nesting-depth": 4,
-    "color-named": "never",
-    "declaration-block-no-redundant-longhand-properties": true,
-    "no-empty-source": null,
+		"declaration-no-important": true,
+		"max-nesting-depth": 4,
+		"color-named": "never",
+		"declaration-block-no-redundant-longhand-properties": true,
+		"no-empty-source": null,
 
-    "declaration-property-unit-allowed-list": {
-      "font-size": ["px", "rem", "em"],
-      "margin": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
-      "padding": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
-      "width": ["px", "rem", "%", "vw", "vh", "dvh", "em", "fr"],
-      "height": ["px", "rem", "%", "vh", "vw", "dvh", "em", "fr"]
-    },
+		"declaration-property-unit-allowed-list": {
+			"font-size": ["px", "rem", "em"],
+			"margin": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+			"padding": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+			"width": ["px", "rem", "%", "vw", "vh", "dvh", "em", "fr"],
+			"height": ["px", "rem", "%", "vh", "vw", "dvh", "em", "fr"]
+		},
 
-    "selector-class-pattern": "^[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
-    "scss/selector-no-redundant-nesting-selector": null,
-    "scss/at-mixin-pattern": null,
-    "scss/at-if-no-null": null
-  }
+		"selector-class-pattern": "^[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+		"scss/selector-no-redundant-nesting-selector": null,
+		"scss/at-mixin-pattern": null,
+		"scss/at-if-no-null": null
+	}
+}
+</file>
+
+<file path="pnpm-workspace.yaml">
+allowBuilds:
+    '@parcel/watcher': true
+    esbuild: true
+    lmdb: true
+    msgpackr-extract: true
+    unrs-resolver: true
+</file>
+
+<file path="tsconfig.json">
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compileOnSave": false,
+	"compilerOptions": {
+		"target": "es2022",
+		"module": "preserve",
+		"moduleResolution": "bundler",
+		"lib": ["es2022", "dom", "dom.iterable"],
+
+		/* Строгость типов */
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"exactOptionalPropertyTypes": true,
+		"noUncheckedIndexedAccess": true,
+
+		/* Совместимость и безопасность */
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		"isolatedModules": true,
+		"useDefineForClassFields": true,
+
+		/* Декораторы Angular */
+		"experimentalDecorators": true,
+		"importHelpers": true,
+
+		/* Path Aliases (FSD Архитектура) */
+		"rootDir": ".",
+		"paths": {
+			"@app/*": ["./src/app/*"],
+			"@pages/*": ["./src/pages/*"],
+			"@widgets/*": ["./src/widgets/*"],
+			"@features/*": ["./src/features/*"],
+			"@entities/*": ["./src/entities/*"],
+			"@shared/*": ["./src/shared/*"]
+		}
+	},
+
+	"angularCompilerOptions": {
+		"strictTemplates": true,
+		"enableI18nLegacyMessageIdFormat": false,
+		"strictInjectionParameters": true,
+		"strictInputAccessModifiers": true,
+		"strictAttributeTypes": true,
+		"strictOutputEventTypes": true,
+		"strictNullInputTypes": true,
+		"extendedDiagnostics": {
+			"defaultCategory": "error"
+		}
+	},
+
+	"files": [],
+	"references": [
+		{
+			"path": "./tsconfig.app.json"
+		}
+	]
 }
 </file>
 
 <file path="angular.json">
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
-  "cli": {
-    "packageManager": "pnpm",
-    "analytics": false
-  },
-  "newProjectRoot": "projects",
-  "projects": {
-    "ngalg": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss",
-          "changeDetection": "OnPush",
-          "displayBlock": true,
-          "skipTests": false
-        }
-      },
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular/build:application",
-          "options": {
-            "outputPath": "dist/ngalg",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
-            "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "styles": ["src/styles.scss"],
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ]
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
-                }
-              ],
-              "outputHashing": "all",
-              "optimization": true,
-              "sourceMap": false,
-              "namedChunks": false
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": {
-                "scripts": true,
-                "styles": true
-              },
-              "namedChunks": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular/build:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "ngalg:build:production"
-            },
-            "development": {
-              "buildTarget": "ngalg:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
-          }
-        }
-      }
-    }
-  }
+	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+	"version": 1,
+	"cli": {
+		"packageManager": "pnpm",
+		"analytics": false
+	},
+	"newProjectRoot": "projects",
+	"projects": {
+		"ngalg": {
+			"projectType": "application",
+			"schematics": {
+				"@schematics/angular:component": {
+					"style": "scss",
+					"changeDetection": "OnPush",
+					"displayBlock": true,
+					"skipTests": false
+				}
+			},
+			"root": "",
+			"sourceRoot": "src",
+			"prefix": "app",
+			"architect": {
+				"build": {
+					"builder": "@angular/build:application",
+					"options": {
+						"outputPath": "dist/ngalg",
+						"index": "src/index.html",
+						"browser": "src/index.ts",
+						"tsConfig": "tsconfig.app.json",
+						"inlineStyleLanguage": "scss",
+						"styles": ["src/index.scss"],
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "public"
+							}
+						]
+					},
+					"configurations": {
+						"production": {
+							"budgets": [
+								{
+									"type": "initial",
+									"maximumWarning": "500kB",
+									"maximumError": "1MB"
+								},
+								{
+									"type": "anyComponentStyle",
+									"maximumWarning": "4kB",
+									"maximumError": "8kB"
+								}
+							],
+							"outputHashing": "all",
+							"optimization": true,
+							"sourceMap": false,
+							"namedChunks": false
+						},
+						"development": {
+							"optimization": false,
+							"extractLicenses": false,
+							"sourceMap": {
+								"scripts": true,
+								"styles": true
+							},
+							"namedChunks": true
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve": {
+					"builder": "@angular/build:dev-server",
+					"configurations": {
+						"production": {
+							"buildTarget": "ngalg:build:production"
+						},
+						"development": {
+							"buildTarget": "ngalg:build:development"
+						}
+					},
+					"defaultConfiguration": "development"
+				},
+				"lint": {
+					"builder": "@angular-eslint/builder:lint",
+					"options": {
+						"lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+					}
+				}
+			}
+		}
+	}
 }
 </file>
 
@@ -557,224 +1521,144 @@ Desktop.ini
 import fsdPlugin from '@conarti/eslint-plugin-feature-sliced';
 import eslint from '@eslint/js';
 import angular from 'angular-eslint';
+import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
-    {
-        files: ['**/*.ts'],
-        extends: [
-            eslint.configs.recommended,
-            ...tseslint.configs.recommended,
-            ...tseslint.configs.stylistic,
-            ...angular.configs.tsRecommended,
-        ],
-        processor: angular.processInlineTemplates as any,
-        rules: {
-            '@angular-eslint/directive-selector': [
-                'error',
-                {
-                    type: 'attribute',
-                    prefix: 'app',
-                    style: 'camelCase',
-                },
-            ],
-            '@angular-eslint/component-selector': [
-                'error',
-                {
-                    type: ['element', 'attribute'],
-                    prefix: 'app',
-                    style: 'kebab-case',
-                },
-            ],
-            '@angular-eslint/prefer-standalone': 'error',
-            '@angular-eslint/component-class-suffix': 'error',
-            '@angular-eslint/directive-class-suffix': 'error',
-            '@typescript-eslint/explicit-function-return-type': [
-                'error',
-                {
-                    allowExpressions: true,
-                    allowTypedFunctionExpressions: true,
-                    allowHigherOrderFunctions: true,
-                    allowDirectConstAssertionInArrowFunctions: true,
-                },
-            ],
-            '@typescript-eslint/no-explicit-any': 'warn',
-        },
-    },
-    // Интегрируем FSD-плагин как отдельный Flat Config объект.
-    // Вызов функции без параметров инициализирует встроенную Flat-конфигурацию плагина.
-    {
-        files: ['**/*.ts'],
-        ...fsdPlugin(),
-        rules: {
-            // Переопределяем префиксы правил, так как плагин сам регистрирует свое имя
-            '@conarti/feature-sliced/layers-slices': ['error', { allowTypeImports: true }],
-            '@conarti/feature-sliced/absolute-relative': 'error',
-            '@conarti/feature-sliced/public-api': 'error',
-        },
-    },
-    {
-        files: ['**/*.html'],
-        extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
-        rules: {
-            '@angular-eslint/template/no-negated-async': 'error',
-            '@angular-eslint/template/prefer-control-flow': 'error',
-        },
-    },
-);
-</file>
-
-<file path="pnpm-workspace.yaml">
-allowBuilds:
-  '@parcel/watcher': true
-  esbuild: true
-  lmdb: true
-  msgpackr-extract: true
-  unrs-resolver: true
-</file>
-
-<file path="tsconfig.app.json">
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./out-tsc/app",
-    "types": []
-  },
-  "files": ["src/main.ts"],
-  "include": ["src/**/*.d.ts", "src/**/*.ts", "eslint.config.ts"],
-  "exclude": ["node_modules", "dist"]
-}
-</file>
-
-<file path="tsconfig.json">
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compileOnSave": false,
-  "compilerOptions": {
-    "target": "es2022",
-    "module": "preserve",
-    "moduleResolution": "bundler",
-    "lib": ["es2022", "dom", "dom.iterable"],
-
-    /* Строгость типов */
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true,
-
-    /* Совместимость и безопасность */
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "useDefineForClassFields": true,
-
-    /* Декораторы Angular */
-    "experimentalDecorators": true,
-    "importHelpers": true,
-
-    /* Path Aliases (FSD Архитектура) */
-    "rootDir": ".",
-    "paths": {
-      "@app/*": ["./src/app/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@widgets/*": ["./src/widgets/*"],
-      "@features/*": ["./src/features/*"],
-      "@entities/*": ["./src/entities/*"],
-      "@shared/*": ["./src/shared/*"]
-    }
-  },
-
-  "angularCompilerOptions": {
-    "strictTemplates": true,
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictAttributeTypes": true,
-    "strictOutputEventTypes": true,
-    "strictNullInputTypes": true,
-    "extendedDiagnostics": {
-      "defaultCategory": "error"
-    }
-  },
-
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    }
-  ]
-}
+export default defineConfig([
+	{
+		files: ['**/*.ts'],
+		extends: [
+			eslint.configs.recommended,
+			...tseslint.configs.recommended,
+			...tseslint.configs.stylistic,
+			...angular.configs.tsRecommended,
+		],
+		processor: angular.processInlineTemplates as any,
+		rules: {
+			'@angular-eslint/directive-selector': [
+				'error',
+				{
+					type: 'attribute',
+					prefix: 'app',
+					style: 'camelCase',
+				},
+			],
+			'@angular-eslint/component-selector': [
+				'error',
+				{
+					type: ['element', 'attribute'],
+					prefix: 'app',
+					style: 'kebab-case',
+				},
+			],
+			'@angular-eslint/prefer-standalone': 'error',
+			'@angular-eslint/component-class-suffix': 'error',
+			'@angular-eslint/directive-class-suffix': 'error',
+			'@typescript-eslint/explicit-function-return-type': [
+				'error',
+				{
+					allowExpressions: true,
+					allowTypedFunctionExpressions: true,
+					allowHigherOrderFunctions: true,
+					allowDirectConstAssertionInArrowFunctions: true,
+				},
+			],
+			'@typescript-eslint/no-explicit-any': 'warn',
+		},
+	},
+	{
+		files: ['**/*.ts'],
+		...fsdPlugin(),
+		rules: {
+			'@conarti/feature-sliced/layers-slices': ['error', { allowTypeImports: true }],
+			'@conarti/feature-sliced/absolute-relative': 'error',
+			'@conarti/feature-sliced/public-api': 'error',
+		},
+	},
+	{
+		files: ['**/*.html'],
+		extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
+		rules: {
+			'@angular-eslint/template/no-negated-async': 'error',
+			'@angular-eslint/template/prefer-control-flow': 'error',
+		},
+	},
+]);
 </file>
 
 <file path="package.json">
 {
-  "name": "course",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@11.7.0",
-  "scripts": {
-    "ng": "ng",
-    "start:dev": "ng serve",
-    "build:prod": "ng build",
-    "watch:dev": "ng build --watch --configuration development",
-    "lint": "pnpm lint:ts && pnpm lint:styles",
-    "lint:ts": "ng lint",
-    "lint:ts:fix": "ng lint --fix",
-    "lint:styles": "stylelint \"src/**/*.{css,scss}\"",
-    "lint:styles:fix": "stylelint \"src/**/*.{css,scss}\" --fix",
-    "format:check": "prettier --check .",
-    "format:write": "prettier --write .",
-    "prepare": "husky",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "repomix": "npx repomix"
-  },
-  "dependencies": {
-    "@angular/common": "^22.1.7",
-    "@angular/compiler": "^22.1.7",
-    "@angular/core": "^22.1.7",
-    "@angular/forms": "^22.1.7",
-    "@angular/platform-browser": "^22.1.7",
-    "@angular/router": "^22.1.7",
-    "rxjs": "^7.8.2",
-    "tslib": "^2.8.1"
-  },
-  "devDependencies": {
-    "@angular-eslint/builder": "^22.5.0",
-    "@angular/build": "^22.1.8",
-    "@angular/cli": "^22.1.8",
-    "@angular/compiler-cli": "^22.1.7",
-    "@commitlint/cli": "^21.2.2",
-    "@commitlint/config-conventional": "^21.2.2",
-    "@conarti/eslint-plugin-feature-sliced": "^2.0.0",
-    "@eslint/compat": "^2.1.1",
-    "@eslint/js": "^10.0.1",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-    "angular-eslint": "^22.5.0",
-    "eslint": "^10.10.0",
-    "husky": "^9.1.7",
-    "jiti": "^2.7.0",
-    "lint-staged": "^17.5.1",
-    "prettier": "^3.9.7",
-    "repomix": "^1.18.0",
-    "stylelint": "^17.15.0",
-    "stylelint-config-standard-scss": "^17.0.0",
-    "stylelint-order": "^8.1.1",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.70.0"
-  }
+	"name": "course",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@11.7.0",
+	"scripts": {
+		"ng": "ng",
+		"start:dev": "ng serve",
+		"build:prod": "ng build",
+		"watch:dev": "ng build --watch --configuration development",
+		"lint": "pnpm lint:ts && pnpm lint:styles",
+		"lint:ts": "ng lint",
+		"lint:ts:fix": "ng lint --fix",
+		"lint:styles": "stylelint \"src/**/*.{css,scss}\"",
+		"lint:styles:fix": "stylelint \"src/**/*.{css,scss}\" --fix",
+		"format:check": "prettier --check .",
+		"format:write": "prettier --write .",
+		"prepare": "husky",
+		"typecheck": "tsc --noEmit -p tsconfig.app.json",
+		"repomix": "npx repomix"
+	},
+	"dependencies": {
+		"@angular/common": "^22.1.7",
+		"@angular/compiler": "^22.1.7",
+		"@angular/core": "^22.1.7",
+		"@angular/forms": "^22.1.7",
+		"@angular/platform-browser": "^22.1.7",
+		"@angular/router": "^22.1.7",
+		"rxjs": "^7.8.2",
+		"tslib": "^2.8.1"
+	},
+	"devDependencies": {
+		"@angular-eslint/builder": "^22.5.0",
+		"@angular/build": "^22.1.8",
+		"@angular/cli": "^22.1.8",
+		"@angular/compiler-cli": "^22.1.7",
+		"@commitlint/cli": "^21.2.2",
+		"@commitlint/config-conventional": "^21.2.2",
+		"@conarti/eslint-plugin-feature-sliced": "^2.0.0",
+		"@eslint/compat": "^2.1.1",
+		"@eslint/js": "^10.0.1",
+		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
+		"angular-eslint": "^22.5.0",
+		"eslint": "^10.10.0",
+		"husky": "^9.1.7",
+		"jiti": "^2.7.0",
+		"lint-staged": "^17.5.1",
+		"prettier": "^3.9.7",
+		"repomix": "^1.18.0",
+		"stylelint": "^17.15.0",
+		"stylelint-config-standard-scss": "^17.0.0",
+		"stylelint-order": "^8.1.1",
+		"typescript": "~6.0.2",
+		"typescript-eslint": "^8.70.0"
+	}
+}
+</file>
+
+<file path="tsconfig.app.json">
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./out-tsc/app",
+		"types": []
+	},
+	"files": ["src/index.ts"],
+	"include": ["src/**/*.d.ts", "src/**/*.ts", "eslint.config.ts"],
+	"exclude": ["node_modules", "dist"]
 }
 </file>
 

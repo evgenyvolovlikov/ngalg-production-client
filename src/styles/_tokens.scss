@@ -1,5 +1,37 @@
 :root {
-	// РАЗМЕР ШРИФТОВ
+	/* --- БАЗОВЫЕ ЦВЕТА И ФОНЫ --- */
+	--bg-main: #f6f9fc;
+	--bg-card: #fff;
+	--bg-code: #0f172a;
+
+	/* --- ТЕКСТ --- */
+	--text-primary: #1e293b;
+	--text-secondary: #64748b;
+	--text-muted: #94a3b8;
+	--text-on-dark: #f8fafc;
+
+	/* --- БРЕНД И АКЦЕНТЫ --- */
+	--brand-primary: #6366f1;
+	--brand-hover: #4f46e5;
+	--brand-light: #eef2ff;
+
+	/* --- СТАТУСЫ И ТЕСТЫ --- */
+	--status-success: #10b981;
+	--status-success-bg: #ecfdf5;
+	--status-error: #ef4444;
+	--status-error-bg: #fef2f2;
+	--status-warning: #f59e0b;
+	--status-warning-bg: #fffbeb;
+
+	/* --- ГРАНИЦЫ И РАЗДЕЛИТЕЛИ --- */
+	--border-light: #e2e8f0;
+	--border-focus: #a5b4fc;
+
+	/* --- ЭФФЕКТЫ ОБЪЕМА --- */
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 5%), 0 2px 4px -1px rgb(0 0 0 / 3%);
+
+	/* --- РАЗМЕР ШРИФТОВ --- */
 	--font-size-xs: 0.75rem;
 	--font-size-sm: 0.875rem;
 	--font-size-base: 1rem;
@@ -8,7 +40,7 @@
 	--font-size-xxl: 1.5rem;
 	--font-size-xxxl: 2rem;
 
-	// ВЫСОТА СТРОКИ
+	/* --- ВЫСОТА СТРОКИ --- */
 	--line-height-none: 1;
 	--line-height-tight: 1.25;
 	--line-height-normal: 1.4;
@@ -16,12 +48,12 @@
 	--line-height-relaxed: 1.6;
 	--line-height-loose: 1.75;
 
-	// НАЧЕРТАНИЕ ШРИФТОВ
+	/* --- НАЧЕРТАНИЕ ШРИФТОВ --- */
 	--font-weight-regular: 400;
 	--font-weight-medium: 500;
 	--font-weight-bold: 700;
 
-	// ЮНИТЫ
+	/* --- ЮНИТЫ (Отступы) --- */
 	--unit-1: 0.25rem;
 	--unit-2: 0.5rem;
 	--unit-3: 0.75rem;
@@ -33,7 +65,7 @@
 	--unit-12: 3rem;
 	--unit-16: 4rem;
 
-	/* СКРУГЛЕНИЯ */
+	/* --- СКРУГЛЕНИЯ --- */
 	--radius-xs: 2px;
 	--radius-sm: 4px;
 	--radius-md: 8px;
@@ -58,7 +90,7 @@
 	--transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 	--transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
-	/* ПРОЗРАЧНОСТЬ */
+	/* --- ПРОЗРАЧНОСТЬ --- */
 	--opacity-disabled: 0.5;
 	--opacity-hover: 0.8;
 }

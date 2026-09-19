@@ -16,9 +16,12 @@ html {
 
 body {
 	min-height: 100%;
+	background-color: var(--bg-main);
 	font-family: var(--font-family-sans);
 	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-regular);
 	line-height: var(--line-height-base);
+	color: var(--text-primary);
 	transition:
 		background-color var(--transition-base),
 		color var(--transition-base);
@@ -56,14 +59,17 @@ a:not([class]):hover {
 img,
 picture,
 video,
-canvas,
-svg {
+canvas {
 	display: block;
 	max-width: 100%;
 	height: auto;
 }
 
 svg {
+	display: inline-block;
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
 	fill: currentcolor;
 }
 
@@ -71,10 +77,25 @@ input,
 button,
 textarea,
 select {
-	background: none;
+	background: transparent;
 	border: none;
 	color: inherit;
 	font: inherit;
+	appearance: none;
+}
+
+textarea {
+	resize: vertical;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	margin: 0;
+	appearance: none;
+}
+
+input[type='number'] {
+	appearance: textfield;
 }
 
 button,
@@ -96,6 +117,12 @@ textarea:disabled {
 	outline: none;
 }
 
+:focus-visible {
+	border-radius: inherit;
+	box-shadow: var(--focus-ring, 0 0 0 4px rgb(99 102 241 / 15%));
+	outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
 	html:focus-within {
 		scroll-behavior: auto;
@@ -104,9 +131,13 @@ textarea:disabled {
 	*,
 	*::before,
 	*::after {
-		animation-duration: 0.01ms;
-		animation-iteration-count: 1;
-		transition-duration: 0.01ms;
-		scroll-behavior: auto;
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-iteration-count: 1 !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		transition-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		scroll-behavior: auto !important;
 	}
 }
