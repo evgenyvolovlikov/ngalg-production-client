@@ -1,0 +1,112 @@
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	height: 100%;
+	scroll-behavior: smooth;
+	scrollbar-gutter: stable;
+	text-size-adjust: 100%;
+	tab-size: 4;
+}
+
+body {
+	min-height: 100%;
+	font-family: var(--font-family-sans);
+	font-size: var(--font-size-base);
+	line-height: var(--line-height-base);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
+	font-synthesis: none;
+	text-rendering: optimizelegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-x: clip;
+}
+
+ul[class],
+ol[class] {
+	list-style: none;
+}
+
+a {
+	color: inherit;
+	transition:
+		color var(--transition-fast),
+		opacity var(--transition-fast);
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a:not([class]) {
+	text-decoration: underline;
+	text-decoration-skip-ink: auto;
+	text-underline-offset: 3px;
+}
+
+a:not([class]):hover {
+	text-decoration: none;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+svg {
+	fill: currentcolor;
+}
+
+input,
+button,
+textarea,
+select {
+	background: none;
+	border: none;
+	color: inherit;
+	font: inherit;
+}
+
+button,
+[role='button'] {
+	cursor: pointer;
+	user-select: none;
+	touch-action: manipulation;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+	opacity: var(--opacity-disabled);
+	cursor: not-allowed;
+}
+
+:focus {
+	outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html:focus-within {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+		transition-duration: 0.01ms;
+		scroll-behavior: auto;
+	}
+}

@@ -1,0 +1,64 @@
+:root {
+	// РАЗМЕР ШРИФТОВ
+	--font-size-xs: 0.75rem;
+	--font-size-sm: 0.875rem;
+	--font-size-base: 1rem;
+	--font-size-lg: 1.125rem;
+	--font-size-xl: 1.25rem;
+	--font-size-xxl: 1.5rem;
+	--font-size-xxxl: 2rem;
+
+	// ВЫСОТА СТРОКИ
+	--line-height-none: 1;
+	--line-height-tight: 1.25;
+	--line-height-normal: 1.4;
+	--line-height-base: 1.5;
+	--line-height-relaxed: 1.6;
+	--line-height-loose: 1.75;
+
+	// НАЧЕРТАНИЕ ШРИФТОВ
+	--font-weight-regular: 400;
+	--font-weight-medium: 500;
+	--font-weight-bold: 700;
+
+	// ЮНИТЫ
+	--unit-1: 0.25rem;
+	--unit-2: 0.5rem;
+	--unit-3: 0.75rem;
+	--unit-4: 1rem;
+	--unit-5: 1.25rem;
+	--unit-6: 1.5rem;
+	--unit-8: 2rem;
+	--unit-10: 2.5rem;
+	--unit-12: 3rem;
+	--unit-16: 4rem;
+
+	/* СКРУГЛЕНИЯ */
+	--radius-xs: 2px;
+	--radius-sm: 4px;
+	--radius-md: 8px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-full: 9999px;
+
+	/* --- СЛОИ --- */
+	--z-negative: -1;
+	--z-elevate: 1;
+	--z-dropdown: 1000;
+	--z-sticky: 1020;
+	--z-fixed: 1030;
+	--z-modal-backdrop: 1040;
+	--z-modal: 1050;
+	--z-popover: 1060;
+	--z-tooltip: 1070;
+	--z-toast: 1080;
+
+	/* --- АНИМАЦИЯ --- */
+	--transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* ПРОЗРАЧНОСТЬ */
+	--opacity-disabled: 0.5;
+	--opacity-hover: 0.8;
+}

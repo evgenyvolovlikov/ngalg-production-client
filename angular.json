@@ -26,10 +26,10 @@
 					"options": {
 						"outputPath": "dist/ngalg",
 						"index": "src/index.html",
-						"browser": "src/main.ts",
+						"browser": "src/index.ts",
 						"tsConfig": "tsconfig.app.json",
 						"inlineStyleLanguage": "scss",
-						"styles": ["src/styles.scss"],
+						"styles": ["src/index.scss"],
 						"assets": [
 							{
 								"glob": "**/*",
