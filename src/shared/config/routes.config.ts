@@ -1,4 +1,4 @@
 export const RouteSegments = {
-	COURSE: 'course',
+	FRONTEND: 'frontend',
 	WILDCARD: '**',
 } as const;

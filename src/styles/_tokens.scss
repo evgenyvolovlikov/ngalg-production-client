@@ -93,4 +93,19 @@
 	/* --- ПРОЗРАЧНОСТЬ --- */
 	--opacity-disabled: 0.5;
 	--opacity-hover: 0.8;
+
+	/* --- СЕТКА И БРЕЙКПОИНТЫ  --- */
+	--breakpoint-xs: 320px;
+	--breakpoint-sm: 576px;
+	--breakpoint-md: 768px;
+	--breakpoint-lg: 1024px;
+	--breakpoint-xl: 1280px;
+	--breakpoint-xxl: 1440px;
+	--breakpoint-xxxl: 1920px;
+
+	/* Ограничители ширины для контейнеров */
+	--container-md: 720px;
+	--container-lg: 960px;
+	--container-xl: 1200px;
+	--container-xxl: 1400px;
 }

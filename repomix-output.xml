@@ -50,12 +50,16 @@ leetcode/
   search/
     binary-search.ts
     linary-search.ts
-  1-two-sum.ts
-  11-container-with-most-water.ts
-  217-contains-duplicate.ts
-  3-longest-substring-withour-repeating-characters.ts
-  42-trapping-rainwater.ts
-  844-backspace-compare.ts
+  structures/
+    linked-list.ts
+  1. Two Sum.ts
+  11. Container With Most Water.ts
+  125. Valid Palindrome.ts
+  217. Contains Duplicate.ts
+  3. Longest Substring Without Repeating Characters.ts
+  42. Trapping Rainwater.ts
+  680. Valid Palindrome II.ts
+  844. Backspace Compare.ts
   big-o.ts
 public/
   fonts/
@@ -69,6 +73,11 @@ public/
   favicon.ico
 src/
   app/
+    layouts/
+      main-layout/
+        main-layout.component.html
+        main-layout.component.scss
+        main-layout.component.ts
     providers/
       app.config.ts
     routes/
@@ -85,10 +94,23 @@ src/
     config/
       index.ts
       routes.config.ts
+    ui/
+      sidebar-layout/
+        index.ts
+        sidebar-layout.component.html
+        sidebar-layout.component.scss
+        sidebar-layout.component.ts
   styles/
     _font-faces.scss
     _reset.scss
     _tokens.scss
+  widgets/
+    header/
+      ui/
+        header.component.html
+        header.component.scss
+        header.component.ts
+      index.ts
   index.html
   index.scss
   index.ts
@@ -109,193 +131,64 @@ tsconfig.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="leetcode/3-longest-substring-withour-repeating-characters.ts">
-// Input: s = 'abcabcbb';
-// Output: 3;
+<file path="leetcode/structures/linked-list.ts">
+class NodeInstance<T> {
+	element: T;
+	next: NodeInstance<T> | null;
 
-// Input: s = 'bbbbb';
-// Output: 1;
-
-// Решение 1:
-function longestSubstring(s: string): number {
-	let maxLength = 0;
-	for (let p1 = 0; p1 < s.length; ++p1) {
-		const obj: Record<string, boolean> = {};
-		let longestLength = 0;
-		for (let p2 = p1; p2 < s.length; ++p2) {
-			if (!obj[s[p2]]) {
-				obj[s[p2]] = true;
-				longestLength++;
-
-				maxLength = Math.max(maxLength, longestLength);
-			} else {
-				break;
-			}
-		}
+	constructor(element: T) {
+		this.element = element;
+		this.next = null;
 	}
-
-	return maxLength;
 }
 
-const input = 'abcabcbb';
+class LinkedList<T = string> {
+	head: NodeInstance<T | string>;
 
-longestSubstring(input);
-
-// Время: O(n^2)
-// Память: O(m)
-
-// Решение 2:
-// 1. Создание переменных макс длины, хранилище Set, левый указатель left
-// 2. Инициализация цикла, внутри цикла - текущее значение в Set
-// 3. Вложенный цикл while где рекурсивно проверяется текущего элемента цикла
-// (currentSymbol)
-// 4. После удаления текущего символа элемента в цикле, добавляем его в конец
-// 5. Длина текущего окна рассчитывается как: right - left + 1
-
-// Input: s = 'abcabcbb';
-function longestSubstring_2(s: string): number {
-	let longestLength = 0;
-	const seen = new Set();
-	let left = 0;
-
-	for (let right = 0; right < s.length; ++right) {
-		const currentSymbol = s[right];
-		while (seen.has(currentSymbol)) {
-			seen.delete(s[left]);
-			left++;
-		}
-
-		seen.add(currentSymbol);
-
-		longestLength = Math.max(longestLength, right - left + 1);
+	constructor() {
+		this.head = new NodeInstance<T | string>('head');
 	}
 
-	return longestLength;
+	find(item: T | string): NodeInstance<T | string> | null {
+		let currentNode: NodeInstance<T | string> | null = this.head;
+
+		while (currentNode !== null && currentNode.element !== item) {
+			currentNode = currentNode.next;
+		}
+
+		return currentNode;
+	}
+
+	insert(newElement: T, item: T | string): void {
+		const currentNode = this.find(item);
+
+		if (!currentNode) {
+			return;
+		}
+
+		const newNode = new NodeInstance<T | string>(newElement);
+		newNode.next = currentNode.next;
+		currentNode.next = newNode;
+	}
+
+	display(): void {
+		let currentNode: NodeInstance<T | string> | null = this.head;
+
+		while (currentNode && currentNode.next) {
+			console.log(currentNode.next.element);
+			currentNode = currentNode.next;
+		}
+	}
 }
 
-// Время: O(n)
-// Память: O(m)
-
-const input_2 = 'abcab';
-
-longestSubstring_2(input_2);
+const list = new LinkedList();
+list.insert('1', 'head');
+list.insert('2', '1');
+list.insert('3', '2');
+list.display();
 </file>
 
-<file path="src/app/routes/app.routes.ts">
-import { Routes } from '@angular/router';
-
-import { RouteSegments } from '@shared/config';
-
-export const APP_ROUTES: Routes = [
-	{
-		path: RouteSegments.COURSE,
-		loadComponent: () => import('@pages/course-page').then((c) => c.CoursePageComponent),
-	},
-
-	{
-		path: RouteSegments.WILDCARD,
-		redirectTo: RouteSegments.COURSE,
-	},
-];
-</file>
-
-<file path="src/pages/course-page/course-page.component.html">
-<div>Course Page</div>
-</file>
-
-<file path="src/pages/course-page/course-page.component.scss">
-
-</file>
-
-<file path="src/pages/course-page/course-page.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-@Component({
-	selector: 'app-course-page',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './course-page.component.html',
-	styleUrl: './course-page.component.scss',
-})
-export class CoursePageComponent {}
-</file>
-
-<file path="src/pages/course-page/index.ts">
-export * from './course-page.component';
-</file>
-
-<file path="src/shared/config/index.ts">
-export * from './routes.config';
-</file>
-
-<file path="src/shared/config/routes.config.ts">
-export const RouteSegments = {
-	COURSE: 'course',
-	WILDCARD: '**',
-} as const;
-</file>
-
-<file path=".husky/commit-msg">
-pnpm exec commitlint --edit "$1"
-</file>
-
-<file path=".husky/pre-commit">
-pnpm  lint-staged
-pnpm  typecheck
-</file>
-
-<file path="leetcode/search/binary-search.ts">
-const binarySearch = (array: number[], target: number): number => {
-	let start = 0;
-	let end = array.length - 1;
-
-	while (start <= end) {
-		const middle = Math.floor((start + end) / 2);
-
-		if (array[middle] === target) {
-			return middle;
-		} else if (array[middle] < target) {
-			start = middle + 1;
-		} else {
-			end = middle - 1;
-		}
-	}
-
-	return -1;
-};
-
-binarySearch([1, 2, 3, 4, 5], 4);
-
-// Время: O(log n)
-// Память: O(1)
-</file>
-
-<file path="leetcode/search/linary-search.ts">
-const linarySearch = (array: number[], target: number): number => {
-	// Вариант 1:
-	for (let p1 = 0; p1 < array.length; ++p1) {
-		if (array[p1] === target) {
-			return p1;
-		}
-	}
-
-	// Вариант 2:
-	for (const [index, elem] of array.entries()) {
-		if (elem === target) {
-			return index;
-		}
-	}
-
-	return -1;
-};
-
-linarySearch([1, 2, 3, 4, 5], 4);
-
-// Время: O(n)
-// Память: O(1)
-</file>
-
-<file path="leetcode/1-two-sum.ts">
+<file path="leetcode/1. Two Sum.ts">
 // O(1) — константное время, не зависит от размера данных
 // O(log n) — логарифмическая сложность, типична для бинарного поиска
 // O(n) — линейная сложность, один проход по данным
@@ -365,7 +258,7 @@ twoSum_3([1, 2, 3, 4, 5], 9);
 // Память: O(n)
 </file>
 
-<file path="leetcode/11-container-with-most-water.ts">
+<file path="leetcode/11. Container With Most Water.ts">
 // https://leetcode.com/problems/container-with-most-water
 
 // 1. Инициализировать необходимые переменные: maxArea
@@ -439,7 +332,32 @@ const input_2 = [1, 8, 6, 2, 5, 4, 8, 3, 7];
 maxArea_2(input_2);
 </file>
 
-<file path="leetcode/217-contains-duplicate.ts">
+<file path="leetcode/125. Valid Palindrome.ts">
+function isPalindrome(s: string): boolean {
+	s = s.replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+
+	let start = 0;
+	let end = s.length - 1;
+
+	while (start < end) {
+		if (s[start] !== s[end]) {
+			return false;
+		}
+
+		++start;
+		--end;
+	}
+
+	return true;
+}
+
+isPalindrome('abccba');
+
+// Время: O(n)
+// Память: O(n)
+</file>
+
+<file path="leetcode/217. Contains Duplicate.ts">
 // 217. https://leetcode.com/problems/contains-duplicate/description/
 
 // Решение 1:
@@ -462,7 +380,79 @@ containsDuplicate([1, 2, 3, 4, 5, 5]);
 // Память: O(n)
 </file>
 
-<file path="leetcode/42-trapping-rainwater.ts">
+<file path="leetcode/3. Longest Substring Without Repeating Characters.ts">
+// Input: s = 'abcabcbb';
+// Output: 3;
+
+// Input: s = 'bbbbb';
+// Output: 1;
+
+// Решение 1:
+function longestSubstring(s: string): number {
+	let maxLength = 0;
+	for (let p1 = 0; p1 < s.length; ++p1) {
+		const obj: Record<string, boolean> = {};
+		let longestLength = 0;
+		for (let p2 = p1; p2 < s.length; ++p2) {
+			if (!obj[s[p2]]) {
+				obj[s[p2]] = true;
+				longestLength++;
+
+				maxLength = Math.max(maxLength, longestLength);
+			} else {
+				break;
+			}
+		}
+	}
+
+	return maxLength;
+}
+
+const input = 'abcabcbb';
+
+longestSubstring(input);
+
+// Время: O(n^2)
+// Память: O(m)
+
+// Решение 2:
+// 1. Создание переменных макс длины, хранилище Set, левый указатель left
+// 2. Инициализация цикла, внутри цикла - текущее значение в Set
+// 3. Вложенный цикл while где рекурсивно проверяется текущего элемента цикла
+// (currentSymbol)
+// 4. После удаления текущего символа элемента в цикле, добавляем его в конец
+// 5. Длина текущего окна рассчитывается как: right - left + 1
+
+// Input: s = 'abcabcbb';
+function longestSubstring_2(s: string): number {
+	let longestLength = 0;
+	const seen = new Set();
+	let left = 0;
+
+	for (let right = 0; right < s.length; ++right) {
+		const currentSymbol = s[right];
+		while (seen.has(currentSymbol)) {
+			seen.delete(s[left]);
+			left++;
+		}
+
+		seen.add(currentSymbol);
+
+		longestLength = Math.max(longestLength, right - left + 1);
+	}
+
+	return longestLength;
+}
+
+// Время: O(n)
+// Память: O(m)
+
+const input_2 = 'abcab';
+
+longestSubstring_2(input_2);
+</file>
+
+<file path="leetcode/42. Trapping Rainwater.ts">
 // https://leetcode.com/problems/trapping-rain-water
 
 // Input: height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
@@ -545,7 +535,39 @@ trap_2(input_2);
 export {};
 </file>
 
-<file path="leetcode/844-backspace-compare.ts">
+<file path="leetcode/680. Valid Palindrome II.ts">
+const validSubPal = (s: string, l: number, r: number): boolean => {
+	while (l < r) {
+		if (s[l] !== s[r]) {
+			return false;
+		}
+		++l;
+		--r;
+	}
+
+	return true;
+};
+
+const isAlmostPalindrom = function (s: string): boolean {
+	let left = 0;
+	let right = s.length - 1;
+
+	while (left < right) {
+		if (s[left] !== s[right]) {
+			return validSubPal(s, left + 1, right) || validSubPal(s, left, right - 1);
+		}
+
+		++left;
+		--right;
+	}
+
+	return true;
+};
+
+isAlmostPalindrom('abccdba');
+</file>
+
+<file path="leetcode/844. Backspace Compare.ts">
 // https://leetcode.com/problems/backspace-string-compare
 
 // Input: s = "ab#c", t = "ad#c"
@@ -639,6 +661,292 @@ backspaceCompare_2('ab#c', 'ad#c');
 // Память: O(1)
 </file>
 
+<file path="src/app/layouts/main-layout/main-layout.component.html">
+<div class="app-layout">
+	<div class="app-layout__header">
+		<app-header />
+	</div>
+
+	<main class="app-layout__main">
+		<div class="app-layout__container">
+			<router-outlet />
+		</div>
+	</main>
+</div>
+</file>
+
+<file path="src/app/layouts/main-layout/main-layout.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.app-layout {
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
+
+	&__main {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		padding-top: var(--unit-6);
+		padding-bottom: var(--unit-8);
+	}
+
+	&__container {
+		width: 100%;
+		max-width: var(--breakpoint-xxl);
+		margin: 0 auto;
+		padding-right: var(--unit-8);
+		padding-left: var(--unit-8);
+	}
+
+	&__header {
+		flex-shrink: 0;
+		width: 100%;
+	}
+}
+</file>
+
+<file path="src/app/layouts/main-layout/main-layout.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+import { HeaderComponent } from '@widgets/header';
+
+@Component({
+    selector: 'app-main-layout',
+    standalone: true,
+    templateUrl: './main-layout.component.html',
+    styleUrl: './main-layout.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [HeaderComponent, RouterOutlet],
+})
+export class MainLayoutComponent {}
+</file>
+
+<file path="src/shared/ui/sidebar-layout/index.ts">
+export * from './sidebar-layout.component';
+</file>
+
+<file path="src/shared/ui/sidebar-layout/sidebar-layout.component.html">
+<div class="sidebar-layout">
+  <aside class="sidebar-layout__sidebar">
+    <div class="sidebar-layout__sidebar-content">
+      <ng-content select="[sidebar]"></ng-content>
+    </div>
+  </aside>
+
+  <section class="sidebar-layout__content">
+    <ng-content></ng-content>
+  </section>
+</div>
+</file>
+
+<file path="src/shared/ui/sidebar-layout/sidebar-layout.component.scss">
+:host {
+	--sidebar-width: 17.5rem;
+
+	display: block;
+	width: 100%;
+	background-color: var(--bg-main);
+}
+
+.sidebar-layout {
+	display: grid;
+	grid-template-columns: var(--sidebar-width) 1fr;
+	gap: var(--unit-8);
+	align-items: start;
+	width: 100%;
+
+	&__sidebar {
+		position: sticky;
+		top: var(--unit-4);
+		z-index: var(--z-sticky);
+		height: calc(100dvh - var(--unit-8));
+		padding-right: var(--unit-3);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-lg);
+	}
+
+	&__sidebar-content {
+		height: 100%;
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: var(--text-muted) transparent;
+
+		&::-webkit-scrollbar {
+			width: var(--unit-1);
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: var(--text-muted);
+			border-radius: var(--radius-full);
+
+			&:hover {
+				background-color: var(--text-secondary);
+			}
+		}
+	}
+
+	&__content {
+		min-width: 0;
+		padding: var(--unit-6);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-sm);
+	}
+}
+</file>
+
+<file path="src/shared/ui/sidebar-layout/sidebar-layout.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+    selector: 'app-sidebar-layout',
+    standalone: true,
+    templateUrl: './sidebar-layout.component.html',
+    styleUrl: './sidebar-layout.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class SidebarLayoutComponent {}
+</file>
+
+<file path="src/widgets/header/ui/header.component.html">
+<header class="header">
+	<div class="header__container">
+		<a routerLink="/" class="header__logo">
+			<span>NGALG</span>
+		</a>
+	</div>
+</header>
+</file>
+
+<file path="src/widgets/header/ui/header.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.header {
+	z-index: var(--z-fixed);
+	width: 100%;
+	backdrop-filter: blur(8px);
+
+	&__container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		max-width: var(--breakpoint-xxl);
+		height: var(--unit-16);
+		margin: 0 auto;
+		padding: 0 var(--unit-8);
+	}
+
+	&__logo {
+		display: flex;
+		align-items: center;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+		transition: color var(--transition-fast);
+		text-decoration: none;
+		letter-spacing: -0.5px;
+
+		&:hover {
+			color: var(--brand-hover);
+		}
+	}
+}
+</file>
+
+<file path="src/widgets/header/ui/header.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+@Component({
+	selector: 'app-header',
+	standalone: true,
+	imports: [RouterLink],
+	templateUrl: './header.component.html',
+	styleUrl: './header.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HeaderComponent {}
+</file>
+
+<file path="src/widgets/header/index.ts">
+export * from './ui/header.component';
+</file>
+
+<file path=".husky/commit-msg">
+pnpm exec commitlint --edit "$1"
+</file>
+
+<file path=".husky/pre-commit">
+pnpm  lint-staged
+pnpm  typecheck
+</file>
+
+<file path="leetcode/search/binary-search.ts">
+const binarySearch = (array: number[], target: number): number => {
+	let start = 0;
+	let end = array.length - 1;
+
+	while (start <= end) {
+		const middle = Math.floor((start + end) / 2);
+
+		if (array[middle] === target) {
+			return middle;
+		} else if (array[middle] < target) {
+			start = middle + 1;
+		} else {
+			end = middle - 1;
+		}
+	}
+
+	return -1;
+};
+
+binarySearch([1, 2, 3, 4, 5], 4);
+
+// Время: O(log n)
+// Память: O(1)
+</file>
+
+<file path="leetcode/search/linary-search.ts">
+const linarySearch = (array: number[], target: number): number => {
+	// Вариант 1:
+	for (let p1 = 0; p1 < array.length; ++p1) {
+		if (array[p1] === target) {
+			return p1;
+		}
+	}
+
+	// Вариант 2:
+	for (const [index, elem] of array.entries()) {
+		if (elem === target) {
+			return index;
+		}
+	}
+
+	return -1;
+};
+
+linarySearch([1, 2, 3, 4, 5], 4);
+
+// Время: O(n)
+// Память: O(1)
+</file>
+
 <file path="leetcode/big-o.ts">
 // O(1) — константное время, не зависит от размера данных
 // O(log n) — логарифмическая сложность, типична для бинарного поиска
@@ -647,29 +955,93 @@ backspaceCompare_2('ab#c', 'ad#c');
 // O(n^2) — вложенные циклы по одним и тем же данным
 </file>
 
-<file path="src/app/providers/app.config.ts">
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
 
-import { APP_ROUTES } from '../routes/app.routes';
+import { RouteSegments } from '@shared/config';
 
-export const appConfig: ApplicationConfig = {
-	providers: [provideRouter(APP_ROUTES)],
-};
+export const APP_ROUTES: Routes = [
+	{
+		path: '',
+		loadComponent: () =>
+			import('../layouts/main-layout/main-layout.component').then(
+				(m) => m.MainLayoutComponent,
+			),
+		children: [
+			{
+				path: '',
+				pathMatch: 'full',
+				redirectTo: RouteSegments.FRONTEND,
+			},
+			{
+				path: RouteSegments.FRONTEND,
+				loadComponent: () =>
+					import('@pages/course-page').then((c) => c.CoursePageComponent),
+				children: [
+					{
+						path: '',
+						redirectTo: 'overview',
+						pathMatch: 'full',
+					},
+				],
+			},
+		],
+	},
+
+	{
+		path: RouteSegments.WILDCARD,
+		redirectTo: RouteSegments.FRONTEND,
+	},
+];
 </file>
 
-<file path="src/app/ui/app.component.ts">
+<file path="src/pages/course-page/course-page.component.html">
+<app-sidebar-layout class="course-page">
+	<div sidebar>Sidebar</div>
+	<div class="content">Content</div>
+</app-sidebar-layout>
+</file>
+
+<file path="src/pages/course-page/course-page.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.content {
+	height: 1200px;
+}
+</file>
+
+<file path="src/pages/course-page/course-page.component.ts">
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+
+import { SidebarLayoutComponent } from '@shared/ui/sidebar-layout';
 
 @Component({
-	selector: 'app-root',
+	selector: 'app-course-page',
 	standalone: true,
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	template: `<router-outlet />`,
-	imports: [RouterOutlet],
+	templateUrl: './course-page.component.html',
+	styleUrl: './course-page.component.scss',
+	imports: [SidebarLayoutComponent],
 })
-export class AppComponent {}
+export class CoursePageComponent {}
+</file>
+
+<file path="src/pages/course-page/index.ts">
+export * from './course-page.component';
+</file>
+
+<file path="src/shared/config/index.ts">
+export * from './routes.config';
+</file>
+
+<file path="src/shared/config/routes.config.ts">
+export const RouteSegments = {
+	FRONTEND: 'frontend',
+	WILDCARD: '**',
+} as const;
 </file>
 
 <file path="src/styles/_font-faces.scss">
@@ -722,6 +1094,147 @@ export class AppComponent {}
 		'Geist Mono', ui-monospace, sfmono-regular, 'Roboto Mono', menlo, monaco, consolas,
 		monospace;
 }
+</file>
+
+<file path="src/index.scss">
+@use './styles/tokens';
+@use './styles/font-faces';
+@use './styles/reset';
+</file>
+
+<file path="src/index.ts">
+import { bootstrapApplication } from '@angular/platform-browser';
+
+import { appConfig } from './app/providers/app.config';
+import { AppComponent } from './app/ui/app.component';
+
+bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
+</file>
+
+<file path=".gitignore">
+# --- Сборка, кэш и компиляция ---
+/dist/
+/tmp/
+/out-tsc/
+/.angular/
+.tsbuildinfo
+.sass-cache/
+
+# --- Зависимости ---
+node_modules/
+.pnpm-store/
+
+# --- Логи и отчеты тестов ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+/coverage/
+
+# --- Переменные окружения и секреты ---
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# --- IDE (JetBrains / Visual Studio) ---
+.idea/
+*.suo
+*.sln
+*.sw?
+
+# --- VS Code (Только командные конфиги, без персонального мусора) ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# --- Системные файлы ---
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+</file>
+
+<file path=".github/workflows/ci.yml">
+name: CI
+
+on:
+    push:
+        branches: [main, master]
+    pull_request:
+        branches: [main, master]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    validate-and-build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Strict Typecheck
+              run: pnpm typecheck
+
+            - name: Check formatting (Prettier)
+              run: pnpm -w format:check
+
+            - name: Lint (ESLint & Stylelint)
+              run: pnpm -w lint
+
+            - name: Build Application
+              run: pnpm -w build:prod
+
+            - name: Upload Build Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: dist
+                  path: dist
+                  retention-days: 7
+</file>
+
+<file path="src/app/providers/app.config.ts">
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { APP_ROUTES } from '../routes/app.routes';
+
+export const appConfig: ApplicationConfig = {
+	providers: [provideRouter(APP_ROUTES)],
+};
+</file>
+
+<file path="src/app/ui/app.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+	selector: 'app-root',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<router-outlet />`,
+	imports: [RouterOutlet],
+})
+export class AppComponent {}
 </file>
 
 <file path="src/styles/_reset.scss">
@@ -966,123 +1479,22 @@ textarea:disabled {
 	/* --- ПРОЗРАЧНОСТЬ --- */
 	--opacity-disabled: 0.5;
 	--opacity-hover: 0.8;
+
+	/* --- СЕТКА И БРЕЙКПОИНТЫ  --- */
+	--breakpoint-xs: 320px;
+	--breakpoint-sm: 576px;
+	--breakpoint-md: 768px;
+	--breakpoint-lg: 1024px;
+	--breakpoint-xl: 1280px;
+	--breakpoint-xxl: 1440px;
+	--breakpoint-xxxl: 1920px;
+
+	/* Ограничители ширины для контейнеров */
+	--container-md: 720px;
+	--container-lg: 960px;
+	--container-xl: 1200px;
+	--container-xxl: 1400px;
 }
-</file>
-
-<file path="src/index.scss">
-@use './styles/tokens';
-@use './styles/font-faces';
-@use './styles/reset';
-</file>
-
-<file path="src/index.ts">
-import { bootstrapApplication } from '@angular/platform-browser';
-
-import { appConfig } from './app/providers/app.config';
-import { AppComponent } from './app/ui/app.component';
-
-bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
-</file>
-
-<file path=".gitignore">
-# --- Сборка, кэш и компиляция ---
-/dist/
-/tmp/
-/out-tsc/
-/.angular/
-.tsbuildinfo
-.sass-cache/
-
-# --- Зависимости ---
-node_modules/
-.pnpm-store/
-
-# --- Логи и отчеты тестов ---
-*.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
-/coverage/
-
-# --- Переменные окружения и секреты ---
-.env
-.env.local
-.env.*.local
-!.env.example
-
-# --- IDE (JetBrains / Visual Studio) ---
-.idea/
-*.suo
-*.sln
-*.sw?
-
-# --- VS Code (Только командные конфиги, без персонального мусора) ---
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/
-
-# --- Системные файлы ---
-.DS_Store
-.DS_Store?
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-</file>
-
-<file path=".github/workflows/ci.yml">
-name: CI
-
-on:
-    push:
-        branches: [main, master]
-    pull_request:
-        branches: [main, master]
-
-concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
-
-jobs:
-    validate-and-build:
-        runs-on: ubuntu-latest
-
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-                  cache: 'pnpm'
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Strict Typecheck
-              run: pnpm typecheck
-
-            - name: Check formatting (Prettier)
-              run: pnpm -w format:check
-
-            - name: Lint (ESLint & Stylelint)
-              run: pnpm -w lint
-
-            - name: Build Application
-              run: pnpm -w build:prod
-
-            - name: Upload Build Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: dist
-                  path: dist
-                  retention-days: 7
 </file>
 
 <file path="src/index.html">

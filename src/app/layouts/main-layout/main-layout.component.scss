@@ -1,0 +1,38 @@
+:host {
+	display: block;
+	width: 100%;
+}
+
+.app-layout {
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
+
+	&__main {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+
+		// ИСПРАВЛЕНО: Учитываем высоту фиксированного хедера (unit-16) + добавляем зазор (unit-6)
+		padding-top: calc(var(--unit-16) + var(--unit-6));
+		padding-bottom: var(--unit-8);
+	}
+
+	&__container {
+		width: 100%;
+		max-width: var(--container-xxl);
+		margin: 0 auto;
+		padding-right: var(--unit-8);
+		padding-left: var(--unit-8);
+	}
+
+	&__header {
+		flex-shrink: 0;
+		width: 100%;
+	}
+}
