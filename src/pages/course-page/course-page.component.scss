@@ -3,6 +3,11 @@
 	width: 100%;
 }
 
-.content {
-	height: 1200px;
+.course-page {
+	&__sidebar {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: var(--unit-4);
+	}
 }

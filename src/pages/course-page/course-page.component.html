@@ -1,4 +1,6 @@
 <app-sidebar-layout class="course-page">
-	<div sidebar>Sidebar</div>
-	<div class="content">Content</div>
+	<div class="course-page__sidebar" sidebar>
+		<app-course-sidebar [progress]="progress" />
+	</div>
+	<div class="course-page__content">Content</div>
 </app-sidebar-layout>

@@ -84,6 +84,17 @@ src/
       app.routes.ts
     ui/
       app.component.ts
+  entities/
+    course/
+      model/
+        types/
+          course-progress.types.ts
+      ui/
+        course-progress/
+          course-progress.component.html
+          course-progress.component.scss
+          course-progress.component.ts
+      index.ts
   pages/
     course-page/
       course-page.component.html
@@ -95,6 +106,11 @@ src/
       index.ts
       routes.config.ts
     ui/
+      circular-progress/
+        circular-progress.component.html
+        circular-progress.component.scss
+        circular-progress.component.ts
+        index.ts
       sidebar-layout/
         index.ts
         sidebar-layout.component.html
@@ -105,6 +121,12 @@ src/
     _reset.scss
     _tokens.scss
   widgets/
+    course-sidebar/
+      ui/
+        course-sidebar.component.html
+        course-sidebar.component.scss
+        course-sidebar.component.ts
+      index.ts
     header/
       ui/
         header.component.html
@@ -130,6 +152,346 @@ tsconfig.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/entities/course/model/types/course-progress.types.ts">
+export interface CourseProgress {
+	totalLessons: number;
+	completedLessons: number;
+	percentage: number;
+}
+</file>
+
+<file path="src/entities/course/ui/course-progress/course-progress.component.html">
+<div class="course-progress-card">
+	<h3 class="title">Статистика курса</h3>
+
+	<div class="chart-container">
+		<app-circular-progress [value]="progress().percentage" [size]="160" [strokeWidth]="12" />
+	</div>
+
+	<div class="stats">
+		<span class="stats-label">Просмотрено:</span>
+		<span class="stats-value">{{ progress().completedLessons }} / {{ progress().totalLessons }}</span>
+	</div>
+</div>
+</file>
+
+<file path="src/entities/course/ui/course-progress/course-progress.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.course-progress-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	padding: var(--unit-6) var(--unit-6) var(--unit-4) var(--unit-6);
+}
+
+.title {
+	margin: 0;
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.chart-container {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.stats {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: var(--unit-4);
+	font-size: var(--font-size-sm);
+	color: var(--text-secondary);
+	border-top: 1px solid var(--border-light);
+
+	.stats-value {
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+}
+</file>
+
+<file path="src/entities/course/ui/course-progress/course-progress.component.ts">
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { CircularProgressComponent } from '@shared/ui/circular-progress';
+
+import { CourseProgress } from '../../model/types/course-progress.types';
+
+@Component({
+	selector: 'app-course-progress',
+	standalone: true,
+	imports: [CircularProgressComponent],
+	templateUrl: './course-progress.component.html',
+	styleUrl: './course-progress.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class CourseProgressComponent {
+	readonly progress = input.required<CourseProgress>();
+}
+</file>
+
+<file path="src/entities/course/index.ts">
+export * from './ui/course-progress/course-progress.component';
+export * from './model/types/course-progress.types';
+</file>
+
+<file path="src/shared/ui/circular-progress/circular-progress.component.html">
+<div class="circular-progress" [style.width.px]="size()" [style.height.px]="size()">
+	<svg [attr.viewBox]="viewBox()" class="progress-svg">
+		<circle
+			class="progress-track"
+			[attr.cx]="center()"
+			[attr.cy]="center()"
+			[attr.r]="radius()"
+			[attr.stroke-width]="strokeWidth()"
+		/>
+		<circle
+			class="progress-indicator"
+			[attr.cx]="center()"
+			[attr.cy]="center()"
+			[attr.r]="radius()"
+			[attr.stroke-width]="strokeWidth()"
+			[attr.stroke-dasharray]="circumference()"
+			[attr.stroke-dashoffset]="strokeDashoffset()"
+		/>
+	</svg>
+
+	@if (showLabel()) {
+		<div class="progress-label">
+			<span class="value">{{ normalizedValue() }}%</span>
+			<ng-content />
+		</div>
+	}
+</div>
+</file>
+
+<file path="src/shared/ui/circular-progress/circular-progress.component.scss">
+:host {
+	display: inline-block;
+}
+
+.circular-progress {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.progress-svg {
+	width: 100%;
+	height: 100%;
+	transform: rotate(-90deg);
+}
+
+.progress-track {
+	fill: none;
+	stroke: var(--border-light);
+}
+
+.progress-indicator {
+	transition: stroke-dashoffset var(--transition-base);
+	fill: none;
+	stroke: var(--brand-primary);
+	stroke-linecap: round;
+}
+
+.progress-label {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+
+	.value {
+		font-size: var(--font-size-xxxl);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-none);
+		color: var(--text-primary);
+	}
+}
+</file>
+
+<file path="src/shared/ui/circular-progress/circular-progress.component.ts">
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+@Component({
+	selector: 'app-circular-progress',
+	standalone: true,
+	imports: [],
+	templateUrl: './circular-progress.component.html',
+	styleUrl: './circular-progress.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class CircularProgressComponent {
+	/** Значение прогресса от 0 до 100 */
+	readonly value = input<number>(0);
+
+	/** Размер SVG в пикселях (ширина и высота) */
+	readonly size = input<number>(180);
+
+	/** Толщина линии прогресса */
+	readonly strokeWidth = input<number>(12);
+
+	/** Флаг отображения текстового значения по центру */
+	readonly showLabel = input<boolean>(true);
+
+	readonly normalizedValue = computed(() => Math.min(100, Math.max(0, this.value())));
+	readonly radius = computed(() => (this.size() - this.strokeWidth()) / 2);
+	readonly circumference = computed(() => 2 * Math.PI * this.radius());
+	readonly strokeDashoffset = computed(() => {
+		const progress = this.normalizedValue() / 100;
+		return this.circumference() * (1 - progress);
+	});
+	readonly viewBox = computed(() => `0 0 ${this.size()} ${this.size()}`);
+	readonly center = computed(() => this.size() / 2);
+}
+</file>
+
+<file path="src/shared/ui/circular-progress/index.ts">
+export * from './circular-progress.component';
+</file>
+
+<file path="src/widgets/course-sidebar/ui/course-sidebar.component.html">
+<aside class="sidebar">
+	<app-course-progress [progress]="progress()" />
+
+	<div class="lessons-container">
+		<h4 class="section-title">Lessons</h4>
+		<div class="lessons-list">
+			<p style="font-size: var(--font-size-sm); color: var(--text-muted); margin: 0">
+				Список уроков появится позже...
+			</p>
+		</div>
+	</div>
+</aside>
+</file>
+
+<file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+}
+
+.lessons-container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+	padding: var(--unit-4) var(--unit-6);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+}
+
+.section-title {
+	margin: 0;
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.lessons-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-2);
+}
+</file>
+
+<file path="src/widgets/course-sidebar/ui/course-sidebar.component.ts">
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { CourseProgress, CourseProgressComponent } from '@entities/course';
+
+@Component({
+	selector: 'app-course-sidebar',
+	standalone: true,
+	imports: [CourseProgressComponent],
+	templateUrl: './course-sidebar.component.html',
+	styleUrl: './course-sidebar.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class CourseSidebarComponent {
+	readonly progress = input.required<CourseProgress>();
+}
+</file>
+
+<file path="src/widgets/course-sidebar/index.ts">
+export * from './ui/course-sidebar.component';
+</file>
+
+<file path=".husky/commit-msg">
+pnpm exec commitlint --edit "$1"
+</file>
+
+<file path=".husky/pre-commit">
+pnpm  lint-staged
+pnpm  typecheck
+</file>
+
+<file path="leetcode/search/binary-search.ts">
+const binarySearch = (array: number[], target: number): number => {
+	let start = 0;
+	let end = array.length - 1;
+
+	while (start <= end) {
+		const middle = Math.floor((start + end) / 2);
+
+		if (array[middle] === target) {
+			return middle;
+		} else if (array[middle] < target) {
+			start = middle + 1;
+		} else {
+			end = middle - 1;
+		}
+	}
+
+	return -1;
+};
+
+binarySearch([1, 2, 3, 4, 5], 4);
+
+// Время: O(log n)
+// Память: O(1)
+</file>
+
+<file path="leetcode/search/linary-search.ts">
+const linarySearch = (array: number[], target: number): number => {
+	// Вариант 1:
+	for (let p1 = 0; p1 < array.length; ++p1) {
+		if (array[p1] === target) {
+			return p1;
+		}
+	}
+
+	// Вариант 2:
+	for (const [index, elem] of array.entries()) {
+		if (elem === target) {
+			return index;
+		}
+	}
+
+	return -1;
+};
+
+linarySearch([1, 2, 3, 4, 5], 4);
+
+// Время: O(n)
+// Память: O(1)
+</file>
 
 <file path="leetcode/structures/linked-list.ts">
 class NodeInstance<T> {
@@ -661,6 +1023,14 @@ backspaceCompare_2('ab#c', 'ad#c');
 // Память: O(1)
 </file>
 
+<file path="leetcode/big-o.ts">
+// O(1) — константное время, не зависит от размера данных
+// O(log n) — логарифмическая сложность, типична для бинарного поиска
+// O(n) — линейная сложность, один проход по данным
+// O(n log n) — типична для эффективных сортировок
+// O(n^2) — вложенные циклы по одним и тем же данным
+</file>
+
 <file path="src/app/layouts/main-layout/main-layout.component.html">
 <div class="app-layout">
 	<div class="app-layout__header">
@@ -701,7 +1071,7 @@ backspaceCompare_2('ab#c', 'ad#c');
 
 	&__container {
 		width: 100%;
-		max-width: var(--breakpoint-xxl);
+		max-width: var(--container-xxl);
 		margin: 0 auto;
 		padding-right: var(--unit-8);
 		padding-left: var(--unit-8);
@@ -721,14 +1091,22 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '@widgets/header';
 
 @Component({
-    selector: 'app-main-layout',
-    standalone: true,
-    templateUrl: './main-layout.component.html',
-    styleUrl: './main-layout.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [HeaderComponent, RouterOutlet],
+	selector: 'app-main-layout',
+	standalone: true,
+	templateUrl: './main-layout.component.html',
+	styleUrl: './main-layout.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [HeaderComponent, RouterOutlet],
 })
 export class MainLayoutComponent {}
+</file>
+
+<file path="src/pages/course-page/index.ts">
+export * from './course-page.component';
+</file>
+
+<file path="src/shared/config/index.ts">
+export * from './routes.config';
 </file>
 
 <file path="src/shared/ui/sidebar-layout/index.ts">
@@ -737,15 +1115,15 @@ export * from './sidebar-layout.component';
 
 <file path="src/shared/ui/sidebar-layout/sidebar-layout.component.html">
 <div class="sidebar-layout">
-  <aside class="sidebar-layout__sidebar">
-    <div class="sidebar-layout__sidebar-content">
-      <ng-content select="[sidebar]"></ng-content>
-    </div>
-  </aside>
+	<aside class="sidebar-layout__sidebar">
+		<div class="sidebar-layout__sidebar-content">
+			<ng-content select="[sidebar]"></ng-content>
+		</div>
+	</aside>
 
-  <section class="sidebar-layout__content">
-    <ng-content></ng-content>
-  </section>
+	<section class="sidebar-layout__content">
+		<ng-content></ng-content>
+	</section>
 </div>
 </file>
 
@@ -811,237 +1189,13 @@ export * from './sidebar-layout.component';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-    selector: 'app-sidebar-layout',
-    standalone: true,
-    templateUrl: './sidebar-layout.component.html',
-    styleUrl: './sidebar-layout.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+	selector: 'app-sidebar-layout',
+	standalone: true,
+	templateUrl: './sidebar-layout.component.html',
+	styleUrl: './sidebar-layout.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarLayoutComponent {}
-</file>
-
-<file path="src/widgets/header/ui/header.component.html">
-<header class="header">
-	<div class="header__container">
-		<a routerLink="/" class="header__logo">
-			<span>NGALG</span>
-		</a>
-	</div>
-</header>
-</file>
-
-<file path="src/widgets/header/ui/header.component.scss">
-:host {
-	display: block;
-	width: 100%;
-}
-
-.header {
-	z-index: var(--z-fixed);
-	width: 100%;
-	backdrop-filter: blur(8px);
-
-	&__container {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		max-width: var(--breakpoint-xxl);
-		height: var(--unit-16);
-		margin: 0 auto;
-		padding: 0 var(--unit-8);
-	}
-
-	&__logo {
-		display: flex;
-		align-items: center;
-		font-size: var(--font-size-lg);
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-		transition: color var(--transition-fast);
-		text-decoration: none;
-		letter-spacing: -0.5px;
-
-		&:hover {
-			color: var(--brand-hover);
-		}
-	}
-}
-</file>
-
-<file path="src/widgets/header/ui/header.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-@Component({
-	selector: 'app-header',
-	standalone: true,
-	imports: [RouterLink],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HeaderComponent {}
-</file>
-
-<file path="src/widgets/header/index.ts">
-export * from './ui/header.component';
-</file>
-
-<file path=".husky/commit-msg">
-pnpm exec commitlint --edit "$1"
-</file>
-
-<file path=".husky/pre-commit">
-pnpm  lint-staged
-pnpm  typecheck
-</file>
-
-<file path="leetcode/search/binary-search.ts">
-const binarySearch = (array: number[], target: number): number => {
-	let start = 0;
-	let end = array.length - 1;
-
-	while (start <= end) {
-		const middle = Math.floor((start + end) / 2);
-
-		if (array[middle] === target) {
-			return middle;
-		} else if (array[middle] < target) {
-			start = middle + 1;
-		} else {
-			end = middle - 1;
-		}
-	}
-
-	return -1;
-};
-
-binarySearch([1, 2, 3, 4, 5], 4);
-
-// Время: O(log n)
-// Память: O(1)
-</file>
-
-<file path="leetcode/search/linary-search.ts">
-const linarySearch = (array: number[], target: number): number => {
-	// Вариант 1:
-	for (let p1 = 0; p1 < array.length; ++p1) {
-		if (array[p1] === target) {
-			return p1;
-		}
-	}
-
-	// Вариант 2:
-	for (const [index, elem] of array.entries()) {
-		if (elem === target) {
-			return index;
-		}
-	}
-
-	return -1;
-};
-
-linarySearch([1, 2, 3, 4, 5], 4);
-
-// Время: O(n)
-// Память: O(1)
-</file>
-
-<file path="leetcode/big-o.ts">
-// O(1) — константное время, не зависит от размера данных
-// O(log n) — логарифмическая сложность, типична для бинарного поиска
-// O(n) — линейная сложность, один проход по данным
-// O(n log n) — типична для эффективных сортировок
-// O(n^2) — вложенные циклы по одним и тем же данным
-</file>
-
-<file path="src/app/routes/app.routes.ts">
-import { Routes } from '@angular/router';
-
-import { RouteSegments } from '@shared/config';
-
-export const APP_ROUTES: Routes = [
-	{
-		path: '',
-		loadComponent: () =>
-			import('../layouts/main-layout/main-layout.component').then(
-				(m) => m.MainLayoutComponent,
-			),
-		children: [
-			{
-				path: '',
-				pathMatch: 'full',
-				redirectTo: RouteSegments.FRONTEND,
-			},
-			{
-				path: RouteSegments.FRONTEND,
-				loadComponent: () =>
-					import('@pages/course-page').then((c) => c.CoursePageComponent),
-				children: [
-					{
-						path: '',
-						redirectTo: 'overview',
-						pathMatch: 'full',
-					},
-				],
-			},
-		],
-	},
-
-	{
-		path: RouteSegments.WILDCARD,
-		redirectTo: RouteSegments.FRONTEND,
-	},
-];
-</file>
-
-<file path="src/pages/course-page/course-page.component.html">
-<app-sidebar-layout class="course-page">
-	<div sidebar>Sidebar</div>
-	<div class="content">Content</div>
-</app-sidebar-layout>
-</file>
-
-<file path="src/pages/course-page/course-page.component.scss">
-:host {
-	display: block;
-	width: 100%;
-}
-
-.content {
-	height: 1200px;
-}
-</file>
-
-<file path="src/pages/course-page/course-page.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-import { SidebarLayoutComponent } from '@shared/ui/sidebar-layout';
-
-@Component({
-	selector: 'app-course-page',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './course-page.component.html',
-	styleUrl: './course-page.component.scss',
-	imports: [SidebarLayoutComponent],
-})
-export class CoursePageComponent {}
-</file>
-
-<file path="src/pages/course-page/index.ts">
-export * from './course-page.component';
-</file>
-
-<file path="src/shared/config/index.ts">
-export * from './routes.config';
-</file>
-
-<file path="src/shared/config/routes.config.ts">
-export const RouteSegments = {
-	FRONTEND: 'frontend',
-	WILDCARD: '**',
-} as const;
 </file>
 
 <file path="src/styles/_font-faces.scss">
@@ -1094,6 +1248,73 @@ export const RouteSegments = {
 		'Geist Mono', ui-monospace, sfmono-regular, 'Roboto Mono', menlo, monaco, consolas,
 		monospace;
 }
+</file>
+
+<file path="src/widgets/header/ui/header.component.html">
+<header class="header">
+	<div class="header__container">
+		<a routerLink="/" class="header__logo">
+			<span>NGALG</span>
+		</a>
+	</div>
+</header>
+</file>
+
+<file path="src/widgets/header/ui/header.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.header {
+	position: relative;
+	z-index: var(--z-elevate);
+	width: 100%;
+
+	&__container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		max-width: var(--container-xxl);
+		height: var(--unit-16);
+		margin: 0 auto;
+		padding: 0 var(--unit-8);
+	}
+
+	&__logo {
+		display: flex;
+		align-items: center;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+		transition: color var(--transition-fast);
+		text-decoration: none;
+		letter-spacing: -0.5px;
+
+		&:hover {
+			color: var(--brand-hover);
+		}
+	}
+}
+</file>
+
+<file path="src/widgets/header/ui/header.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+@Component({
+	selector: 'app-header',
+	standalone: true,
+	imports: [RouterLink],
+	templateUrl: './header.component.html',
+	styleUrl: './header.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HeaderComponent {}
+</file>
+
+<file path="src/widgets/header/index.ts">
+export * from './ui/header.component';
 </file>
 
 <file path="src/index.scss">
@@ -1223,6 +1444,46 @@ export const appConfig: ApplicationConfig = {
 };
 </file>
 
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
+
+import { RouteSegments } from '@shared/config';
+
+export const APP_ROUTES: Routes = [
+	{
+		path: '',
+		loadComponent: () =>
+			import('../layouts/main-layout/main-layout.component').then(
+				(m) => m.MainLayoutComponent,
+			),
+		children: [
+			{
+				path: '',
+				pathMatch: 'full',
+				redirectTo: RouteSegments.FRONTEND,
+			},
+			{
+				path: RouteSegments.FRONTEND,
+				loadComponent: () =>
+					import('@pages/course-page').then((c) => c.CoursePageComponent),
+				children: [
+					{
+						path: '',
+						redirectTo: 'overview',
+						pathMatch: 'full',
+					},
+				],
+			},
+		],
+	},
+
+	{
+		path: RouteSegments.WILDCARD,
+		redirectTo: RouteSegments.FRONTEND,
+	},
+];
+</file>
+
 <file path="src/app/ui/app.component.ts">
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
@@ -1235,6 +1496,55 @@ import { RouterOutlet } from '@angular/router';
 	imports: [RouterOutlet],
 })
 export class AppComponent {}
+</file>
+
+<file path="src/pages/course-page/course-page.component.html">
+<app-sidebar-layout class="course-page">
+	<div sidebar style="display: flex; flex-direction: column; align-items: center; padding: var(--unit-4)">
+		<app-course-sidebar [progress]="progress" />
+	</div>
+	<div class="content">Content</div>
+</app-sidebar-layout>
+</file>
+
+<file path="src/pages/course-page/course-page.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+</file>
+
+<file path="src/pages/course-page/course-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { CourseSidebarComponent } from '@widgets/course-sidebar';
+
+import { CourseProgress } from '@entities/course';
+
+import { SidebarLayoutComponent } from '@shared/ui/sidebar-layout';
+
+@Component({
+	selector: 'app-course-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './course-page.component.html',
+	styleUrl: './course-page.component.scss',
+	imports: [SidebarLayoutComponent, CourseSidebarComponent],
+})
+export class CoursePageComponent {
+	progress: CourseProgress = {
+		completedLessons: 0,
+		percentage: 0,
+		totalLessons: 0,
+	};
+}
+</file>
+
+<file path="src/shared/config/routes.config.ts">
+export const RouteSegments = {
+	FRONTEND: 'frontend',
+	WILDCARD: '**',
+} as const;
 </file>
 
 <file path="src/styles/_reset.scss">
@@ -1380,120 +1690,6 @@ textarea:disabled {
 		/* stylelint-disable-next-line declaration-no-important */
 		scroll-behavior: auto !important;
 	}
-}
-</file>
-
-<file path="src/styles/_tokens.scss">
-:root {
-	/* --- БАЗОВЫЕ ЦВЕТА И ФОНЫ --- */
-	--bg-main: #f6f9fc;
-	--bg-card: #fff;
-	--bg-code: #0f172a;
-
-	/* --- ТЕКСТ --- */
-	--text-primary: #1e293b;
-	--text-secondary: #64748b;
-	--text-muted: #94a3b8;
-	--text-on-dark: #f8fafc;
-
-	/* --- БРЕНД И АКЦЕНТЫ --- */
-	--brand-primary: #6366f1;
-	--brand-hover: #4f46e5;
-	--brand-light: #eef2ff;
-
-	/* --- СТАТУСЫ И ТЕСТЫ --- */
-	--status-success: #10b981;
-	--status-success-bg: #ecfdf5;
-	--status-error: #ef4444;
-	--status-error-bg: #fef2f2;
-	--status-warning: #f59e0b;
-	--status-warning-bg: #fffbeb;
-
-	/* --- ГРАНИЦЫ И РАЗДЕЛИТЕЛИ --- */
-	--border-light: #e2e8f0;
-	--border-focus: #a5b4fc;
-
-	/* --- ЭФФЕКТЫ ОБЪЕМА --- */
-	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
-	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 5%), 0 2px 4px -1px rgb(0 0 0 / 3%);
-
-	/* --- РАЗМЕР ШРИФТОВ --- */
-	--font-size-xs: 0.75rem;
-	--font-size-sm: 0.875rem;
-	--font-size-base: 1rem;
-	--font-size-lg: 1.125rem;
-	--font-size-xl: 1.25rem;
-	--font-size-xxl: 1.5rem;
-	--font-size-xxxl: 2rem;
-
-	/* --- ВЫСОТА СТРОКИ --- */
-	--line-height-none: 1;
-	--line-height-tight: 1.25;
-	--line-height-normal: 1.4;
-	--line-height-base: 1.5;
-	--line-height-relaxed: 1.6;
-	--line-height-loose: 1.75;
-
-	/* --- НАЧЕРТАНИЕ ШРИФТОВ --- */
-	--font-weight-regular: 400;
-	--font-weight-medium: 500;
-	--font-weight-bold: 700;
-
-	/* --- ЮНИТЫ (Отступы) --- */
-	--unit-1: 0.25rem;
-	--unit-2: 0.5rem;
-	--unit-3: 0.75rem;
-	--unit-4: 1rem;
-	--unit-5: 1.25rem;
-	--unit-6: 1.5rem;
-	--unit-8: 2rem;
-	--unit-10: 2.5rem;
-	--unit-12: 3rem;
-	--unit-16: 4rem;
-
-	/* --- СКРУГЛЕНИЯ --- */
-	--radius-xs: 2px;
-	--radius-sm: 4px;
-	--radius-md: 8px;
-	--radius-lg: 12px;
-	--radius-xl: 16px;
-	--radius-full: 9999px;
-
-	/* --- СЛОИ --- */
-	--z-negative: -1;
-	--z-elevate: 1;
-	--z-dropdown: 1000;
-	--z-sticky: 1020;
-	--z-fixed: 1030;
-	--z-modal-backdrop: 1040;
-	--z-modal: 1050;
-	--z-popover: 1060;
-	--z-tooltip: 1070;
-	--z-toast: 1080;
-
-	/* --- АНИМАЦИЯ --- */
-	--transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-	--transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-	--transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-
-	/* --- ПРОЗРАЧНОСТЬ --- */
-	--opacity-disabled: 0.5;
-	--opacity-hover: 0.8;
-
-	/* --- СЕТКА И БРЕЙКПОИНТЫ  --- */
-	--breakpoint-xs: 320px;
-	--breakpoint-sm: 576px;
-	--breakpoint-md: 768px;
-	--breakpoint-lg: 1024px;
-	--breakpoint-xl: 1280px;
-	--breakpoint-xxl: 1440px;
-	--breakpoint-xxxl: 1920px;
-
-	/* Ограничители ширины для контейнеров */
-	--container-md: 720px;
-	--container-lg: 960px;
-	--container-xl: 1200px;
-	--container-xxl: 1400px;
 }
 </file>
 
@@ -1831,6 +2027,120 @@ allowBuilds:
 			"path": "./tsconfig.app.json"
 		}
 	]
+}
+</file>
+
+<file path="src/styles/_tokens.scss">
+:root {
+	/* --- БАЗОВЫЕ ЦВЕТА И ФОНЫ --- */
+	--bg-main: #f6f9fc;
+	--bg-card: #fff;
+	--bg-code: #0f172a;
+
+	/* --- ТЕКСТ --- */
+	--text-primary: #1e293b;
+	--text-secondary: #64748b;
+	--text-muted: #94a3b8;
+	--text-on-dark: #f8fafc;
+
+	/* --- БРЕНД И АКЦЕНТЫ --- */
+	--brand-primary: #6366f1;
+	--brand-hover: #4f46e5;
+	--brand-light: #eef2ff;
+
+	/* --- СТАТУСЫ И ТЕСТЫ --- */
+	--status-success: #10b981;
+	--status-success-bg: #ecfdf5;
+	--status-error: #ef4444;
+	--status-error-bg: #fef2f2;
+	--status-warning: #f59e0b;
+	--status-warning-bg: #fffbeb;
+
+	/* --- ГРАНИЦЫ И РАЗДЕЛИТЕЛИ --- */
+	--border-light: #e2e8f0;
+	--border-focus: #a5b4fc;
+
+	/* --- ЭФФЕКТЫ ОБЪЕМА --- */
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 5%), 0 2px 4px -1px rgb(0 0 0 / 3%);
+
+	/* --- РАЗМЕР ШРИФТОВ --- */
+	--font-size-xs: 0.75rem;
+	--font-size-sm: 0.875rem;
+	--font-size-base: 1rem;
+	--font-size-lg: 1.125rem;
+	--font-size-xl: 1.25rem;
+	--font-size-xxl: 1.5rem;
+	--font-size-xxxl: 2rem;
+
+	/* --- ВЫСОТА СТРОКИ --- */
+	--line-height-none: 1;
+	--line-height-tight: 1.25;
+	--line-height-normal: 1.4;
+	--line-height-base: 1.5;
+	--line-height-relaxed: 1.6;
+	--line-height-loose: 1.75;
+
+	/* --- НАЧЕРТАНИЕ ШРИФТОВ --- */
+	--font-weight-regular: 400;
+	--font-weight-medium: 500;
+	--font-weight-bold: 700;
+
+	/* --- ЮНИТЫ (Отступы) --- */
+	--unit-1: 0.25rem;
+	--unit-2: 0.5rem;
+	--unit-3: 0.75rem;
+	--unit-4: 1rem;
+	--unit-5: 1.25rem;
+	--unit-6: 1.5rem;
+	--unit-8: 2rem;
+	--unit-10: 2.5rem;
+	--unit-12: 3rem;
+	--unit-16: 4rem;
+
+	/* --- СКРУГЛЕНИЯ --- */
+	--radius-xs: 2px;
+	--radius-sm: 4px;
+	--radius-md: 8px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-full: 9999px;
+
+	/* --- СЛОИ --- */
+	--z-negative: -1;
+	--z-elevate: 1;
+	--z-dropdown: 1000;
+	--z-sticky: 1020;
+	--z-fixed: 1030;
+	--z-modal-backdrop: 1040;
+	--z-modal: 1050;
+	--z-popover: 1060;
+	--z-tooltip: 1070;
+	--z-toast: 1080;
+
+	/* --- АНИМАЦИЯ --- */
+	--transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* --- ПРОЗРАЧНОСТЬ --- */
+	--opacity-disabled: 0.5;
+	--opacity-hover: 0.8;
+
+	/* --- СЕТКА И БРЕЙКПОИНТЫ  --- */
+	--breakpoint-xs: 320px;
+	--breakpoint-sm: 576px;
+	--breakpoint-md: 768px;
+	--breakpoint-lg: 1024px;
+	--breakpoint-xl: 1280px;
+	--breakpoint-xxl: 1440px;
+	--breakpoint-xxxl: 1920px;
+
+	/* Ограничители ширины для контейнеров */
+	--container-md: 720px;
+	--container-lg: 960px;
+	--container-xl: 1200px;
+	--container-xxl: 1400px;
 }
 </file>
 

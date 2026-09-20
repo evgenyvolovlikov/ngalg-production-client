@@ -1,0 +1,27 @@
+<div class="circular-progress" [style.width.px]="size()" [style.height.px]="size()">
+	<svg [attr.viewBox]="viewBox()" class="progress-svg">
+		<circle
+			class="progress-track"
+			[attr.cx]="center()"
+			[attr.cy]="center()"
+			[attr.r]="radius()"
+			[attr.stroke-width]="strokeWidth()"
+		/>
+		<circle
+			class="progress-indicator"
+			[attr.cx]="center()"
+			[attr.cy]="center()"
+			[attr.r]="radius()"
+			[attr.stroke-width]="strokeWidth()"
+			[attr.stroke-dasharray]="circumference()"
+			[attr.stroke-dashoffset]="strokeDashoffset()"
+		/>
+	</svg>
+
+	@if (showLabel()) {
+		<div class="progress-label">
+			<span class="value">{{ normalizedValue() }}%</span>
+			<ng-content />
+		</div>
+	}
+</div>
