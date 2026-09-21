@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 import { CourseProgress, CourseProgressComponent } from '@entities/course';
-import { CourseSkeletonLesson, LessonCardComponent } from '@entities/lesson';
+import { LessonCardComponent } from '@entities/lesson';
+
+import { CourseSkeletonLesson } from '@shared/types/course.types';
 
 @Component({
 	selector: 'app-course-sidebar',

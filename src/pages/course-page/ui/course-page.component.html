@@ -1,6 +1,8 @@
 <app-sidebar-layout class="course-page">
-	<div class="course-page__sidebar" sidebar>
+	<div sidebar class="course-page__sidebar">
 		<app-course-sidebar [lessons]="lessons" [progress]="progress" />
 	</div>
-	<div class="course-page__content"></div>
+	<div class="course-page__content">
+		<app-lesson-content [lesson]="lesson" />
+	</div>
 </app-sidebar-layout>

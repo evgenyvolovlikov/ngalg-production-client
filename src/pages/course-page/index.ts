@@ -1,1 +1,1 @@
-export * from './course-page.component';
+export * from './ui/course-page.component';

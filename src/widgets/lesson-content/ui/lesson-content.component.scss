@@ -1,0 +1,17 @@
+:host {
+	display: block;
+	width: 100%;
+}
+
+.lesson-box {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-8);
+}
+
+.lesson-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	background-color: var(--bg-card);
+}

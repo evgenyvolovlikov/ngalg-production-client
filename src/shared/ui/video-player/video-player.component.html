@@ -1,0 +1,17 @@
+<div class="video-container">
+	@if (src(); as videoSrc) {
+		<video
+			[src]="videoSrc"
+			[poster]="poster() ?? ''"
+			[controls]="controls()"
+			class="video-element"
+			preload="metadata"
+		>
+			Ваш браузер не поддерживает воспроизведение видео.
+		</video>
+	} @else {
+		<div class="video-placeholder">
+			<span>Источник видео не указан</span>
+		</div>
+	}
+</div>
