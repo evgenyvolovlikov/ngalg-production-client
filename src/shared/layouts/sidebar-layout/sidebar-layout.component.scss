@@ -1,5 +1,5 @@
 :host {
-	--sidebar-width: 17.5rem;
+	--sidebar-width: 18rem;
 
 	display: block;
 	width: 100%;
@@ -18,20 +18,20 @@
 		top: var(--unit-4);
 		z-index: var(--z-sticky);
 		height: calc(100dvh - var(--unit-8));
-		padding-right: var(--unit-3);
-		background-color: var(--bg-card);
-		border: 1px solid var(--border-light);
-		border-radius: var(--radius-lg);
+		padding: 0;
+		background-color: transparent;
+		border: none;
+		border-radius: 0;
 	}
 
 	&__sidebar-content {
 		height: 100%;
-		overflow-y: auto;
-		scrollbar-width: thin;
+		overflow: visible;
+		scrollbar-width: none;
 		scrollbar-color: var(--text-muted) transparent;
 
 		&::-webkit-scrollbar {
-			width: var(--unit-1);
+			display: none;
 		}
 
 		&::-webkit-scrollbar-thumb {

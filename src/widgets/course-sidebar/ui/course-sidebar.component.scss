@@ -1,26 +1,36 @@
 :host {
 	display: block;
 	width: 100%;
+	height: calc(100dvh - var(--unit-8));
 }
 
 .sidebar {
 	display: flex;
 	flex-direction: column;
 	gap: var(--unit-4);
+	height: 100%;
+}
+
+app-course-progress {
+	flex-shrink: 0;
 }
 
 .lessons-container {
 	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
 	gap: var(--unit-4);
-	padding: var(--unit-4) var(--unit-6);
+	min-height: 0;
+	padding: var(--unit-5) 0;
 	background-color: var(--bg-card);
 	border: 1px solid var(--border-light);
 	border-radius: var(--radius-md);
 }
 
 .section-title {
+	flex-shrink: 0;
 	margin: 0;
+	padding: 0 var(--unit-6);
 	font-size: var(--font-size-base);
 	font-weight: var(--font-weight-bold);
 	color: var(--text-primary);
@@ -29,5 +39,26 @@
 .lessons-list {
 	display: flex;
 	flex-direction: column;
-	gap: var(--unit-2);
+	flex-grow: 1;
+	gap: var(--unit-1);
+	width: 100%;
+	min-height: 0;
+	padding-right: var(--unit-4);
+	padding-left: var(--unit-6);
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--text-muted) transparent;
+
+	&::-webkit-scrollbar {
+		width: var(--unit-1);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--text-muted);
+		border-radius: var(--radius-full);
+
+		&:hover {
+			background-color: var(--text-secondary);
+		}
+	}
 }

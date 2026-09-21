@@ -1,0 +1,19 @@
+<div class="lesson-box" [ngClass]="{ 'is-active': isActive(), 'is-locked': !lesson().isFree && !lesson().isCompleted }">
+	<button variant="clear" class="lesson-card" [disabled]="!lesson().isFree && !lesson().isCompleted">
+		<span class="lesson-title">{{ lesson().sequenceOrder }} - {{ lesson().title }}</span>
+	</button>
+
+	<span
+		class="lesson-status"
+		[class.is-free]="lesson().isFree && !lesson().isCompleted"
+		[class.is-completed]="lesson().isCompleted"
+	>
+		@if (lesson().isCompleted) {
+			<app-icon name="check" size="s" />
+		} @else if (lesson().isFree) {
+			FREE
+		} @else {
+			<app-icon name="lock" size="s" />
+		}
+	</span>
+</div>

@@ -1,0 +1,14 @@
+export type IconName =
+	| 'sun'
+	| 'moon'
+	| 'logo'
+	| 'eye-opened'
+	| 'eye-closed'
+	| 'person'
+	| 'credit-card'
+	| 'pencil-to-square'
+	| 'floppy-disk'
+	| 'check'
+	| 'lock'
+	| 'clock'
+	| 'envelope';

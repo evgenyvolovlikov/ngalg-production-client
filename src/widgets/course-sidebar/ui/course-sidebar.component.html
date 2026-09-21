@@ -2,11 +2,15 @@
 	<app-course-progress [progress]="progress()" />
 
 	<div class="lessons-container">
-		<h4 class="section-title">Lessons</h4>
+		<h4 class="section-title">Уроки</h4>
 		<div class="lessons-list">
-			<p style="font-size: var(--font-size-sm); color: var(--text-muted); margin: 0">
-				Список уроков появится позже...
-			</p>
+			@for (lesson of lessons(); track lesson.id) {
+				<app-lesson-card
+					[lesson]="lesson"
+					[isActive]="lesson.id === activeLessonId()"
+					(click)="selectLesson.emit(lesson.id)"
+				/>
+			}
 		</div>
 	</div>
 </aside>
