@@ -1,8 +1,22 @@
 <app-sidebar-layout class="course-page">
 	<div sidebar class="course-page__sidebar">
-		<app-course-sidebar [lessons]="lessons" [progress]="progress" />
+		<app-course-sidebar
+			[lessons]="lessons()"
+			[progress]="progress()"
+			[activeLessonId]="currentLesson().id"
+			(selectLesson)="onSelectLesson($event)"
+		/>
 	</div>
+
 	<div class="course-page__content">
-		<app-lesson-content [nextLesson]="nextLesson" [lesson]="lesson" />
+		<app-lesson-content
+			[lesson]="currentLesson()"
+			[videoUrl]="currentLesson().videoUrl"
+			[nextLesson]="nextLesson()"
+			(toggleComplete)="onToggleComplete($event)"
+			(selectLesson)="onSelectLesson($event)"
+		/>
 	</div>
+
+	<app-drawer-sidebar />
 </app-sidebar-layout>

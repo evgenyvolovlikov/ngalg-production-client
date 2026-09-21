@@ -17,8 +17,8 @@ export const MOCK_LESSONS: CourseSkeletonLesson[] = [
 		durationSeconds: 720,
 		isFree: true,
 		isCompleted: false,
+		hasCodeEditor: true,
 	},
-
 	{
 		id: '64e4f4c5-ce96-455c-9c78-33d19bb9f',
 		sequenceOrder: 2,
@@ -27,6 +27,7 @@ export const MOCK_LESSONS: CourseSkeletonLesson[] = [
 		durationSeconds: 720,
 		isFree: true,
 		isCompleted: false,
+		hasCodeEditor: true,
 	},
 ];
 
@@ -36,7 +37,7 @@ export const MOCK_LESSON = {
 	sequenceOrder: 1,
 	title: 'Введение в RXJS',
 	description: 'Разбор нового реактивного примитива и его применения.',
-	videoUrl: 'https://example.com/videos/lesson-1.mp4',
+	videoUrl: '',
 	durationSeconds: 720,
 	isFree: true,
 	hasCodeEditor: true,
@@ -48,7 +49,8 @@ export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
 	sequenceOrder: 2,
 	title: 'Введение в RXJS',
 	description: 'Изучаем новый встроенный механизм реактивности в Angular и его отличия от RxJS.',
-	durationSeconds: 900, // 15 минут
+	durationSeconds: 900,
 	isFree: true,
+	hasCodeEditor: true,
 	isCompleted: false,
 };

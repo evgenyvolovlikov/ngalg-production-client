@@ -6,7 +6,7 @@ import {
 	input,
 } from '@angular/core';
 
-export type ButtonVariant = 'clear' | 'outline' | 'filled';
+export type ButtonVariant = 'clear' | 'outline' | 'filled' | 'fab';
 export type ButtonColor = 'default' | 'primary' | 'error' | 'success';
 export type ButtonSize = 's' | 'm' | 'l' | 'xl';
 
@@ -21,6 +21,7 @@ export type ButtonSize = 's' | 'm' | 'l' | 'xl';
 		'[class.app-button--variant-clear]': 'variant() === "clear"',
 		'[class.app-button--variant-outline]': 'variant() === "outline"',
 		'[class.app-button--variant-filled]': 'variant() === "filled"',
+		'[class.app-button--variant-fab]': 'variant() === "fab"',
 		'[class.app-button--color-default]': 'color() === "default"',
 		'[class.app-button--color-primary]': 'color() === "primary"',
 		'[class.app-button--color-error]': 'color() === "error"',

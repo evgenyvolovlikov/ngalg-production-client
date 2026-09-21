@@ -1,0 +1,38 @@
+:host {
+	display: block;
+}
+
+.draw-sidebar {
+	position: fixed;
+	right: var(--unit-4);
+	bottom: var(--unit-4);
+	z-index: var(--z-fixed);
+	display: block;
+	border-radius: var(--radius-full);
+	box-shadow: var(--shadow-md);
+	transition:
+		transform var(--transition-base),
+		opacity var(--transition-fast);
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	&--hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: scale(0.8) translateY(24px);
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-1);
+		justify-content: center;
+		align-items: center;
+		font-size: 0.65rem;
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-none);
+		letter-spacing: 0.5px;
+	}
+}

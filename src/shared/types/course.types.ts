@@ -19,6 +19,7 @@ export interface LessonEntity extends BaseEntity {
 	videoUrl: string | null;
 	durationSeconds: number;
 	isFree: boolean;
+	hasCodeEditor: boolean;
 }
 
 export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
@@ -51,6 +52,7 @@ export interface CreateLessonDto {
 	videoUrl?: string;
 	durationSeconds?: number;
 	isFree?: boolean;
+	hasCodeEditor?: boolean;
 }
 
 export type UpdateLessonDto = Partial<CreateLessonDto>;

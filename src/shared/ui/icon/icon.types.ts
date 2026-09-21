@@ -12,4 +12,6 @@ export type IconName =
 	| 'lock'
 	| 'clock'
 	| 'envelope'
-	| 'arrow-right';
+	| 'arrow-right'
+	| 'book-open'
+	| 'xmark';

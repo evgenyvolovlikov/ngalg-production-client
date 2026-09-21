@@ -1,0 +1,21 @@
+<div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
+	<button
+		app-button
+		type="button"
+		variant="fab"
+		color="primary"
+		(click)="toggleArticlesOpen()"
+		aria-label="Открыть глоссарий"
+	>
+		<span class="draw-sidebar__content">
+			<app-icon name="book-open" size="m" />
+			<span>A-Z</span>
+		</span>
+	</button>
+</div>
+
+<app-drawer [(isOpen)]="isArticlesOpen">
+	<div drawer-header></div>
+
+	<div class="drawer-inner-content"></div>
+</app-drawer>
