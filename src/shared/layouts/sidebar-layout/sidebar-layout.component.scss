@@ -1,3 +1,5 @@
+@use 'media' as m;
+
 :host {
 	--sidebar-width: 18rem;
 
@@ -13,6 +15,11 @@
 	align-items: start;
 	width: 100%;
 
+	@include m.media-below('lg') {
+		grid-template-columns: 1fr;
+		gap: var(--unit-4);
+	}
+
 	&__sidebar {
 		position: sticky;
 		top: var(--unit-4);
@@ -22,6 +29,10 @@
 		background-color: transparent;
 		border: none;
 		border-radius: 0;
+
+		@include m.media-below('lg') {
+			display: none;
+		}
 	}
 
 	&__sidebar-content {
@@ -51,5 +62,9 @@
 		border: 1px solid var(--border-light);
 		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-sm);
+
+		@include m.media-below('lg') {
+			padding: var(--unit-4);
+		}
 	}
 }

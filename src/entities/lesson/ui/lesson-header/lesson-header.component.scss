@@ -1,3 +1,10 @@
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
 :host {
 	display: block;
 }
@@ -8,6 +15,11 @@
 	justify-content: space-between;
 	align-items: center;
 	padding-bottom: var(--unit-4);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-2);
+		padding-bottom: var(--unit-2);
+	}
 }
 
 .title {
@@ -15,6 +27,10 @@
 	font-size: var(--font-size-xxl);
 	font-weight: var(--font-weight-medium);
 	color: var(--text-primary);
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-lg);
+	}
 }
 
 .duration {
@@ -26,6 +42,10 @@
 	font-weight: var(--font-weight-medium);
 	color: var(--status-success);
 	white-space: nowrap;
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-xs);
+	}
 }
 
 .description {
@@ -33,4 +53,8 @@
 	font-size: var(--font-size-sm);
 	line-height: var(--line-height-relaxed);
 	color: var(--text-muted);
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-xs);
+	}
 }

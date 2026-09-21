@@ -1,3 +1,5 @@
+@use 'media' as m;
+
 :host {
 	display: block;
 	width: 100%;
@@ -11,6 +13,10 @@
 	padding-right: var(--unit-4);
 	border-radius: var(--radius-md);
 	transition: background-color var(--transition-fast);
+
+	@include m.media-below('lg') {
+		padding-right: var(--unit-2);
+	}
 
 	&:hover:not(.is-locked) {
 		background-color: var(--brand-light);

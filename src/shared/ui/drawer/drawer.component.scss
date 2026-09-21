@@ -18,7 +18,7 @@
 	position: fixed;
 	top: 0;
 	right: 0;
-	z-index: var(--z-modal); /* Слой самого окна */
+	z-index: var(--z-modal);
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -41,13 +41,22 @@
 		z-index: var(--z-elevate);
 		font-size: var(--font-size-base);
 		color: var(--text-secondary);
+
+		&--left {
+			right: auto;
+			left: var(--unit-4);
+		}
+
+		&--right {
+			right: var(--unit-4);
+			left: auto;
+		}
 	}
 
 	&__header {
 		display: flex;
 		flex-direction: column;
-		padding: var(--unit-12) var(--unit-6) var(--unit-4) var(--unit-6);
-		border-bottom: 1px solid var(--border-light);
+		padding: var(--unit-6) var(--unit-6);
 	}
 
 	&__content {

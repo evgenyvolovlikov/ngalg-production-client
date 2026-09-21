@@ -1,3 +1,9 @@
+<div class="course-page__mobile-action">
+	<button app-button type="button" (click)="toggleMobileMenu()" aria-label="Открыть меню курса">
+		<app-icon name="bars" size="m" />
+	</button>
+</div>
+
 <app-sidebar-layout class="course-page">
 	<div sidebar class="course-page__sidebar">
 		<app-course-sidebar
@@ -8,15 +14,24 @@
 		/>
 	</div>
 
-	<div class="course-page__content">
-		<app-lesson-content
-			[lesson]="currentLesson()"
-			[videoUrl]="currentLesson().videoUrl"
-			[nextLesson]="nextLesson()"
-			(toggleComplete)="onToggleComplete($event)"
-			(selectLesson)="onSelectLesson($event)"
-		/>
-	</div>
+	<app-lesson-content
+		[lesson]="currentLesson()"
+		[videoUrl]="currentLesson().videoUrl"
+		[nextLesson]="nextLesson()"
+		(toggleComplete)="onToggleComplete($event)"
+		(selectLesson)="onSelectLesson($event)"
+	/>
 
 	<app-drawer-sidebar />
 </app-sidebar-layout>
+
+<app-drawer [(isOpen)]="isMobileMenuOpen" [showCloseBtn]="true">
+	<div class="mobile-sidebar-container">
+		<app-course-sidebar
+			[lessons]="lessons()"
+			[progress]="progress()"
+			[activeLessonId]="currentLesson().id"
+			(selectLesson)="onSelectLesson($event)"
+		/>
+	</div>
+</app-drawer>

@@ -1,0 +1,90 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+
+$screen-xs: 320px !default;
+$screen-sm: 576px !default;
+$screen-md: 768px !default;
+$screen-lg: 1024px !default;
+$screen-xl: 1280px !default;
+$screen-xxl: 1440px !default;
+$screen-xxxl: 1920px !default;
+$breakpoints: (
+	'xs': $screen-xs,
+	'sm': $screen-sm,
+	'md': $screen-md,
+	'lg': $screen-lg,
+	'xl': $screen-xl,
+	'xxl': $screen-xxl,
+	'xxxl': $screen-xxxl,
+) !default;
+
+@function -get-breakpoint-value($key) {
+	@if map.has-key($breakpoints, $key) {
+		@return map.get($breakpoints, $key);
+	} @else if meta.type-of($key) == 'number' {
+		@return $key;
+	} @else {
+		@error "НЕДОПУСТИМОЕ ЗНАЧЕНИЕ: '#{$key}'. Допустимы ключи: #{map.keys($breakpoints)} или числа (px, rem, em).";
+	}
+}
+
+@function -decrement-width($value) {
+	$unit: math.unit($value);
+
+	@if $unit == 'px' {
+		@return $value - 0.02px;
+	} @else if $unit == 'rem' {
+		@return $value - 0.001rem;
+	} @else if $unit == 'em' {
+		@return $value - 0.001em;
+	}
+
+	@return $value - 0.02;
+}
+
+@mixin respond-to($breakpoint, $direction: 'min', $next-breakpoint: null) {
+	$width: -get-breakpoint-value($breakpoint);
+
+	@if $direction == 'min' or $direction == 'above' {
+		@media (min-width: $width) {
+			@content;
+		}
+	} @else if $direction == 'max' or $direction == 'below' {
+		$max-width: -decrement-width($width);
+
+		@media (max-width: $max-width) {
+			@content;
+		}
+	} @else if $direction == 'between' {
+		@if $next-breakpoint == null {
+			@error "ОШИБКА: Для стратегии 'between' требуется передать аргумент $next-breakpoint.";
+		}
+
+		$max-width: -decrement-width(-get-breakpoint-value($next-breakpoint));
+
+		@media (min-width: $width) and (max-width: $max-width) {
+			@content;
+		}
+	} @else {
+		@error "НЕИЗВЕСТНОЕ НАПРАВЛЕНИЕ: '#{$direction}'. Допустимы: 'min', 'max', 'above', 'below', 'between'.";
+	}
+}
+
+@mixin media-above($breakpoint) {
+	@include respond-to($breakpoint, 'min') {
+		@content;
+	}
+}
+
+@mixin media-below($breakpoint) {
+	@include respond-to($breakpoint, 'max') {
+		@content;
+	}
+}
+
+@mixin media-between($from, $to) {
+	@include respond-to($from, 'between', $to) {
+		@content;
+	}
+}

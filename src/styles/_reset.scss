@@ -65,6 +65,10 @@ canvas {
 	height: auto;
 }
 
+body.lock-scroll {
+	overflow: hidden;
+}
+
 svg {
 	display: inline-block;
 	max-width: 100%;

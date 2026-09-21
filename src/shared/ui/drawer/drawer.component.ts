@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, HostListener, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, input, model } from '@angular/core';
 
 import { ButtonComponent } from '../button';
 import { IconComponent } from '../icon';
+
+export type DrawerCloseBtnPosition = 'left' | 'right';
 
 @Component({
 	selector: 'app-drawer',
@@ -13,6 +15,9 @@ import { IconComponent } from '../icon';
 })
 export class DrawerComponent {
 	readonly isOpen = model<boolean>(false);
+
+	readonly closeBtnPosition = input<DrawerCloseBtnPosition>('right');
+	readonly showCloseBtn = input<boolean>(true);
 
 	protected close(): void {
 		this.isOpen.set(false);

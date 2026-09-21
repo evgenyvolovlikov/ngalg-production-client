@@ -64,6 +64,7 @@ leetcode/
 public/
   assets/
     arrow-right.svg
+    bars.svg
     book-open.svg
     check.svg
     clock.svg
@@ -155,7 +156,6 @@ src/
         sidebar-layout.component.ts
     types/
       course.types.ts
-      index.ts
     ui/
       button/
         button.component.html
@@ -190,6 +190,7 @@ src/
         video-player.component.ts
   styles/
     _font-faces.scss
+    _media.scss
     _reset.scss
     _tokens.scss
   widgets/
@@ -238,254 +239,101 @@ vercel.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="public/assets/book-open.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M7.345 2.634q.136.069.268.145L8 3l.387-.221q.133-.076.268-.145a6.7 6.7 0 0 1 6.052-.03c.486.242.793.74.793 1.283v8.938c0 .65-.526 1.175-1.175 1.175h-.04c-.187 0-.37-.05-.529-.146a4.8 4.8 0 0 0-4.61-.177l-.199.1A2.1 2.1 0 0 1 8 14h-.117a1.6 1.6 0 0 1-.726-.171l-.233-.117a4.94 4.94 0 0 0-4.748.183.74.74 0 0 1-.381.105h-.12A1.175 1.175 0 0 1 .5 12.825V3.887c0-.543.307-1.04.793-1.284a6.7 6.7 0 0 1 6.052.03m1.405 9.572V4.3l.382-.218A5.2 5.2 0 0 1 14 3.927v8.357a6.3 6.3 0 0 0-5.25-.078m-1.5.005V4.299l-.382-.218A5.2 5.2 0 0 0 2 3.927v8.365a6.44 6.44 0 0 1 5.25-.082" clip-rule="evenodd"/></svg>
+<file path="public/assets/bars.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.25 3.25A.75.75 0 0 1 2 2.5h12A.75.75 0 0 1 14 4H2a.75.75 0 0 1-.75-.75m0 4.75A.75.75 0 0 1 2 7.25h12a.75.75 0 0 1 0 1.5H2A.75.75 0 0 1 1.25 8M2 12a.75.75 0 0 0 0 1.5h12a.75.75 0 0 0 0-1.5z" clip-rule="evenodd"/></svg>
 </file>
 
-<file path="public/assets/xmark.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06" clip-rule="evenodd"/></svg>
-</file>
+<file path="src/styles/_media.scss">
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
 
-<file path="src/shared/ui/drawer/drawer.component.html">
-@if (isOpen()) {
-	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
+$screen-xs: 320px !default;
+$screen-sm: 576px !default;
+$screen-md: 768px !default;
+$screen-lg: 1024px !default;
+$screen-xl: 1280px !default;
+$screen-xxl: 1440px !default;
+$screen-xxxl: 1920px !default;
+$breakpoints: (
+	'xs': $screen-xs,
+	'sm': $screen-sm,
+	'md': $screen-md,
+	'lg': $screen-lg,
+	'xl': $screen-xl,
+	'xxl': $screen-xxl,
+	'xxxl': $screen-xxxl,
+) !default;
+
+@function -get-breakpoint-value($key) {
+	@if map.has-key($breakpoints, $key) {
+		@return map.get($breakpoints, $key);
+	} @else if meta.type-of($key) == 'number' {
+		@return $key;
+	} @else {
+		@error "НЕДОПУСТИМОЕ ЗНАЧЕНИЕ: '#{$key}'. Допустимы ключи: #{map.keys($breakpoints)} или числа (px, rem, em).";
+	}
 }
 
-<aside class="drawer-panel" [class.drawer-panel--open]="isOpen()" [attr.aria-hidden]="!isOpen()" role="dialog">
-	<button
-		app-button
-		type="button"
-		variant="clear"
-		color="default"
-		size="s"
-		(click)="close()"
-		class="drawer-panel__close"
-		aria-label="Закрыть панель"
-	>
-		<app-icon [name]="'xmark'" size="l" />
-	</button>
+@function -decrement-width($value) {
+	$unit: math.unit($value);
 
-	<header class="drawer-panel__header">
-		<ng-content select="[drawer-header]"></ng-content>
-	</header>
+	@if $unit == 'px' {
+		@return $value - 0.02px;
+	} @else if $unit == 'rem' {
+		@return $value - 0.001rem;
+	} @else if $unit == 'em' {
+		@return $value - 0.001em;
+	}
 
-	<main class="drawer-panel__content">
-		<ng-content></ng-content>
-	</main>
-</aside>
-</file>
-
-<file path="src/shared/ui/drawer/drawer.component.scss">
-:host {
-	display: block;
+	@return $value - 0.02;
 }
 
-.drawer-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: var(--z-modal-backdrop);
-	width: 100vw;
-	height: 100vh;
-	background-color: rgb(0 0 0 / 20%);
-	animation: drawer-fade-in var(--transition-fast) forwards;
-	backdrop-filter: blur(2px);
-}
+@mixin respond-to($breakpoint, $direction: 'min', $next-breakpoint: null) {
+	$width: -get-breakpoint-value($breakpoint);
 
-.drawer-panel {
-	position: fixed;
-	top: 0;
-	right: 0;
-	z-index: var(--z-modal); /* Слой самого окна */
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	max-width: 26rem;
-	height: 100vh;
-	background-color: var(--bg-card);
-	box-shadow: var(--shadow-md);
-	transition: transform var(--transition-base);
-	border-left: 1px solid var(--border-light);
-	transform: translateX(100%);
+	@if $direction == 'min' or $direction == 'above' {
+		@media (min-width: $width) {
+			@content;
+		}
+	} @else if $direction == 'max' or $direction == 'below' {
+		$max-width: -decrement-width($width);
 
-	&--open {
-		transform: translateX(0);
-	}
-
-	&__close {
-		position: absolute;
-		top: var(--unit-4);
-		left: var(--unit-4);
-		z-index: var(--z-elevate);
-		font-size: var(--font-size-base);
-		color: var(--text-secondary);
-	}
-
-	&__header {
-		display: flex;
-		flex-direction: column;
-		padding: var(--unit-12) var(--unit-6) var(--unit-4) var(--unit-6);
-		border-bottom: 1px solid var(--border-light);
-	}
-
-	&__content {
-		flex-grow: 1;
-		padding: var(--unit-6);
-		overflow-y: auto;
-		scrollbar-width: thin;
-		scrollbar-color: var(--text-muted) transparent;
-
-		&::-webkit-scrollbar {
-			width: var(--unit-1);
+		@media (max-width: $max-width) {
+			@content;
+		}
+	} @else if $direction == 'between' {
+		@if $next-breakpoint == null {
+			@error "ОШИБКА: Для стратегии 'between' требуется передать аргумент $next-breakpoint.";
 		}
 
-		&::-webkit-scrollbar-thumb {
-			background-color: var(--text-muted);
-			border-radius: var(--radius-full);
+		$max-width: -decrement-width(-get-breakpoint-value($next-breakpoint));
 
-			&:hover {
-				background-color: var(--text-secondary);
-			}
+		@media (min-width: $width) and (max-width: $max-width) {
+			@content;
 		}
+	} @else {
+		@error "НЕИЗВЕСТНОЕ НАПРАВЛЕНИЕ: '#{$direction}'. Допустимы: 'min', 'max', 'above', 'below', 'between'.";
 	}
 }
 
-@keyframes drawer-fade-in {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
+@mixin media-above($breakpoint) {
+	@include respond-to($breakpoint, 'min') {
+		@content;
 	}
 }
-</file>
 
-<file path="src/shared/ui/drawer/drawer.component.ts">
-import { ChangeDetectionStrategy, Component, HostListener, model } from '@angular/core';
-
-import { ButtonComponent } from '../button';
-import { IconComponent } from '../icon';
-
-@Component({
-	selector: 'app-drawer',
-	standalone: true,
-	imports: [ButtonComponent, IconComponent],
-	templateUrl: './drawer.component.html',
-	styleUrl: './drawer.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class DrawerComponent {
-	readonly isOpen = model<boolean>(false);
-
-	protected close(): void {
-		this.isOpen.set(false);
-	}
-
-	@HostListener('window:keydown.escape')
-	protected onEscapePressed(): void {
-		if (this.isOpen()) {
-			this.close();
-		}
+@mixin media-below($breakpoint) {
+	@include respond-to($breakpoint, 'max') {
+		@content;
 	}
 }
-</file>
 
-<file path="src/shared/ui/drawer/index.ts">
-export * from './drawer.component';
-</file>
-
-<file path="src/widgets/drawer-sidebar/ui/drawer-sidebar.component.html">
-<div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
-	<button
-		app-button
-		type="button"
-		variant="fab"
-		color="primary"
-		(click)="toggleArticlesOpen()"
-		aria-label="Открыть глоссарий"
-	>
-		<span class="draw-sidebar__content">
-			<app-icon name="book-open" size="m" />
-			<span>A-Z</span>
-		</span>
-	</button>
-</div>
-
-<app-drawer [(isOpen)]="isArticlesOpen">
-	<div drawer-header></div>
-
-	<div class="drawer-inner-content"></div>
-</app-drawer>
-</file>
-
-<file path="src/widgets/drawer-sidebar/ui/drawer-sidebar.component.scss">
-:host {
-	display: block;
-}
-
-.draw-sidebar {
-	position: fixed;
-	right: var(--unit-4);
-	bottom: var(--unit-4);
-	z-index: var(--z-fixed);
-	display: block;
-	border-radius: var(--radius-full);
-	box-shadow: var(--shadow-md);
-	transition:
-		transform var(--transition-base),
-		opacity var(--transition-fast);
-
-	&:active {
-		transform: scale(0.95);
-	}
-
-	&--hidden {
-		opacity: 0;
-		pointer-events: none;
-		transform: scale(0.8) translateY(24px);
-	}
-
-	&__content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--unit-1);
-		justify-content: center;
-		align-items: center;
-		font-size: 0.65rem;
-		font-weight: var(--font-weight-bold);
-		line-height: var(--line-height-none);
-		letter-spacing: 0.5px;
+@mixin media-between($from, $to) {
+	@include respond-to($from, 'between', $to) {
+		@content;
 	}
 }
-</file>
-
-<file path="src/widgets/drawer-sidebar/ui/drawer-sidebar.component.ts">
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-
-import { ButtonComponent } from '@shared/ui/button';
-import { DrawerComponent } from '@shared/ui/drawer';
-import { IconComponent } from '@shared/ui/icon';
-
-@Component({
-	selector: 'app-drawer-sidebar',
-	standalone: true,
-	templateUrl: './drawer-sidebar.component.html',
-	styleUrl: './drawer-sidebar.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [IconComponent, DrawerComponent, ButtonComponent],
-})
-export class DrawerSidebarComponent {
-	readonly isArticlesOpen = signal<boolean>(false);
-
-	protected toggleArticlesOpen(): void {
-		this.isArticlesOpen.update((state) => !state);
-	}
-}
-</file>
-
-<file path="src/widgets/drawer-sidebar/index.ts">
-export * from './ui/drawer-sidebar.component';
 </file>
 
 <file path=".husky/commit-msg">
@@ -1090,6 +938,10 @@ backspaceCompare_2('ab#c', 'ad#c');
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.25 8A.75.75 0 0 1 2 7.25h10.19L9.47 4.53a.75.75 0 0 1 1.06-1.06l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 1 1-1.06-1.06l2.72-2.72H2A.75.75 0 0 1 1.25 8" clip-rule="evenodd"/></svg>
 </file>
 
+<file path="public/assets/book-open.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M7.345 2.634q.136.069.268.145L8 3l.387-.221q.133-.076.268-.145a6.7 6.7 0 0 1 6.052-.03c.486.242.793.74.793 1.283v8.938c0 .65-.526 1.175-1.175 1.175h-.04c-.187 0-.37-.05-.529-.146a4.8 4.8 0 0 0-4.61-.177l-.199.1A2.1 2.1 0 0 1 8 14h-.117a1.6 1.6 0 0 1-.726-.171l-.233-.117a4.94 4.94 0 0 0-4.748.183.74.74 0 0 1-.381.105h-.12A1.175 1.175 0 0 1 .5 12.825V3.887c0-.543.307-1.04.793-1.284a6.7 6.7 0 0 1 6.052.03m1.405 9.572V4.3l.382-.218A5.2 5.2 0 0 1 14 3.927v8.357a6.3 6.3 0 0 0-5.25-.078m-1.5.005V4.299l-.382-.218A5.2 5.2 0 0 0 2 3.927v8.365a6.44 6.44 0 0 1 5.25-.082" clip-rule="evenodd"/></svg>
+</file>
+
 <file path="public/assets/check.svg">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M13.488 3.43a.75.75 0 0 1 .081 1.058l-6 7a.75.75 0 0 1-1.1.042l-3.5-3.5A.75.75 0 0 1 4.03 6.97l2.928 2.927 5.473-6.385a.75.75 0 0 1 1.057-.081" clip-rule="evenodd"/></svg>
 </file>
@@ -1200,6 +1052,10 @@ fill="#000000" stroke="none">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M8 3a.75.75 0 0 1-.75-.75V.75a.75.75 0 0 1 1.5 0v1.5A.75.75 0 0 1 8 3m0 7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-.75 3.25a.75.75 0 0 0 1.5 0v-1.5a.75.75 0 0 0-1.5 0zM13 8a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 13 8M.75 7.25a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5zm10.786-2.786a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 0 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0m-9.193 8.132a.75.75 0 0 0 1.06 1.06l1.062-1.06a.75.75 0 0 0-1.061-1.06zm9.193-1.06a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06M3.404 2.343a.75.75 0 0 0-1.06 1.06l1.06 1.061a.75.75 0 1 0 1.06-1.06z" clip-rule="evenodd"/></svg>
 </file>
 
+<file path="public/assets/xmark.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06" clip-rule="evenodd"/></svg>
+</file>
+
 <file path="src/app/layouts/main-layout/main-layout.component.html">
 <div class="app-layout">
 	<div class="app-layout__header">
@@ -1255,6 +1111,8 @@ export interface CourseProgress {
 </file>
 
 <file path="src/entities/course/ui/course-progress/course-progress.component.scss">
+@use 'media' as m;
+
 :host {
 	display: block;
 	width: 100%;
@@ -1347,6 +1205,8 @@ export * from './model/types/course-progress.types';
 </file>
 
 <file path="src/entities/lesson/ui/lesson-card/lesson-card.component.scss">
+@use 'media' as m;
+
 :host {
 	display: block;
 	width: 100%;
@@ -1360,6 +1220,10 @@ export * from './model/types/course-progress.types';
 	padding-right: var(--unit-4);
 	border-radius: var(--radius-md);
 	transition: background-color var(--transition-fast);
+
+	@include m.media-below('lg') {
+		padding-right: var(--unit-2);
+	}
 
 	&:hover:not(.is-locked) {
 		background-color: var(--brand-light);
@@ -1441,6 +1305,13 @@ export * from './model/types/course-progress.types';
 </file>
 
 <file path="src/entities/lesson/ui/lesson-header/lesson-header.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
 :host {
 	display: block;
 }
@@ -1451,6 +1322,11 @@ export * from './model/types/course-progress.types';
 	justify-content: space-between;
 	align-items: center;
 	padding-bottom: var(--unit-4);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-2);
+		padding-bottom: var(--unit-2);
+	}
 }
 
 .title {
@@ -1458,6 +1334,10 @@ export * from './model/types/course-progress.types';
 	font-size: var(--font-size-xxl);
 	font-weight: var(--font-weight-medium);
 	color: var(--text-primary);
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-lg);
+	}
 }
 
 .duration {
@@ -1469,6 +1349,10 @@ export * from './model/types/course-progress.types';
 	font-weight: var(--font-weight-medium);
 	color: var(--status-success);
 	white-space: nowrap;
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-xs);
+	}
 }
 
 .description {
@@ -1476,6 +1360,10 @@ export * from './model/types/course-progress.types';
 	font-size: var(--font-size-sm);
 	line-height: var(--line-height-relaxed);
 	color: var(--text-muted);
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-xs);
+	}
 }
 </file>
 
@@ -1525,28 +1413,6 @@ export class LessonHeaderComponent {
 }
 </file>
 
-<file path="src/features/lesson-navigation/ui/lesson-navigation-controls.component.ts">
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-
-import { CourseSkeletonLesson } from '@shared/types/course.types';
-import { ButtonComponent } from '@shared/ui/button';
-import { IconComponent } from '@shared/ui/icon';
-
-@Component({
-	selector: 'app-lesson-navigation-controls',
-	standalone: true,
-	imports: [ButtonComponent, IconComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-
-	templateUrl: './lesson-navigation-controls.component.html',
-	styleUrl: './lesson-navigation-controls.component.scss',
-})
-export class LessonNavigationControlsComponent {
-	readonly nextLesson = input<CourseSkeletonLesson | null>(null);
-	readonly nextLessonSelect = output<string>();
-}
-</file>
-
 <file path="src/features/lesson-navigation/index.ts">
 export * from './ui/lesson-navigation-controls.component';
 </file>
@@ -1586,6 +1452,8 @@ export * from './ui/mark-lesson-watched.component';
 </file>
 
 <file path="src/pages/course-page/ui/course-page.component.scss">
+@use 'media' as m;
+
 :host {
 	display: block;
 	width: 100%;
@@ -1598,6 +1466,18 @@ export * from './ui/mark-lesson-watched.component';
 		align-items: center;
 		height: 100%;
 		padding: 0;
+	}
+
+	&__mobile-action {
+		display: none;
+		justify-content: flex-end;
+		width: 100%;
+
+		@include m.media-below('lg') {
+			display: flex;
+			margin-bottom: var(--unit-4);
+			padding: 0 var(--unit-1);
+		}
 	}
 }
 </file>
@@ -1625,6 +1505,8 @@ export * from './sidebar-layout.component';
 </file>
 
 <file path="src/shared/layouts/sidebar-layout/sidebar-layout.component.scss">
+@use 'media' as m;
+
 :host {
 	--sidebar-width: 18rem;
 
@@ -1640,6 +1522,11 @@ export * from './sidebar-layout.component';
 	align-items: start;
 	width: 100%;
 
+	@include m.media-below('lg') {
+		grid-template-columns: 1fr;
+		gap: var(--unit-4);
+	}
+
 	&__sidebar {
 		position: sticky;
 		top: var(--unit-4);
@@ -1649,6 +1536,10 @@ export * from './sidebar-layout.component';
 		background-color: transparent;
 		border: none;
 		border-radius: 0;
+
+		@include m.media-below('lg') {
+			display: none;
+		}
 	}
 
 	&__sidebar-content {
@@ -1678,6 +1569,10 @@ export * from './sidebar-layout.component';
 		border: 1px solid var(--border-light);
 		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-sm);
+
+		@include m.media-below('lg') {
+			padding: var(--unit-4);
+		}
 	}
 }
 </file>
@@ -1695,69 +1590,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class SidebarLayoutComponent {}
 </file>
 
-<file path="src/shared/types/course.types.ts">
-export interface BaseEntity {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-}
-
-export interface CourseEntity extends BaseEntity {
-	slug: string;
-	title: string;
-	description: string;
-	isPublished: boolean;
-}
-
-export interface LessonEntity extends BaseEntity {
-	courseId: string;
-	sequenceOrder: number;
-	title: string;
-	description: string | null;
-	videoUrl: string | null;
-	durationSeconds: number;
-	isFree: boolean;
-}
-
-export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
-	isCompleted: boolean;
-};
-
-export type CourseSkeletonLesson = Omit<LessonDetail, 'courseId' | 'videoUrl'>;
-
-export type CourseSkeleton = Omit<CourseEntity, 'createdAt' | 'updatedAt'> & {
-	lessons: CourseSkeletonLesson[];
-};
-
-export interface ToggleLessonProgressResponse {
-	completed: boolean;
-}
-
-export interface CreateCourseDto {
-	slug: string;
-	title: string;
-	description: string;
-	isPublished?: boolean;
-}
-
-export type UpdateCourseDto = Partial<CreateCourseDto>;
-
-export interface CreateLessonDto {
-	sequenceOrder: number;
-	title: string;
-	description?: string;
-	videoUrl?: string;
-	durationSeconds?: number;
-	isFree?: boolean;
-}
-
-export type UpdateLessonDto = Partial<CreateLessonDto>;
-</file>
-
-<file path="src/shared/types/index.ts">
-export * from './course.types';
-</file>
-
 <file path="src/shared/ui/button/button.component.html">
 @if (loading()) {
 	<span class="app-button__loader" aria-hidden="true"></span>
@@ -1766,239 +1598,6 @@ export * from './course.types';
 <span class="app-button__content" [class.app-button__content--hidden]="loading()">
 	<ng-content></ng-content>
 </span>
-</file>
-
-<file path="src/shared/ui/button/button.component.scss">
-:host {
-	position: relative;
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	border: 1px solid transparent;
-	font-family:
-		system-ui,
-		-apple-system,
-		sans-serif;
-	font-weight: var(--font-weight-medium);
-	transition:
-		background-color var(--transition-fast),
-		color var(--transition-fast),
-		border-color var(--transition-fast),
-		opacity var(--transition-fast),
-		transform var(--transition-fast),
-		box-shadow var(--transition-fast);
-	cursor: pointer;
-	box-sizing: border-box;
-	outline: none;
-	text-decoration: none;
-
-	&:focus-visible {
-		box-shadow: 0 0 0 4px rgb(99 102 241 / 15%);
-		border-color: var(--border-focus);
-	}
-
-	&:active:not(:disabled, .app-button--disabled, .app-button--variant-fab) {
-		transform: scale(0.98);
-	}
-}
-
-:host(.app-button--disabled) {
-	opacity: var(--opacity-disabled);
-	cursor: not-allowed;
-	pointer-events: none;
-}
-
-:host(.app-button--full-width) {
-	width: 100%;
-}
-
-:host(.app-button--variant-fab) {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	width: 3.75rem;
-	height: 3.75rem;
-	padding: 0;
-	border-radius: var(--radius-full);
-}
-
-:host(.app-button--variant-filled.app-button--color-default),
-:host(.app-button--variant-fab.app-button--color-default) {
-	background-color: var(--bg-main);
-	color: var(--text-primary);
-	border-color: var(--border-light);
-
-	&:hover:not(.app-button--disabled) {
-		background-color: var(--border-light);
-	}
-}
-
-:host(.app-button--variant-filled.app-button--color-primary),
-:host(.app-button--variant-fab.app-button--color-primary) {
-	background-color: var(--brand-primary);
-	color: var(--text-on-dark);
-	border-color: var(--brand-primary);
-
-	&:hover:not(.app-button--disabled) {
-		background-color: var(--brand-hover);
-		border-color: var(--brand-hover);
-	}
-}
-
-:host(.app-button--variant-filled.app-button--color-error),
-:host(.app-button--variant-fab.app-button--color-error) {
-	background-color: var(--status-error);
-	color: var(--text-on-dark);
-	border-color: var(--status-error);
-}
-
-:host(.app-button--variant-filled.app-button--color-success),
-:host(.app-button--variant-fab.app-button--color-success) {
-	background-color: var(--status-success);
-	color: var(--text-on-dark);
-	border-color: var(--status-success);
-}
-
-:host(.app-button--variant-outline.app-button--color-default) {
-	background-color: transparent;
-	color: var(--text-primary);
-	border-color: var(--border-light);
-
-	&:hover:not(.app-button--disabled) {
-		background-color: var(--bg-main);
-	}
-}
-
-:host(.app-button--variant-outline.app-button--color-primary) {
-	background-color: transparent;
-	color: var(--brand-primary);
-	border-color: var(--brand-primary);
-
-	&:hover:not(.app-button--disabled) {
-		background-color: var(--brand-light);
-	}
-}
-
-:host(.app-button--variant-clear.app-button--color-default) {
-	background-color: transparent;
-	color: var(--text-muted);
-	border-color: transparent;
-
-	&:hover:not(.app-button--disabled) {
-		background-color: var(--bg-main);
-		color: var(--text-primary);
-	}
-}
-
-:host(.app-button--variant-clear.app-button--color-primary) {
-	background-color: transparent;
-	color: var(--brand-primary);
-	border-color: transparent;
-
-	&:hover:not(.app-button--disabled) {
-		background-color: var(--brand-light);
-	}
-}
-
-:host(.app-button--size-s:not(.app-button--variant-fab)) {
-	padding: var(--unit-1) var(--unit-3);
-	border-radius: var(--radius-xs);
-	font-size: var(--font-size-xs);
-}
-
-:host(.app-button--size-m:not(.app-button--variant-fab)) {
-	padding: var(--unit-2) var(--unit-4);
-	border-radius: var(--radius-sm);
-	font-size: var(--font-size-sm);
-}
-
-:host(.app-button--size-l:not(.app-button--variant-fab)) {
-	padding: var(--unit-3) var(--unit-6);
-	border-radius: var(--radius-md);
-	font-size: var(--font-size-base);
-}
-
-:host(.app-button--size-xl:not(.app-button--variant-fab)) {
-	padding: var(--unit-4) var(--unit-8);
-	border-radius: var(--radius-md);
-	font-size: var(--font-size-lg);
-}
-
-.app-button__loader {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: var(--unit-4);
-	height: var(--unit-4);
-	border: 2px solid currentcolor;
-	border-radius: var(--radius-full);
-	animation: spin 0.75s linear infinite;
-	transform: translate(-50%, -50%);
-	border-right-color: transparent;
-}
-
-@keyframes spin {
-	from {
-		transform: translate(-50%, -50%) rotate(0deg);
-	}
-
-	to {
-		transform: translate(-50%, -50%) rotate(360deg);
-	}
-}
-</file>
-
-<file path="src/shared/ui/button/button.component.ts">
-import {
-	ChangeDetectionStrategy,
-	Component,
-	booleanAttribute,
-	computed,
-	input,
-} from '@angular/core';
-
-export type ButtonVariant = 'clear' | 'outline' | 'filled' | 'fab';
-export type ButtonColor = 'default' | 'primary' | 'error' | 'success';
-export type ButtonSize = 's' | 'm' | 'l' | 'xl';
-
-@Component({
-	selector: 'button[app-button], a[app-button]',
-	standalone: true,
-	templateUrl: './button.component.html',
-	styleUrl: './button.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	host: {
-		class: 'app-button',
-		'[class.app-button--variant-clear]': 'variant() === "clear"',
-		'[class.app-button--variant-outline]': 'variant() === "outline"',
-		'[class.app-button--variant-filled]': 'variant() === "filled"',
-		'[class.app-button--variant-fab]': 'variant() === "fab"',
-		'[class.app-button--color-default]': 'color() === "default"',
-		'[class.app-button--color-primary]': 'color() === "primary"',
-		'[class.app-button--color-error]': 'color() === "error"',
-		'[class.app-button--color-success]': 'color() === "success"',
-		'[class.app-button--size-s]': 'size() === "s"',
-		'[class.app-button--size-m]': 'size() === "m"',
-		'[class.app-button--size-l]': 'size() === "l"',
-		'[class.app-button--size-xl]': 'size() === "xl"',
-		'[class.app-button--full-width]': 'fullWidth()',
-		'[class.app-button--disabled]': 'isDisabled()',
-		'[class.app-button--loading]': 'loading()',
-		'[attr.disabled]': 'isDisabled() ? true : null',
-		'[attr.aria-busy]': 'loading() ? "true" : null',
-	},
-})
-export class ButtonComponent {
-	readonly variant = input<ButtonVariant>('filled');
-	readonly color = input<ButtonColor>('default');
-	readonly size = input<ButtonSize>('m');
-
-	readonly loading = input(false, { transform: booleanAttribute });
-	readonly disabled = input(false, { transform: booleanAttribute });
-	readonly fullWidth = input(false, { transform: booleanAttribute });
-
-	readonly isDisabled = computed(() => this.disabled() || this.loading());
-}
 </file>
 
 <file path="src/shared/ui/button/index.ts">
@@ -2270,6 +1869,173 @@ export class CircularProgressComponent {
 export * from './circular-progress.component';
 </file>
 
+<file path="src/shared/ui/drawer/drawer.component.html">
+@if (isOpen()) {
+	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
+}
+
+<aside class="drawer-panel" [class.drawer-panel--open]="isOpen()" [attr.aria-hidden]="!isOpen()" role="dialog">
+	@if (showCloseBtn()) {
+		<button
+			app-button
+			type="button"
+			variant="clear"
+			color="default"
+			size="s"
+			(click)="close()"
+			class="drawer-panel__close"
+			[class.drawer-panel__close--left]="closeBtnPosition() === 'left'"
+			[class.drawer-panel__close--right]="closeBtnPosition() === 'right'"
+			aria-label="Закрыть панель"
+		>
+			<app-icon [name]="'xmark'" size="l" />
+		</button>
+	}
+
+	<header class="drawer-panel__header">
+		<ng-content select="[drawer-header]"></ng-content>
+	</header>
+
+	<main class="drawer-panel__content">
+		<ng-content></ng-content>
+	</main>
+</aside>
+</file>
+
+<file path="src/shared/ui/drawer/drawer.component.scss">
+:host {
+	display: block;
+}
+
+.drawer-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: var(--z-modal-backdrop);
+	width: 100vw;
+	height: 100vh;
+	background-color: rgb(0 0 0 / 20%);
+	animation: drawer-fade-in var(--transition-fast) forwards;
+	backdrop-filter: blur(2px);
+}
+
+.drawer-panel {
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: var(--z-modal);
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 26rem;
+	height: 100vh;
+	background-color: var(--bg-card);
+	box-shadow: var(--shadow-md);
+	transition: transform var(--transition-base);
+	border-left: 1px solid var(--border-light);
+	transform: translateX(100%);
+
+	&--open {
+		transform: translateX(0);
+	}
+
+	&__close {
+		position: absolute;
+		top: var(--unit-4);
+		left: var(--unit-4);
+		z-index: var(--z-elevate);
+		font-size: var(--font-size-base);
+		color: var(--text-secondary);
+
+		&--left {
+			right: auto; // Явно сбрасываем правый край
+			left: var(--unit-4);
+		}
+
+		&--right {
+			right: var(--unit-4);
+			left: auto;
+		}
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		padding: var(--unit-6) var(--unit-6);
+	}
+
+	&__content {
+		flex-grow: 1;
+		padding: var(--unit-6);
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: var(--text-muted) transparent;
+
+		&::-webkit-scrollbar {
+			width: var(--unit-1);
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: var(--text-muted);
+			border-radius: var(--radius-full);
+
+			&:hover {
+				background-color: var(--text-secondary);
+			}
+		}
+	}
+}
+
+@keyframes drawer-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+</file>
+
+<file path="src/shared/ui/drawer/drawer.component.ts">
+import { ChangeDetectionStrategy, Component, HostListener, input, model } from '@angular/core';
+
+import { ButtonComponent } from '../button';
+import { IconComponent } from '../icon';
+
+export type DrawerCloseBtnPosition = 'left' | 'right';
+
+@Component({
+	selector: 'app-drawer',
+	standalone: true,
+	imports: [ButtonComponent, IconComponent],
+	templateUrl: './drawer.component.html',
+	styleUrl: './drawer.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DrawerComponent {
+	readonly isOpen = model<boolean>(false);
+
+	readonly closeBtnPosition = input<DrawerCloseBtnPosition>('right');
+	readonly showCloseBtn = input<boolean>(true);
+
+	protected close(): void {
+		this.isOpen.set(false);
+	}
+
+	@HostListener('window:keydown.escape')
+	protected onEscapePressed(): void {
+		if (this.isOpen()) {
+			this.close();
+		}
+	}
+}
+</file>
+
+<file path="src/shared/ui/drawer/index.ts">
+export * from './drawer.component';
+</file>
+
 <file path="src/shared/ui/icon/icon.component.scss">
 :host {
 	display: inline-flex;
@@ -2536,6 +2302,99 @@ export class VideoPlayerComponent {
 
 <file path="src/widgets/course-sidebar/index.ts">
 export * from './ui/course-sidebar.component';
+</file>
+
+<file path="src/widgets/drawer-sidebar/ui/drawer-sidebar.component.html">
+<div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
+	<button
+		app-button
+		type="button"
+		variant="fab"
+		color="primary"
+		(click)="toggleArticlesOpen()"
+		aria-label="Открыть глоссарий"
+	>
+		<span class="draw-sidebar__content">
+			<app-icon name="book-open" size="m" />
+			<span>A-Z</span>
+		</span>
+	</button>
+</div>
+
+<app-drawer [(isOpen)]="isArticlesOpen">
+	<div drawer-header></div>
+
+	<div class="drawer-inner-content"></div>
+</app-drawer>
+</file>
+
+<file path="src/widgets/drawer-sidebar/ui/drawer-sidebar.component.scss">
+:host {
+	display: block;
+}
+
+.draw-sidebar {
+	position: fixed;
+	right: var(--unit-4);
+	bottom: var(--unit-4);
+	z-index: var(--z-fixed);
+	display: block;
+	border-radius: var(--radius-full);
+	box-shadow: var(--shadow-md);
+	transition:
+		transform var(--transition-base),
+		opacity var(--transition-fast);
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	&--hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: scale(0.8) translateY(24px);
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-1);
+		justify-content: center;
+		align-items: center;
+		font-size: 0.65rem;
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-none);
+		letter-spacing: 0.5px;
+	}
+}
+</file>
+
+<file path="src/widgets/drawer-sidebar/ui/drawer-sidebar.component.ts">
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+
+import { ButtonComponent } from '@shared/ui/button';
+import { DrawerComponent } from '@shared/ui/drawer';
+import { IconComponent } from '@shared/ui/icon';
+
+@Component({
+	selector: 'app-drawer-sidebar',
+	standalone: true,
+	templateUrl: './drawer-sidebar.component.html',
+	styleUrl: './drawer-sidebar.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [IconComponent, DrawerComponent, ButtonComponent],
+})
+export class DrawerSidebarComponent {
+	readonly isArticlesOpen = signal<boolean>(false);
+
+	protected toggleArticlesOpen(): void {
+		this.isArticlesOpen.update((state) => !state);
+	}
+}
+</file>
+
+<file path="src/widgets/drawer-sidebar/index.ts">
+export * from './ui/drawer-sidebar.component';
 </file>
 
 <file path="src/widgets/header/ui/header.component.html">
@@ -2828,150 +2687,30 @@ export * from './ui/lesson-card/lesson-card.component';
 export * from './ui/lesson-header/lesson-header.component';
 </file>
 
-<file path="src/pages/course-page/ui/course-page.component.html">
-<app-sidebar-layout class="course-page">
-	<div sidebar class="course-page__sidebar">
-		<app-course-sidebar
-			[lessons]="lessons()"
-			[progress]="progress()"
-			[activeLessonId]="currentLesson().id"
-			(selectLesson)="onSelectLesson($event)"
-		/>
-	</div>
+<file path="src/features/lesson-navigation/ui/lesson-navigation-controls.component.ts">
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-	<div class="course-page__content">
-		<app-lesson-content
-			[lesson]="currentLesson()"
-			[videoUrl]="currentLesson().videoUrl"
-			[nextLesson]="nextLesson()"
-			(toggleComplete)="onToggleComplete($event)"
-			(selectLesson)="onSelectLesson($event)"
-		/>
-	</div>
-
-	<app-drawer-sidebar />
-</app-sidebar-layout>
-</file>
-
-<file path="src/pages/course-page/ui/course-page.component.ts">
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-
-import { CourseSidebarComponent } from '@widgets/course-sidebar';
-import { DrawerSidebarComponent } from '@widgets/drawer-sidebar';
-import { LessonContentComponent } from '@widgets/lesson-content';
-
-import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
 import { CourseSkeletonLesson } from '@shared/types/course.types';
-
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } from '../mock';
+import { ButtonComponent } from '@shared/ui/button';
+import { IconComponent } from '@shared/ui/icon';
 
 @Component({
-	selector: 'app-course-page',
+	selector: 'app-lesson-navigation-controls',
 	standalone: true,
+	imports: [ButtonComponent, IconComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './course-page.component.html',
-	styleUrl: './course-page.component.scss',
-	imports: [
-		SidebarLayoutComponent,
-		CourseSidebarComponent,
-		LessonContentComponent,
-		DrawerSidebarComponent,
-	],
+
+	templateUrl: './lesson-navigation-controls.component.html',
+	styleUrl: './lesson-navigation-controls.component.scss',
 })
-export class CoursePageComponent {
-	readonly progress = signal(MOCK_COURSE_PROGRESS);
-	readonly lessons = signal<CourseSkeletonLesson[]>(MOCK_LESSONS);
-
-	readonly currentLesson = signal(MOCK_LESSON);
-
-	readonly nextLesson = signal<CourseSkeletonLesson | null>(MOCK_NEXT_LESSON);
-
-	protected onSelectLesson(lessonId: string): void {
-		const found = this.lessons().find((l) => l.id === lessonId);
-		if (found) {
-			this.currentLesson.set({
-				...found,
-				description: found.description ?? '',
-				courseId: this.currentLesson().courseId,
-				videoUrl: MOCK_LESSON.videoUrl,
-				hasCodeEditor: true,
-				isCompleted: found.isCompleted,
-			});
-		}
-	}
-
-	protected onToggleComplete(event: { id: string; completed: boolean }): void {
-		this.lessons.update((list) =>
-			list.map((l) => (l.id === event.id ? { ...l, isCompleted: event.completed } : l)),
-		);
-
-		if (this.currentLesson().id === event.id) {
-			this.currentLesson.update((l) => ({ ...l, isCompleted: event.completed }));
-		}
-	}
+export class LessonNavigationControlsComponent {
+	readonly nextLesson = input<CourseSkeletonLesson | null>(null);
+	readonly nextLessonSelect = output<string>();
 }
 </file>
 
 <file path="src/pages/course-page/index.ts">
 export * from './ui/course-page.component';
-</file>
-
-<file path="src/pages/course-page/mock.ts">
-import { CourseProgress } from '@entities/course';
-
-import { CourseSkeletonLesson } from '@shared/types/course.types';
-
-export const MOCK_COURSE_PROGRESS: CourseProgress = {
-	totalLessons: 10,
-	completedLessons: 5,
-	percentage: 50,
-};
-
-export const MOCK_LESSONS: CourseSkeletonLesson[] = [
-	{
-		id: '64e4f4c5-ce96-455c-9c78-33d19bb9fdc3',
-		sequenceOrder: 1,
-		title: 'Введение в RXJS',
-		description: 'Разбор нового реактивного примитива и его применения.',
-		durationSeconds: 720,
-		isFree: true,
-		isCompleted: false,
-	},
-
-	{
-		id: '64e4f4c5-ce96-455c-9c78-33d19bb9f',
-		sequenceOrder: 2,
-		title: 'Введение',
-		description: 'Разбор нового реактивн',
-		durationSeconds: 720,
-		isFree: true,
-		isCompleted: false,
-	},
-];
-
-export const MOCK_LESSON = {
-	id: '64e4f4c5-ce96-455c-9c78-33d19bb9fdc3',
-	courseId: 'a2c0efd2-4e76-46a9-9a6f-09031360ca6e',
-	sequenceOrder: 1,
-	title: 'Введение в RXJS',
-	description: 'Разбор нового реактивного примитива и его применения.',
-	videoUrl: 'https://w3schools.com',
-	durationSeconds: 720,
-	isFree: true,
-	hasCodeEditor: true,
-	isCompleted: false,
-};
-
-export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
-	id: '75f5a5d6-df12-466d-a890-44e20cc0aed4',
-	sequenceOrder: 2,
-	title: 'Введение в RXJS',
-	description: 'Изучаем новый встроенный механизм реактивности в Angular и его отличия от RxJS.',
-	durationSeconds: 900,
-	isFree: true,
-	isCompleted: false,
-};
 </file>
 
 <file path="src/shared/config/routes.config.ts">
@@ -2981,24 +2720,298 @@ export const RouteSegments = {
 } as const;
 </file>
 
-<file path="src/shared/ui/icon/icon.types.ts">
-export type IconName =
-	| 'sun'
-	| 'moon'
-	| 'logo'
-	| 'eye-opened'
-	| 'eye-closed'
-	| 'person'
-	| 'credit-card'
-	| 'pencil-to-square'
-	| 'floppy-disk'
-	| 'check'
-	| 'lock'
-	| 'clock'
-	| 'envelope'
-	| 'arrow-right'
-	| 'book-open'
-	| 'xmark';
+<file path="src/shared/types/course.types.ts">
+export interface BaseEntity {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface CourseEntity extends BaseEntity {
+	slug: string;
+	title: string;
+	description: string;
+	isPublished: boolean;
+}
+
+export interface LessonEntity extends BaseEntity {
+	courseId: string;
+	sequenceOrder: number;
+	title: string;
+	description: string | null;
+	videoUrl: string | null;
+	durationSeconds: number;
+	isFree: boolean;
+	hasCodeEditor: boolean;
+}
+
+export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
+	isCompleted: boolean;
+};
+
+export type CourseSkeletonLesson = Omit<LessonDetail, 'courseId' | 'videoUrl'>;
+
+export type CourseSkeleton = Omit<CourseEntity, 'createdAt' | 'updatedAt'> & {
+	lessons: CourseSkeletonLesson[];
+};
+
+export interface ToggleLessonProgressResponse {
+	completed: boolean;
+}
+
+export interface CreateCourseDto {
+	slug: string;
+	title: string;
+	description: string;
+	isPublished?: boolean;
+}
+
+export type UpdateCourseDto = Partial<CreateCourseDto>;
+
+export interface CreateLessonDto {
+	sequenceOrder: number;
+	title: string;
+	description?: string;
+	videoUrl?: string;
+	durationSeconds?: number;
+	isFree?: boolean;
+	hasCodeEditor?: boolean;
+}
+
+export type UpdateLessonDto = Partial<CreateLessonDto>;
+</file>
+
+<file path="src/shared/ui/button/button.component.scss">
+:host {
+	position: relative;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid transparent;
+	font-family:
+		system-ui,
+		-apple-system,
+		sans-serif;
+	font-weight: var(--font-weight-medium);
+	transition:
+		background-color var(--transition-fast),
+		color var(--transition-fast),
+		border-color var(--transition-fast),
+		opacity var(--transition-fast),
+		transform var(--transition-fast),
+		box-shadow var(--transition-fast);
+	cursor: pointer;
+	box-sizing: border-box;
+	outline: none;
+	text-decoration: none;
+
+	&:focus-visible {
+		box-shadow: 0 0 0 4px rgb(99 102 241 / 15%);
+		border-color: var(--border-focus);
+	}
+
+	&:active:not(:disabled, .app-button--disabled, .app-button--variant-fab) {
+		transform: scale(0.98);
+	}
+}
+
+:host(.app-button--disabled) {
+	opacity: var(--opacity-disabled);
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+:host(.app-button--full-width) {
+	width: 100%;
+}
+
+:host(.app-button--variant-fab) {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	width: 3.75rem;
+	height: 3.75rem;
+	padding: 0;
+	border-radius: var(--radius-full);
+}
+
+:host(.app-button--variant-filled.app-button--color-default),
+:host(.app-button--variant-fab.app-button--color-default) {
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	border-color: var(--border-light);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--border-light);
+	}
+}
+
+:host(.app-button--variant-filled.app-button--color-primary),
+:host(.app-button--variant-fab.app-button--color-primary) {
+	background-color: var(--brand-primary);
+	color: var(--text-on-dark);
+	border-color: var(--brand-primary);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--brand-hover);
+		border-color: var(--brand-hover);
+	}
+}
+
+:host(.app-button--variant-filled.app-button--color-error),
+:host(.app-button--variant-fab.app-button--color-error) {
+	background-color: var(--status-error);
+	color: var(--text-on-dark);
+	border-color: var(--status-error);
+}
+
+:host(.app-button--variant-filled.app-button--color-success),
+:host(.app-button--variant-fab.app-button--color-success) {
+	background-color: var(--status-success);
+	color: var(--text-on-dark);
+	border-color: var(--status-success);
+}
+
+:host(.app-button--variant-outline.app-button--color-default) {
+	background-color: transparent;
+	color: var(--text-primary);
+	border-color: var(--border-light);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--bg-main);
+	}
+}
+
+:host(.app-button--variant-outline.app-button--color-primary) {
+	background-color: transparent;
+	color: var(--brand-primary);
+	border-color: var(--brand-primary);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--brand-light);
+	}
+}
+
+:host(.app-button--variant-clear.app-button--color-default) {
+	background-color: transparent;
+	color: var(--text-muted);
+	border-color: transparent;
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--bg-main);
+		color: var(--text-primary);
+	}
+}
+
+:host(.app-button--variant-clear.app-button--color-primary) {
+	background-color: transparent;
+	color: var(--brand-primary);
+	border-color: transparent;
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--brand-light);
+	}
+}
+
+:host(.app-button--size-s:not(.app-button--variant-fab)) {
+	padding: var(--unit-1) var(--unit-3);
+	border-radius: var(--radius-xs);
+	font-size: var(--font-size-xs);
+}
+
+:host(.app-button--size-m:not(.app-button--variant-fab)) {
+	padding: var(--unit-2) var(--unit-4);
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-sm);
+}
+
+:host(.app-button--size-l:not(.app-button--variant-fab)) {
+	padding: var(--unit-3) var(--unit-6);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-base);
+}
+
+:host(.app-button--size-xl:not(.app-button--variant-fab)) {
+	padding: var(--unit-4) var(--unit-8);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-lg);
+}
+
+.app-button__loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: var(--unit-4);
+	height: var(--unit-4);
+	border: 2px solid currentcolor;
+	border-radius: var(--radius-full);
+	animation: spin 0.75s linear infinite;
+	transform: translate(-50%, -50%);
+	border-right-color: transparent;
+}
+
+@keyframes spin {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+</file>
+
+<file path="src/shared/ui/button/button.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	booleanAttribute,
+	computed,
+	input,
+} from '@angular/core';
+
+export type ButtonVariant = 'clear' | 'outline' | 'filled' | 'fab';
+export type ButtonColor = 'default' | 'primary' | 'error' | 'success';
+export type ButtonSize = 's' | 'm' | 'l' | 'xl';
+
+@Component({
+	selector: 'button[app-button], a[app-button]',
+	standalone: true,
+	templateUrl: './button.component.html',
+	styleUrl: './button.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	host: {
+		class: 'app-button',
+		'[class.app-button--variant-clear]': 'variant() === "clear"',
+		'[class.app-button--variant-outline]': 'variant() === "outline"',
+		'[class.app-button--variant-filled]': 'variant() === "filled"',
+		'[class.app-button--variant-fab]': 'variant() === "fab"',
+		'[class.app-button--color-default]': 'color() === "default"',
+		'[class.app-button--color-primary]': 'color() === "primary"',
+		'[class.app-button--color-error]': 'color() === "error"',
+		'[class.app-button--color-success]': 'color() === "success"',
+		'[class.app-button--size-s]': 'size() === "s"',
+		'[class.app-button--size-m]': 'size() === "m"',
+		'[class.app-button--size-l]': 'size() === "l"',
+		'[class.app-button--size-xl]': 'size() === "xl"',
+		'[class.app-button--full-width]': 'fullWidth()',
+		'[class.app-button--disabled]': 'isDisabled()',
+		'[class.app-button--loading]': 'loading()',
+		'[attr.disabled]': 'isDisabled() ? true : null',
+		'[attr.aria-busy]': 'loading() ? "true" : null',
+	},
+})
+export class ButtonComponent {
+	readonly variant = input<ButtonVariant>('filled');
+	readonly color = input<ButtonColor>('default');
+	readonly size = input<ButtonSize>('m');
+
+	readonly loading = input(false, { transform: booleanAttribute });
+	readonly disabled = input(false, { transform: booleanAttribute });
+	readonly fullWidth = input(false, { transform: booleanAttribute });
+
+	readonly isDisabled = computed(() => this.disabled() || this.loading());
+}
 </file>
 
 <file path="src/styles/_reset.scss">
@@ -3067,6 +3080,10 @@ canvas {
 	display: block;
 	max-width: 100%;
 	height: auto;
+}
+
+body.lock-scroll {
+	overflow: hidden;
 }
 
 svg {
@@ -3147,92 +3164,6 @@ textarea:disabled {
 }
 </file>
 
-<file path="src/widgets/course-sidebar/ui/course-sidebar.component.html">
-<aside class="sidebar">
-	<app-course-progress [progress]="progress()" />
-
-	<div class="lessons-container">
-		<h4 class="section-title">Лекции</h4>
-		<div class="lessons-list">
-			@for (lesson of lessons(); track lesson.id) {
-				<app-lesson-card
-					[lesson]="lesson"
-					[isActive]="lesson.id === activeLessonId()"
-					(click)="selectLesson.emit(lesson.id)"
-				/>
-			}
-		</div>
-	</div>
-</aside>
-</file>
-
-<file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
-:host {
-	display: block;
-	width: 100%;
-	height: calc(100dvh - var(--unit-8));
-}
-
-.sidebar {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-4);
-	height: 100%;
-}
-
-app-course-progress {
-	flex-shrink: 0;
-}
-
-.lessons-container {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	gap: var(--unit-4);
-	min-height: 0;
-	padding: var(--unit-5) 0;
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-}
-
-.section-title {
-	flex-shrink: 0;
-	margin: 0;
-	padding: 0 var(--unit-6);
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
-
-.lessons-list {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	gap: var(--unit-1);
-	width: 100%;
-	min-height: 0;
-	padding-right: var(--unit-4);
-	padding-left: var(--unit-6);
-	overflow-y: auto;
-	scrollbar-width: thin;
-	scrollbar-color: var(--text-muted) transparent;
-
-	&::-webkit-scrollbar {
-		width: var(--unit-1);
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: var(--text-muted);
-		border-radius: var(--radius-full);
-
-		&:hover {
-			background-color: var(--text-secondary);
-		}
-	}
-}
-</file>
-
 <file path="src/widgets/header/ui/header.component.scss">
 :host {
 	display: block;
@@ -3293,6 +3224,8 @@ app-course-progress {
 </file>
 
 <file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
+@use 'media' as m;
+
 :host {
 	display: block;
 	width: 100%;
@@ -3302,6 +3235,10 @@ app-course-progress {
 	display: flex;
 	flex-direction: column;
 	gap: var(--unit-8);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+	}
 }
 
 .lesson-content {
@@ -3313,6 +3250,11 @@ app-course-progress {
 	border: 1px solid var(--border-light);
 	border-radius: var(--radius-md);
 	font-family: var(--font-family-sans);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+		padding: var(--unit-4);
+	}
 
 	&__actions {
 		display: flex;
@@ -3703,6 +3645,205 @@ allowBuilds:
 }
 </file>
 
+<file path="src/pages/course-page/ui/course-page.component.html">
+<div class="course-page__mobile-action">
+	<button app-button type="button" (click)="toggleMobileMenu()" aria-label="Открыть меню курса">
+		<app-icon name="bars" size="m" />
+	</button>
+</div>
+
+<app-sidebar-layout class="course-page">
+	<div sidebar class="course-page__sidebar">
+		<app-course-sidebar
+			[lessons]="lessons()"
+			[progress]="progress()"
+			[activeLessonId]="currentLesson().id"
+			(selectLesson)="onSelectLesson($event)"
+		/>
+	</div>
+
+	<app-lesson-content
+		[lesson]="currentLesson()"
+		[videoUrl]="currentLesson().videoUrl"
+		[nextLesson]="nextLesson()"
+		(toggleComplete)="onToggleComplete($event)"
+		(selectLesson)="onSelectLesson($event)"
+	/>
+
+	<app-drawer-sidebar />
+</app-sidebar-layout>
+
+<app-drawer [(isOpen)]="isMobileMenuOpen" [showCloseBtn]="true">
+	<div class="mobile-sidebar-container">
+		<app-course-sidebar
+			[lessons]="lessons()"
+			[progress]="progress()"
+			[activeLessonId]="currentLesson().id"
+			(selectLesson)="onSelectLesson($event)"
+		/>
+	</div>
+</app-drawer>
+</file>
+
+<file path="src/pages/course-page/ui/course-page.component.ts">
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+
+import { CourseSidebarComponent } from '@widgets/course-sidebar';
+import { DrawerSidebarComponent } from '@widgets/drawer-sidebar';
+import { LessonContentComponent } from '@widgets/lesson-content';
+
+import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
+import { CourseSkeletonLesson } from '@shared/types/course.types';
+import { ButtonComponent } from '@shared/ui/button';
+import { DrawerComponent } from '@shared/ui/drawer';
+import { IconComponent } from '@shared/ui/icon';
+
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
+import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } from '../mock';
+
+@Component({
+	selector: 'app-course-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './course-page.component.html',
+	styleUrl: './course-page.component.scss',
+	imports: [
+		SidebarLayoutComponent,
+		CourseSidebarComponent,
+		LessonContentComponent,
+		DrawerSidebarComponent,
+		DrawerComponent,
+		IconComponent,
+		ButtonComponent,
+	],
+})
+export class CoursePageComponent {
+	readonly isMobileMenuOpen = signal<boolean>(false);
+
+	readonly progress = signal(MOCK_COURSE_PROGRESS);
+	readonly lessons = signal<CourseSkeletonLesson[]>(MOCK_LESSONS);
+	readonly currentLesson = signal(MOCK_LESSON);
+	readonly nextLesson = signal<CourseSkeletonLesson | null>(MOCK_NEXT_LESSON);
+
+	constructor() {
+		effect(() => {
+			if (this.isMobileMenuOpen()) {
+				document.body.classList.add('lock-scroll');
+			} else {
+				document.body.classList.remove('lock-scroll');
+			}
+		});
+	}
+
+	protected toggleMobileMenu(): void {
+		this.isMobileMenuOpen.update((state) => !state);
+	}
+
+	protected onSelectLesson(lessonId: string): void {
+		this.isMobileMenuOpen.set(false);
+		const found = this.lessons().find((l) => l.id === lessonId);
+		if (found) {
+			this.currentLesson.set({
+				...found,
+				description: found.description ?? '',
+				courseId: this.currentLesson().courseId,
+				videoUrl: '',
+			});
+		}
+	}
+
+	protected onToggleComplete(event: { id: string; completed: boolean }): void {
+		this.lessons.update((list) =>
+			list.map((l) => (l.id === event.id ? { ...l, isCompleted: event.completed } : l)),
+		);
+
+		if (this.currentLesson().id === event.id) {
+			this.currentLesson.update((l) => ({ ...l, isCompleted: event.completed }));
+		}
+	}
+}
+</file>
+
+<file path="src/pages/course-page/mock.ts">
+import { CourseProgress } from '@entities/course';
+
+import { CourseSkeletonLesson } from '@shared/types/course.types';
+
+export const MOCK_COURSE_PROGRESS: CourseProgress = {
+	totalLessons: 10,
+	completedLessons: 5,
+	percentage: 50,
+};
+
+export const MOCK_LESSONS: CourseSkeletonLesson[] = [
+	{
+		id: '64e4f4c5-ce96-455c-9c78-33d19bb9fdc3',
+		sequenceOrder: 1,
+		title: 'Введение в RXJS',
+		description: 'Разбор нового реактивного примитива и его применения.',
+		durationSeconds: 720,
+		isFree: true,
+		isCompleted: false,
+		hasCodeEditor: true,
+	},
+	{
+		id: '64e4f4c5-ce96-455c-9c78-33d19bb9f',
+		sequenceOrder: 2,
+		title: 'Введение',
+		description: 'Разбор нового реактивн',
+		durationSeconds: 720,
+		isFree: true,
+		isCompleted: false,
+		hasCodeEditor: true,
+	},
+];
+
+export const MOCK_LESSON = {
+	id: '64e4f4c5-ce96-455c-9c78-33d19bb9fdc3',
+	courseId: 'a2c0efd2-4e76-46a9-9a6f-09031360ca6e',
+	sequenceOrder: 1,
+	title: 'Введение в RXJS',
+	description: 'Разбор нового реактивного примитива и его применения.',
+	videoUrl: '',
+	durationSeconds: 720,
+	isFree: true,
+	hasCodeEditor: true,
+	isCompleted: false,
+};
+
+export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
+	id: '75f5a5d6-df12-466d-a890-44e20cc0aed4',
+	sequenceOrder: 2,
+	title: 'Введение в RXJS',
+	description: 'Изучаем новый встроенный механизм реактивности в Angular и его отличия от RxJS.',
+	durationSeconds: 900,
+	isFree: true,
+	hasCodeEditor: true,
+	isCompleted: false,
+};
+</file>
+
+<file path="src/shared/ui/icon/icon.types.ts">
+export type IconName =
+	| 'sun'
+	| 'moon'
+	| 'logo'
+	| 'eye-opened'
+	| 'eye-closed'
+	| 'person'
+	| 'credit-card'
+	| 'pencil-to-square'
+	| 'floppy-disk'
+	| 'check'
+	| 'lock'
+	| 'clock'
+	| 'envelope'
+	| 'arrow-right'
+	| 'book-open'
+	| 'xmark'
+	| 'bars';
+</file>
+
 <file path="src/styles/_tokens.scss">
 :root {
 	/* --- БАЗОВЫЕ ЦВЕТА И ФОНЫ --- */
@@ -3817,6 +3958,92 @@ allowBuilds:
 }
 </file>
 
+<file path="src/widgets/course-sidebar/ui/course-sidebar.component.html">
+<aside class="sidebar">
+	<app-course-progress [progress]="progress()" />
+
+	<div class="lessons-container">
+		<h4 class="section-title">Лекции</h4>
+		<div class="lessons-list">
+			@for (lesson of lessons(); track lesson.id) {
+				<app-lesson-card
+					[lesson]="lesson"
+					[isActive]="lesson.id === activeLessonId()"
+					(click)="selectLesson.emit(lesson.id)"
+				/>
+			}
+		</div>
+	</div>
+</aside>
+</file>
+
+<file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
+:host {
+	display: block;
+	width: 100%;
+	height: calc(100dvh - var(--unit-8));
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+	height: 100%;
+}
+
+app-course-progress {
+	flex-shrink: 0;
+}
+
+.lessons-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	gap: var(--unit-4);
+	min-height: 0;
+	padding: var(--unit-5) 0;
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+}
+
+.section-title {
+	flex-shrink: 0;
+	margin: 0;
+	padding: 0 var(--unit-6);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.lessons-list {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	gap: var(--unit-1);
+	width: 100%;
+	min-height: 0;
+	padding-right: var(--unit-4);
+	padding-left: var(--unit-6);
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--text-muted) transparent;
+
+	&::-webkit-scrollbar {
+		width: var(--unit-1);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--text-muted);
+		border-radius: var(--radius-full);
+
+		&:hover {
+			background-color: var(--text-secondary);
+		}
+	}
+}
+</file>
+
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.ts">
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
@@ -3876,6 +4103,9 @@ export class CourseSidebarComponent {
 						"tsConfig": "tsconfig.app.json",
 						"inlineStyleLanguage": "scss",
 						"styles": ["src/index.scss"],
+						"stylePreprocessorOptions": {
+							"includePaths": ["src/styles"]
+						},
 						"assets": [
 							{
 								"glob": "**/*",

@@ -3,18 +3,22 @@
 }
 
 <aside class="drawer-panel" [class.drawer-panel--open]="isOpen()" [attr.aria-hidden]="!isOpen()" role="dialog">
-	<button
-		app-button
-		type="button"
-		variant="clear"
-		color="default"
-		size="s"
-		(click)="close()"
-		class="drawer-panel__close"
-		aria-label="Закрыть панель"
-	>
-		<app-icon [name]="'xmark'" size="l" />
-	</button>
+	@if (showCloseBtn()) {
+		<button
+			app-button
+			type="button"
+			variant="clear"
+			color="default"
+			size="s"
+			(click)="close()"
+			class="drawer-panel__close"
+			[class.drawer-panel__close--left]="closeBtnPosition() === 'left'"
+			[class.drawer-panel__close--right]="closeBtnPosition() === 'right'"
+			aria-label="Закрыть панель"
+		>
+			<app-icon [name]="'xmark'" size="l" />
+		</button>
+	}
 
 	<header class="drawer-panel__header">
 		<ng-content select="[drawer-header]"></ng-content>

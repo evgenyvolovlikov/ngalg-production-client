@@ -14,4 +14,5 @@ export type IconName =
 	| 'envelope'
 	| 'arrow-right'
 	| 'book-open'
-	| 'xmark';
+	| 'xmark'
+	| 'bars';
