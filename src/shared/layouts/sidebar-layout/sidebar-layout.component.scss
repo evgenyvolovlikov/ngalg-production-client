@@ -65,7 +65,7 @@
 		padding: var(--unit-6);
 
 		@include m.media-below('lg') {
-			padding: var(--unit-4);
+			padding: var(--unit-0);
 		}
 	}
 }
