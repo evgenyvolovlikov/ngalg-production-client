@@ -1,0 +1,203 @@
+:host {
+	position: relative;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid transparent;
+	font-family:
+		system-ui,
+		-apple-system,
+		sans-serif;
+	font-weight: var(--font-weight-medium);
+	transition:
+		background-color var(--transition-fast),
+		color var(--transition-fast),
+		border-color var(--transition-fast),
+		opacity var(--transition-fast),
+		transform var(--transition-fast),
+		box-shadow var(--transition-fast);
+	cursor: pointer;
+	box-sizing: border-box;
+	outline: none;
+	text-decoration: none;
+
+	&:focus-visible {
+		box-shadow: 0 0 0 4px rgb(99 102 241 / 15%);
+		border-color: var(--border-focus);
+	}
+
+	&:active:not(:disabled, .app-button--disabled) {
+		transform: scale(0.98);
+	}
+}
+
+:host(.app-button--disabled) {
+	opacity: var(--opacity-disabled);
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+:host(.app-button--full-width) {
+	width: 100%;
+}
+
+:host(.app-button--variant-filled.app-button--color-default) {
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	border-color: var(--border-light);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--border-light);
+	}
+}
+
+:host(.app-button--variant-filled.app-button--color-primary) {
+	background-color: var(--brand-primary);
+	color: var(--text-on-dark);
+	border-color: var(--brand-primary);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--brand-hover);
+		border-color: var(--brand-hover);
+	}
+}
+
+:host(.app-button--variant-filled.app-button--color-error) {
+	background-color: var(--status-error);
+	color: var(--text-on-dark);
+	border-color: var(--status-error);
+
+	&:hover:not(.app-button--disabled) {
+		opacity: var(--opacity-hover);
+	}
+}
+
+:host(.app-button--variant-filled.app-button--color-success) {
+	background-color: var(--status-success);
+	color: var(--text-on-dark);
+	border-color: var(--status-success);
+
+	&:hover:not(.app-button--disabled) {
+		opacity: var(--opacity-hover);
+	}
+}
+
+:host(.app-button--variant-outline.app-button--color-default) {
+	background-color: transparent;
+	color: var(--text-primary);
+	border-color: var(--border-light);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--bg-main);
+	}
+}
+
+:host(.app-button--variant-outline.app-button--color-primary) {
+	background-color: transparent;
+	color: var(--brand-primary);
+	border-color: var(--brand-primary);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--brand-light);
+	}
+}
+
+:host(.app-button--variant-outline.app-button--color-error) {
+	background-color: transparent;
+	color: var(--status-error);
+	border-color: var(--status-error);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--status-error-bg);
+	}
+}
+
+:host(.app-button--variant-outline.app-button--color-success) {
+	background-color: transparent;
+	color: var(--status-success);
+	border-color: var(--status-success);
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--status-success-bg);
+	}
+}
+
+:host(.app-button--variant-clear.app-button--color-default) {
+	background-color: transparent;
+	color: var(--text-muted);
+	border-color: transparent;
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--bg-main);
+		color: var(--text-primary);
+	}
+}
+
+:host(.app-button--variant-clear.app-button--color-primary) {
+	background-color: transparent;
+	color: var(--brand-primary);
+	border-color: transparent;
+
+	&:hover:not(.app-button--disabled) {
+		background-color: var(--brand-light);
+	}
+}
+
+:host(.app-button--size-s) {
+	padding: var(--unit-1) var(--unit-3);
+	border-radius: var(--radius-xs);
+	font-size: var(--font-size-xs);
+}
+
+:host(.app-button--size-m) {
+	padding: var(--unit-2) var(--unit-4);
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-sm);
+}
+
+:host(.app-button--size-l) {
+	padding: var(--unit-3) var(--unit-6);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-base);
+}
+
+:host(.app-button--size-xl) {
+	padding: var(--unit-4) var(--unit-8);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-lg);
+}
+
+.app-button__content {
+	display: inline-flex;
+	gap: var(--unit-2);
+	justify-content: center;
+	align-items: center;
+	transition: opacity var(--transition-fast);
+
+	&--hidden {
+		opacity: 0;
+	}
+}
+
+.app-button__loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: var(--unit-4);
+	height: var(--unit-4);
+	border: 2px solid currentcolor;
+	border-radius: var(--radius-full);
+	animation: spin 0.75s linear infinite;
+	transform: translate(-50%, -50%);
+	border-right-color: transparent;
+}
+
+@keyframes spin {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}

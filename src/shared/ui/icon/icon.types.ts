@@ -11,4 +11,5 @@ export type IconName =
 	| 'check'
 	| 'lock'
 	| 'clock'
-	| 'envelope';
+	| 'envelope'
+	| 'arrow-right';

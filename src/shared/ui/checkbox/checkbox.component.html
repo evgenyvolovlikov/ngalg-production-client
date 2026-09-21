@@ -1,0 +1,27 @@
+<label class="checkbox" [class.checkbox--disabled]="disabled()">
+	<input
+		type="checkbox"
+		class="checkbox__input"
+		[id]="inputId()"
+		[checked]="checked()"
+		[disabled]="disabled()"
+		(change)="onChange($event)"
+	/>
+
+	<span class="checkbox__box" aria-hidden="true">
+		<svg class="checkbox__icon" viewBox="0 0 24 24">
+			<path
+				fill="none"
+				stroke="currentColor"
+				stroke-width="3"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M5 13l4 4L19 7"
+			/>
+		</svg>
+	</span>
+
+	<span class="checkbox__label">
+		<ng-content></ng-content>
+	</span>
+</label>

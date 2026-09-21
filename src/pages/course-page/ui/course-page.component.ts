@@ -6,7 +6,7 @@ import { LessonContentComponent } from '@widgets/lesson-content';
 import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
 
 // eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS } from '../mock';
+import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } from '../mock';
 
 @Component({
 	selector: 'app-course-page',
@@ -20,4 +20,5 @@ export class CoursePageComponent {
 	progress = MOCK_COURSE_PROGRESS;
 	lessons = MOCK_LESSONS;
 	lesson = MOCK_LESSON;
+	nextLesson = MOCK_NEXT_LESSON;
 }

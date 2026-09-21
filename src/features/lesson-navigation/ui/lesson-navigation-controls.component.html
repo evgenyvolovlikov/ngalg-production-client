@@ -1,0 +1,14 @@
+<div class="navigation-controls">
+	@if (nextLesson(); as next) {
+		<button
+			app-button
+			type="button"
+			variant="filled"
+			[disabled]="!next.isFree && !next.isCompleted"
+			(click)="nextLessonSelect.emit(next.id)"
+			class="button"
+		>
+			Следующий урок <app-icon [name]="'arrow-right'" size="s" />
+		</button>
+	}
+</div>

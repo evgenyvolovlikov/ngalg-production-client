@@ -11,9 +11,19 @@ export const MOCK_COURSE_PROGRESS: CourseProgress = {
 export const MOCK_LESSONS: CourseSkeletonLesson[] = [
 	{
 		id: '64e4f4c5-ce96-455c-9c78-33d19bb9fdc3',
-		sequenceOrder: 2,
+		sequenceOrder: 1,
 		title: 'Введение в RXJS',
 		description: 'Разбор нового реактивного примитива и его применения.',
+		durationSeconds: 720,
+		isFree: true,
+		isCompleted: false,
+	},
+
+	{
+		id: '64e4f4c5-ce96-455c-9c78-33d19bb9f',
+		sequenceOrder: 2,
+		title: 'Введение',
+		description: 'Разбор нового реактивн',
 		durationSeconds: 720,
 		isFree: true,
 		isCompleted: false,
@@ -23,12 +33,22 @@ export const MOCK_LESSONS: CourseSkeletonLesson[] = [
 export const MOCK_LESSON = {
 	id: '64e4f4c5-ce96-455c-9c78-33d19bb9fdc3',
 	courseId: 'a2c0efd2-4e76-46a9-9a6f-09031360ca6e',
-	sequenceOrder: 2,
+	sequenceOrder: 1,
 	title: 'Введение в RXJS',
 	description: 'Разбор нового реактивного примитива и его применения.',
 	videoUrl: 'https://example.com/videos/lesson-1.mp4',
 	durationSeconds: 720,
 	isFree: true,
 	hasCodeEditor: true,
+	isCompleted: false,
+};
+
+export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
+	id: '75f5a5d6-df12-466d-a890-44e20cc0aed4',
+	sequenceOrder: 2,
+	title: 'Введение в RXJS',
+	description: 'Изучаем новый встроенный механизм реактивности в Angular и его отличия от RxJS.',
+	durationSeconds: 900, // 15 минут
+	isFree: true,
 	isCompleted: false,
 };
