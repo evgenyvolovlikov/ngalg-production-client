@@ -1,12 +1,16 @@
+@use 'media' as m;
+
 :host {
-	display: block;
+	display: flex;
+	flex-direction: column;
 	width: 100%;
+	min-height: 100dvh;
 }
 
 .app-layout {
 	display: flex;
 	flex-direction: column;
-	min-height: 100dvh;
+	flex-grow: 1;
 	background-color: var(--bg-main);
 	color: var(--text-primary);
 	transition:
@@ -19,14 +23,27 @@
 		flex-grow: 1;
 		padding-top: var(--unit-6);
 		padding-bottom: var(--unit-8);
+
+		@include m.media-below('lg') {
+			padding-top: var(--unit-4);
+			padding-bottom: var(--unit-4);
+		}
 	}
 
 	&__container {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
 		width: 100%;
 		max-width: var(--container-xxl);
 		margin: 0 auto;
 		padding-right: var(--unit-8);
 		padding-left: var(--unit-8);
+
+		@include m.media-below('lg') {
+			padding-right: var(--unit-4);
+			padding-left: var(--unit-4);
+		}
 	}
 
 	&__header {

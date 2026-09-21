@@ -1,7 +1,9 @@
 @use 'media' as m;
 
 :host {
-	display: block;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
 	width: 100%;
 }
 

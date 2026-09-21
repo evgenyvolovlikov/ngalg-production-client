@@ -4,12 +4,14 @@
 	--sidebar-width: 18rem;
 
 	display: block;
+	flex-grow: 1;
 	width: 100%;
 	background-color: var(--bg-main);
 }
 
 .sidebar-layout {
 	display: grid;
+	flex-grow: 1;
 	grid-template-columns: var(--sidebar-width) 1fr;
 	gap: var(--unit-8);
 	align-items: start;
@@ -56,12 +58,11 @@
 	}
 
 	&__content {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
 		min-width: 0;
 		padding: var(--unit-6);
-		background-color: var(--bg-card);
-		border: 1px solid var(--border-light);
-		border-radius: var(--radius-lg);
-		box-shadow: var(--shadow-sm);
 
 		@include m.media-below('lg') {
 			padding: var(--unit-4);
