@@ -41,6 +41,31 @@
 	width: 100%;
 }
 
+/* --- РАЗМЕРЫ (Паддинги по умолчанию) --- */
+:host(.app-button--size-s:not(.app-button--variant-fab)) {
+	padding: var(--unit-1) var(--unit-3);
+	border-radius: var(--radius-xs);
+	font-size: var(--font-size-xs);
+}
+
+:host(.app-button--size-m:not(.app-button--variant-fab)) {
+	padding: var(--unit-2) var(--unit-4);
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-sm);
+}
+
+:host(.app-button--size-l:not(.app-button--variant-fab)) {
+	padding: var(--unit-3) var(--unit-6);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-base);
+}
+
+:host(.app-button--size-xl:not(.app-button--variant-fab)) {
+	padding: var(--unit-4) var(--unit-8);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-lg);
+}
+
 :host(.app-button--variant-fab) {
 	display: inline-flex;
 	justify-content: center;
@@ -51,6 +76,7 @@
 	border-radius: var(--radius-full);
 }
 
+/* --- ВАРИАНТЫ СТИЛЕЙ --- */
 :host(.app-button--variant-filled.app-button--color-default),
 :host(.app-button--variant-fab.app-button--color-default) {
 	background-color: var(--bg-main);
@@ -109,48 +135,27 @@
 }
 
 :host(.app-button--variant-clear.app-button--color-default) {
+	padding: 0;
 	background-color: transparent;
 	color: var(--text-muted);
 	border-color: transparent;
 
 	&:hover:not(.app-button--disabled) {
-		background-color: var(--bg-main);
+		background-color: transparent;
 		color: var(--text-primary);
 	}
 }
 
 :host(.app-button--variant-clear.app-button--color-primary) {
+	padding: 0;
 	background-color: transparent;
 	color: var(--brand-primary);
 	border-color: transparent;
 
 	&:hover:not(.app-button--disabled) {
-		background-color: var(--brand-light);
+		background-color: transparent;
+		color: var(--brand-hover);
 	}
-}
-
-:host(.app-button--size-s:not(.app-button--variant-fab)) {
-	padding: var(--unit-1) var(--unit-3);
-	border-radius: var(--radius-xs);
-	font-size: var(--font-size-xs);
-}
-
-:host(.app-button--size-m:not(.app-button--variant-fab)) {
-	padding: var(--unit-2) var(--unit-4);
-	border-radius: var(--radius-sm);
-	font-size: var(--font-size-sm);
-}
-
-:host(.app-button--size-l:not(.app-button--variant-fab)) {
-	padding: var(--unit-3) var(--unit-6);
-	border-radius: var(--radius-md);
-	font-size: var(--font-size-base);
-}
-
-:host(.app-button--size-xl:not(.app-button--variant-fab)) {
-	padding: var(--unit-4) var(--unit-8);
-	border-radius: var(--radius-md);
-	font-size: var(--font-size-lg);
 }
 
 .app-button__loader {

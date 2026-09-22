@@ -3,5 +3,9 @@
 		<a routerLink="/" class="header__logo">
 			<span>NGALG</span>
 		</a>
+
+		<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">Войти</button>
 	</div>
 </header>
+
+<app-auth-by-github [(isOpen)]="isAuthOpen" />

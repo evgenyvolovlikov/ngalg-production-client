@@ -104,6 +104,8 @@ src/
       app.component.ts
   entities/
     course/
+      api/
+        course-api.service.ts
       model/
         types/
           course-progress.types.ts
@@ -124,7 +126,14 @@ src/
           lesson-header.component.scss
           lesson-header.component.ts
       index.ts
+  environments/
+    environment.development.ts
+    environment.ts
   features/
+    auth-by-github/
+      ui/
+        auth-by-github.component.ts
+      index.ts
     lesson-navigation/
       ui/
         lesson-navigation-controls.component.html
@@ -138,6 +147,9 @@ src/
       index.ts
   pages/
     course-page/
+      lib/
+        guards/
+          course.guard.ts
       ui/
         course-page.component.html
         course-page.component.scss
@@ -145,8 +157,11 @@ src/
       index.ts
       mock.ts
   shared/
+    api/
+      api.interceptor.ts
+      base-api.service.ts
     config/
-      index.ts
+      environment.config.ts
       routes.config.ts
     layouts/
       sidebar-layout/
@@ -238,6 +253,14 @@ vercel.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/features/auth-by-github/ui/auth-by-github.component.ts">
+import { Component } from '@angular/core';
+</file>
+
+<file path="src/features/auth-by-github/index.ts">
+
+</file>
 
 <file path=".husky/commit-msg">
 pnpm exec commitlint --edit "$1"
@@ -994,6 +1017,24 @@ import { HeaderComponent } from '@widgets/header';
 export class MainLayoutComponent {}
 </file>
 
+<file path="src/entities/course/api/course-api.service.ts">
+import { Injectable } from '@angular/core';
+
+import { Observable } from 'rxjs';
+
+import { BaseApiService } from '@shared/api/base-api.service';
+import { CourseSkeleton } from '@shared/types/course.types';
+
+@Injectable({ providedIn: 'root' })
+export class CourseApiService extends BaseApiService {
+	private readonly coursesPath = 'courses';
+
+	getCourseSkeleton(slug: string): Observable<CourseSkeleton> {
+		return this.http.get<CourseSkeleton>(`/${this.coursesPath}/${slug}`);
+	}
+}
+</file>
+
 <file path="src/entities/course/model/types/course-progress.types.ts">
 export interface CourseProgress {
 	totalLessons: number;
@@ -1035,11 +1076,6 @@ import { CourseProgress } from '../../model/types/course-progress.types';
 export class CourseProgressComponent {
 	readonly progress = input.required<CourseProgress>();
 }
-</file>
-
-<file path="src/entities/course/index.ts">
-export * from './ui/course-progress/course-progress.component';
-export * from './model/types/course-progress.types';
 </file>
 
 <file path="src/entities/lesson/ui/lesson-card/lesson-card.component.html">
@@ -1098,6 +1134,20 @@ import { IconComponent } from '@shared/ui/icon';
 export class LessonHeaderComponent {
 	readonly lesson = input.required<CourseSkeletonLesson>();
 }
+</file>
+
+<file path="src/environments/environment.development.ts">
+export const environment = {
+	production: false,
+	apiUrl: 'http://localhost:3000/api',
+};
+</file>
+
+<file path="src/environments/environment.ts">
+export const environment = {
+	production: true,
+	apiUrl: 'https://ngalg/api',
+};
 </file>
 
 <file path="src/features/lesson-navigation/ui/lesson-navigation-controls.component.html">
@@ -1164,8 +1214,153 @@ export class MarkLessonWatchedComponent {
 export * from './ui/mark-lesson-watched.component';
 </file>
 
-<file path="src/shared/config/index.ts">
-export * from './routes.config';
+<file path="src/pages/course-page/lib/guards/course.guard.ts">
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
+const ALLOWED_SLUGS = ['frontend', 'backend'];
+
+export const courseSlugGuard: CanActivateFn = (route) => {
+	const router = inject(Router);
+	const slug = route.paramMap.get('slug');
+
+	if (slug && ALLOWED_SLUGS.includes(slug)) {
+		return true;
+	}
+
+	return router.createUrlTree(['/frontend']);
+};
+</file>
+
+<file path="src/shared/api/api.interceptor.ts">
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+
+import { ENVIRONMENT } from '../config/environment.config';
+
+export const apiInterceptor: HttpInterceptorFn = (req, next) => {
+	const env = inject(ENVIRONMENT, { optional: true });
+	const baseUrl = env?.apiUrl;
+
+	if (!baseUrl || req.url.startsWith('http://') || req.url.startsWith('https://')) {
+		return next(req);
+	}
+
+	const apiReq = req.clone({
+		url: `${baseUrl.replace(/\/$/, '')}/${req.url.replace(/^\//, '')}`,
+	});
+
+	return next(apiReq);
+};
+</file>
+
+<file path="src/shared/api/base-api.service.ts">
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { inject } from '@angular/core';
+
+import { Observable, catchError, throwError } from 'rxjs';
+
+export type ApiQueryParams = Record<
+	string,
+	string | number | boolean | null | undefined | unknown[] | object
+>;
+
+export abstract class BaseApiService {
+	protected readonly http = inject(HttpClient);
+
+	/**
+	 * GET запрос
+	 * @template T Тип возвращаемого ответа бэкенда
+	 * @template P Тип Query-параметров (DTO)
+	 */
+	protected get<T, P extends ApiQueryParams = ApiQueryParams>(
+		endpoint: string,
+		params?: P,
+	): Observable<T> {
+		return this.http
+			.get<T>(endpoint, { params: this.buildParams(params) })
+			.pipe(catchError((err: HttpErrorResponse) => this.handleError(err)));
+	}
+
+	/**
+	 * POST запрос
+	 * @template T Тип возвращаемого ответа бэкенда
+	 * @template R Тип тела запроса (Request DTO)
+	 */
+	protected post<T, R = unknown>(endpoint: string, body?: R): Observable<T> {
+		return this.http
+			.post<T>(endpoint, body)
+			.pipe(catchError((err: HttpErrorResponse) => this.handleError(err)));
+	}
+
+	/**
+	 * PATCH запрос
+	 * @template T Тип возвращаемого ответа бэкенда
+	 * @template R Тип тела запроса (Request DTO)
+	 */
+	protected patch<T, R = unknown>(endpoint: string, body?: R): Observable<T> {
+		return this.http
+			.patch<T>(endpoint, body)
+			.pipe(catchError((err: HttpErrorResponse) => this.handleError(err)));
+	}
+
+	/**
+	 * DELETE запрос
+	 * @template T Тип возвращаемого ответа бэкенда
+	 */
+	protected delete<T>(endpoint: string): Observable<T> {
+		return this.http
+			.delete<T>(endpoint)
+			.pipe(catchError((err: HttpErrorResponse) => this.handleError(err)));
+	}
+
+	/**
+	 * Преобразует объект параметров в иммутабельный HttpParams для Angular
+	 */
+	private buildParams(params?: ApiQueryParams): HttpParams {
+		let httpParams = new HttpParams();
+		if (!params) return httpParams;
+
+		Object.entries(params).forEach(([key, value]) => {
+			if (value === null || value === undefined) return;
+
+			if (Array.isArray(value)) {
+				value.forEach((item: unknown) => {
+					const itemValue =
+						typeof item === 'object' && item !== null
+							? JSON.stringify(item)
+							: String(item);
+					httpParams = httpParams.append(key, itemValue);
+				});
+			} else if (typeof value === 'object') {
+				httpParams = httpParams.set(key, JSON.stringify(value));
+			} else {
+				httpParams = httpParams.set(key, String(value));
+			}
+		});
+
+		return httpParams;
+	}
+
+	/**
+	 * Централизованный обработчик ошибок HTTP-запросов
+	 */
+	protected handleError(error: HttpErrorResponse): Observable<never> {
+		console.error('API Error произошла по адресу:', error.url, error);
+		return throwError(() => error);
+	}
+}
+</file>
+
+<file path="src/shared/config/environment.config.ts">
+import { InjectionToken } from '@angular/core';
+
+export interface EnvironmentToken {
+	production: boolean;
+	apiUrl: string;
+}
+
+export const ENVIRONMENT = new InjectionToken<EnvironmentToken>('ENVIRONMENT');
 </file>
 
 <file path="src/shared/layouts/sidebar-layout/index.ts">
@@ -2062,57 +2257,6 @@ jobs:
                   retention-days: 7
 </file>
 
-<file path="src/app/providers/app.config.ts">
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-
-import { APP_ROUTES } from '../routes/app.routes';
-
-export const appConfig: ApplicationConfig = {
-	providers: [provideRouter(APP_ROUTES)],
-};
-</file>
-
-<file path="src/app/routes/app.routes.ts">
-import { Routes } from '@angular/router';
-
-import { RouteSegments } from '@shared/config';
-
-export const APP_ROUTES: Routes = [
-	{
-		path: '',
-		loadComponent: () =>
-			import('../layouts/main-layout/main-layout.component').then(
-				(m) => m.MainLayoutComponent,
-			),
-		children: [
-			{
-				path: '',
-				pathMatch: 'full',
-				redirectTo: RouteSegments.FRONTEND,
-			},
-			{
-				path: RouteSegments.FRONTEND,
-				loadComponent: () =>
-					import('@pages/course-page').then((c) => c.CoursePageComponent),
-				children: [
-					{
-						path: '',
-						redirectTo: 'overview',
-						pathMatch: 'full',
-					},
-				],
-			},
-		],
-	},
-
-	{
-		path: RouteSegments.WILDCARD,
-		redirectTo: RouteSegments.FRONTEND,
-	},
-];
-</file>
-
 <file path="src/app/ui/app.component.ts">
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
@@ -2127,58 +2271,10 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {}
 </file>
 
-<file path="src/entities/course/ui/course-progress/course-progress.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.course-progress-card {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-6);
-	padding: var(--unit-6) var(--unit-6) var(--unit-4) var(--unit-6);
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-
-	@include m.media-below('lg') {
-		padding: var(--unit-4);
-		background-color: unset;
-		border: unset;
-		border-radius: unset;
-	}
-}
-
-.title {
-	margin: 0;
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
-
-.chart-container {
-	display: flex;
-	justify-content: center;
-	width: 100%;
-}
-
-.stats {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding-top: var(--unit-4);
-	font-size: var(--font-size-sm);
-	color: var(--text-secondary);
-	border-top: 1px solid var(--border-light);
-
-	.stats-value {
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-	}
-}
+<file path="src/entities/course/index.ts">
+export * from './ui/course-progress/course-progress.component';
+export * from './model/types/course-progress.types';
+export * from './api/course-api.service';
 </file>
 
 <file path="src/entities/lesson/ui/lesson-card/lesson-card.component.scss">
@@ -2374,10 +2470,6 @@ export class LessonNavigationControlsComponent {
 	readonly nextLesson = input<CourseSkeletonLesson | null>(null);
 	readonly nextLessonSelect = output<string>();
 }
-</file>
-
-<file path="src/pages/course-page/index.ts">
-export * from './ui/course-page.component';
 </file>
 
 <file path="src/shared/config/routes.config.ts">
@@ -2712,113 +2804,6 @@ export class ButtonComponent {
 		<ng-content></ng-content>
 	</main>
 </aside>
-</file>
-
-<file path="src/shared/ui/drawer/drawer.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-}
-
-.drawer-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: var(--z-modal-backdrop);
-	width: 100vw;
-	height: 100vh;
-	background-color: rgb(0 0 0 / 20%);
-	animation: drawer-fade-in var(--transition-fast) forwards;
-	backdrop-filter: blur(2px);
-}
-
-.drawer-panel {
-	position: fixed;
-	top: 0;
-	right: 0;
-	z-index: var(--z-modal);
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	max-width: 26rem;
-	height: 100vh;
-	background-color: var(--bg-card);
-	box-shadow: var(--shadow-md);
-	transition: transform var(--transition-base);
-	border-left: 1px solid var(--border-light);
-	transform: translateX(100%);
-
-	&--open {
-		transform: translateX(0);
-	}
-
-	&__close {
-		position: absolute;
-		top: var(--unit-4);
-		left: var(--unit-4);
-		z-index: var(--z-elevate);
-		font-size: var(--font-size-base);
-		color: var(--text-secondary);
-
-		&--left {
-			right: auto;
-			left: var(--unit-4);
-		}
-
-		&--right {
-			right: var(--unit-4);
-			left: auto;
-		}
-	}
-
-	&__header {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: var(--unit-6);
-
-		@include m.media-below('lg') {
-			padding: var(--unit-0);
-		}
-	}
-
-	&__content {
-		flex-grow: 1;
-		padding: var(--unit-6);
-		overflow-y: auto;
-		scrollbar-width: thin;
-		scrollbar-color: var(--text-muted) transparent;
-
-		@include m.media-below('lg') {
-			padding: var(--unit-0);
-		}
-
-		&::-webkit-scrollbar {
-			width: var(--unit-1);
-		}
-
-		&::-webkit-scrollbar-thumb {
-			background-color: var(--text-muted);
-			border-radius: var(--radius-full);
-
-			&:hover {
-				background-color: var(--text-secondary);
-			}
-		}
-	}
-}
-
-@keyframes drawer-fade-in {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
-}
 </file>
 
 <file path="src/shared/ui/drawer/drawer.component.ts">
@@ -3386,6 +3371,119 @@ allowBuilds:
 }
 </file>
 
+<file path="src/app/providers/app.config.ts">
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+
+import { apiInterceptor } from '@shared/api/api.interceptor';
+import { ENVIRONMENT } from '@shared/config/environment.config';
+
+import { environment } from '../../environments/environment';
+import { APP_ROUTES } from '../routes/app.routes';
+
+export const appConfig: ApplicationConfig = {
+	providers: [
+		provideRouter(APP_ROUTES, withComponentInputBinding()),
+		provideHttpClient(withInterceptors([apiInterceptor])),
+		{
+			provide: ENVIRONMENT,
+			useValue: environment,
+		},
+	],
+};
+</file>
+
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
+
+import { courseSlugGuard } from '@pages/course-page';
+
+import { RouteSegments } from '@shared/config/routes.config';
+
+export const APP_ROUTES: Routes = [
+	{
+		path: '',
+		loadComponent: () =>
+			import('../layouts/main-layout/main-layout.component').then(
+				(m) => m.MainLayoutComponent,
+			),
+		children: [
+			{
+				path: '',
+				pathMatch: 'full',
+				redirectTo: 'frontend',
+			},
+			{
+				path: ':slug',
+				canActivate: [courseSlugGuard],
+				loadComponent: () =>
+					import('@pages/course-page').then((c) => c.CoursePageComponent),
+			},
+		],
+	},
+	{
+		path: RouteSegments.WILDCARD,
+		redirectTo: 'frontend',
+	},
+];
+</file>
+
+<file path="src/entities/course/ui/course-progress/course-progress.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.course-progress-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	padding: var(--unit-6) var(--unit-6) var(--unit-4) var(--unit-6);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+
+	@include m.media-below('lg') {
+		padding: var(--unit-4);
+		background-color: unset;
+		border: unset;
+		border-radius: unset;
+	}
+}
+
+.title {
+	display: flex;
+	margin: 0;
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.chart-container {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.stats {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: var(--unit-4);
+	font-size: var(--font-size-sm);
+	color: var(--text-secondary);
+	border-top: 1px solid var(--border-light);
+
+	.stats-value {
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+}
+</file>
+
 <file path="src/pages/course-page/ui/course-page.component.scss">
 @use 'media' as m;
 
@@ -3417,6 +3515,11 @@ allowBuilds:
 		}
 	}
 }
+</file>
+
+<file path="src/pages/course-page/index.ts">
+export * from './ui/course-page.component';
+export * from './lib/guards/course.guard';
 </file>
 
 <file path="src/pages/course-page/mock.ts">
@@ -3476,6 +3579,113 @@ export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
 	hasCodeEditor: true,
 	isCompleted: false,
 };
+</file>
+
+<file path="src/shared/ui/drawer/drawer.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+}
+
+.drawer-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: var(--z-modal-backdrop);
+	width: 100vw;
+	height: 100vh;
+	background-color: rgb(0 0 0 / 20%);
+	animation: drawer-fade-in var(--transition-fast) forwards;
+	backdrop-filter: blur(2px);
+}
+
+.drawer-panel {
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: var(--z-modal);
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 26rem;
+	height: 100vh;
+	background-color: var(--bg-card);
+	box-shadow: var(--shadow-md);
+	transition: transform var(--transition-base);
+	border-left: 1px solid var(--border-light);
+	transform: translateX(100%);
+
+	&--open {
+		transform: translateX(0);
+	}
+
+	&__close {
+		position: absolute;
+		top: var(--unit-4);
+		left: var(--unit-4);
+		z-index: var(--z-elevate);
+		font-size: var(--font-size-base);
+		color: var(--text-secondary);
+
+		&--left {
+			right: auto;
+			left: var(--unit-4);
+		}
+
+		&--right {
+			right: var(--unit-4);
+			left: auto;
+		}
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: var(--unit-6);
+
+		@include m.media-below('lg') {
+			padding: var(--unit-0);
+		}
+	}
+
+	&__content {
+		flex-grow: 1;
+		padding: var(--unit-6);
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: var(--text-muted) transparent;
+
+		@include m.media-below('lg') {
+			padding: var(--unit-0);
+		}
+
+		&::-webkit-scrollbar {
+			width: var(--unit-1);
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: var(--text-muted);
+			border-radius: var(--radius-full);
+
+			&:hover {
+				background-color: var(--text-secondary);
+			}
+		}
+	}
+}
+
+@keyframes drawer-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
 </file>
 
 <file path="src/styles/_reset.scss">
@@ -3759,88 +3969,6 @@ textarea:disabled {
 		</div>
 	</div>
 </aside>
-</file>
-
-<file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-	height: calc(100dvh - var(--unit-8));
-
-	@include m.media-below('lg') {
-		height: calc(100dvh - var(--unit-4));
-	}
-}
-
-.sidebar {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-4);
-	height: 100%;
-
-	@include m.media-below('lg') {
-		gap: var(--unit-2);
-	}
-}
-
-app-course-progress {
-	flex-shrink: 0;
-}
-
-.lessons-container {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	gap: var(--unit-4);
-	min-height: 0;
-	padding: var(--unit-5) 0;
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-
-	@include m.media-below('lg') {
-		background-color: unset;
-		border: unset;
-		border-radius: unset;
-	}
-}
-
-.section-title {
-	flex-shrink: 0;
-	margin: 0;
-	padding: 0 var(--unit-4);
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
-
-.lessons-list {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	gap: var(--unit-1);
-	width: 100%;
-	min-height: 0;
-	padding: 0 var(--unit-4);
-	overflow-y: auto;
-	scrollbar-width: thin;
-	scrollbar-color: var(--text-muted) transparent;
-
-	&::-webkit-scrollbar {
-		width: var(--unit-1);
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: var(--text-muted);
-		border-radius: var(--radius-full);
-
-		&:hover {
-			background-color: var(--text-secondary);
-		}
-	}
-}
 </file>
 
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.ts">
@@ -4133,6 +4261,160 @@ export class CoursePageComponent {
 }
 </file>
 
+<file path="src/shared/ui/icon/icon.types.ts">
+export type IconName =
+	| 'sun'
+	| 'moon'
+	| 'logo'
+	| 'eye-opened'
+	| 'eye-closed'
+	| 'person'
+	| 'credit-card'
+	| 'pencil-to-square'
+	| 'floppy-disk'
+	| 'check'
+	| 'lock'
+	| 'clock'
+	| 'envelope'
+	| 'arrow-right'
+	| 'book-open'
+	| 'xmark'
+	| 'bars';
+</file>
+
+<file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+	height: calc(100dvh - var(--unit-8));
+
+	@include m.media-below('lg') {
+		height: calc(100dvh - var(--unit-4));
+	}
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+	height: 100%;
+
+	@include m.media-below('lg') {
+		gap: var(--unit-2);
+	}
+}
+
+app-course-progress {
+	flex-shrink: 0;
+}
+
+.lessons-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	gap: var(--unit-4);
+	min-height: 0;
+	padding: var(--unit-5) 0;
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+
+	@include m.media-below('lg') {
+		background-color: unset;
+		border: unset;
+		border-radius: unset;
+	}
+}
+
+.section-title {
+	flex-shrink: 0;
+	margin: 0;
+	padding: 0 var(--unit-4);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.lessons-list {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	gap: var(--unit-1);
+	width: 100%;
+	min-height: 0;
+	padding: 0 var(--unit-4);
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--text-muted) transparent;
+
+	&::-webkit-scrollbar {
+		width: var(--unit-1);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--text-muted);
+		border-radius: var(--radius-full);
+
+		&:hover {
+			background-color: var(--text-secondary);
+		}
+	}
+}
+</file>
+
+<file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.lesson-box {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-8);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+	}
+}
+
+.lesson-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	padding: var(--unit-8);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	font-family: var(--font-family-sans);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+		padding: var(--unit-3);
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--unit-4);
+		justify-content: flex-end;
+		align-items: center;
+		margin-top: var(--unit-2);
+		padding-top: var(--unit-6);
+		border-top: 1px solid var(--border-light);
+	}
+}
+
+.lesson-button-next {
+	display: flex;
+	justify-content: end;
+}
+</file>
+
 <file path="src/shared/layouts/sidebar-layout/sidebar-layout.component.scss">
 @use 'media' as m;
 
@@ -4198,84 +4480,7 @@ export class CoursePageComponent {
 		flex-direction: column;
 		flex-grow: 1;
 		min-width: 0;
-		padding: var(--unit-6);
-
-		@include m.media-below('lg') {
-			padding: var(--unit-0);
-		}
 	}
-}
-</file>
-
-<file path="src/shared/ui/icon/icon.types.ts">
-export type IconName =
-	| 'sun'
-	| 'moon'
-	| 'logo'
-	| 'eye-opened'
-	| 'eye-closed'
-	| 'person'
-	| 'credit-card'
-	| 'pencil-to-square'
-	| 'floppy-disk'
-	| 'check'
-	| 'lock'
-	| 'clock'
-	| 'envelope'
-	| 'arrow-right'
-	| 'book-open'
-	| 'xmark'
-	| 'bars';
-</file>
-
-<file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.lesson-box {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-8);
-
-	@include m.media-below('lg') {
-		gap: var(--unit-4);
-	}
-}
-
-.lesson-content {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-6);
-	padding: var(--unit-8);
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-	font-family: var(--font-family-sans);
-
-	@include m.media-below('lg') {
-		gap: var(--unit-4);
-		padding: var(--unit-3);
-	}
-
-	&__actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--unit-4);
-		justify-content: flex-end;
-		align-items: center;
-		margin-top: var(--unit-2);
-		padding-top: var(--unit-6);
-		border-top: 1px solid var(--border-light);
-	}
-}
-
-.lesson-button-next {
-	display: flex;
-	justify-content: end;
 }
 </file>
 
@@ -4348,7 +4553,13 @@ export type IconName =
 								"scripts": true,
 								"styles": true
 							},
-							"namedChunks": true
+							"namedChunks": true,
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.development.ts"
+								}
+							]
 						}
 					},
 					"defaultConfiguration": "production"

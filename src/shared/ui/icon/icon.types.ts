@@ -15,4 +15,5 @@ export type IconName =
 	| 'arrow-right'
 	| 'book-open'
 	| 'xmark'
-	| 'bars';
+	| 'bars'
+	| 'logo-github';
