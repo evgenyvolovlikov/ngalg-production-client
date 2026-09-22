@@ -1,3 +1,5 @@
+@use 'media' as m;
+
 :host {
 	display: block;
 }
@@ -56,7 +58,13 @@
 	&__header {
 		display: flex;
 		flex-direction: column;
-		padding: var(--unit-6) var(--unit-6);
+		justify-content: center;
+		align-items: center;
+		padding: var(--unit-6);
+
+		@include m.media-below('lg') {
+			padding: var(--unit-0);
+		}
 	}
 
 	&__content {
@@ -65,6 +73,10 @@
 		overflow-y: auto;
 		scrollbar-width: thin;
 		scrollbar-color: var(--text-muted) transparent;
+
+		@include m.media-below('lg') {
+			padding: var(--unit-0);
+		}
 
 		&::-webkit-scrollbar {
 			width: var(--unit-1);

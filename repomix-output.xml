@@ -239,103 +239,6 @@ vercel.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="public/assets/bars.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.25 3.25A.75.75 0 0 1 2 2.5h12A.75.75 0 0 1 14 4H2a.75.75 0 0 1-.75-.75m0 4.75A.75.75 0 0 1 2 7.25h12a.75.75 0 0 1 0 1.5H2A.75.75 0 0 1 1.25 8M2 12a.75.75 0 0 0 0 1.5h12a.75.75 0 0 0 0-1.5z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="src/styles/_media.scss">
-@use 'sass:map';
-@use 'sass:math';
-@use 'sass:meta';
-
-$screen-xs: 320px !default;
-$screen-sm: 576px !default;
-$screen-md: 768px !default;
-$screen-lg: 1024px !default;
-$screen-xl: 1280px !default;
-$screen-xxl: 1440px !default;
-$screen-xxxl: 1920px !default;
-$breakpoints: (
-	'xs': $screen-xs,
-	'sm': $screen-sm,
-	'md': $screen-md,
-	'lg': $screen-lg,
-	'xl': $screen-xl,
-	'xxl': $screen-xxl,
-	'xxxl': $screen-xxxl,
-) !default;
-
-@function -get-breakpoint-value($key) {
-	@if map.has-key($breakpoints, $key) {
-		@return map.get($breakpoints, $key);
-	} @else if meta.type-of($key) == 'number' {
-		@return $key;
-	} @else {
-		@error "НЕДОПУСТИМОЕ ЗНАЧЕНИЕ: '#{$key}'. Допустимы ключи: #{map.keys($breakpoints)} или числа (px, rem, em).";
-	}
-}
-
-@function -decrement-width($value) {
-	$unit: math.unit($value);
-
-	@if $unit == 'px' {
-		@return $value - 0.02px;
-	} @else if $unit == 'rem' {
-		@return $value - 0.001rem;
-	} @else if $unit == 'em' {
-		@return $value - 0.001em;
-	}
-
-	@return $value - 0.02;
-}
-
-@mixin respond-to($breakpoint, $direction: 'min', $next-breakpoint: null) {
-	$width: -get-breakpoint-value($breakpoint);
-
-	@if $direction == 'min' or $direction == 'above' {
-		@media (min-width: $width) {
-			@content;
-		}
-	} @else if $direction == 'max' or $direction == 'below' {
-		$max-width: -decrement-width($width);
-
-		@media (max-width: $max-width) {
-			@content;
-		}
-	} @else if $direction == 'between' {
-		@if $next-breakpoint == null {
-			@error "ОШИБКА: Для стратегии 'between' требуется передать аргумент $next-breakpoint.";
-		}
-
-		$max-width: -decrement-width(-get-breakpoint-value($next-breakpoint));
-
-		@media (min-width: $width) and (max-width: $max-width) {
-			@content;
-		}
-	} @else {
-		@error "НЕИЗВЕСТНОЕ НАПРАВЛЕНИЕ: '#{$direction}'. Допустимы: 'min', 'max', 'above', 'below', 'between'.";
-	}
-}
-
-@mixin media-above($breakpoint) {
-	@include respond-to($breakpoint, 'min') {
-		@content;
-	}
-}
-
-@mixin media-below($breakpoint) {
-	@include respond-to($breakpoint, 'max') {
-		@content;
-	}
-}
-
-@mixin media-between($from, $to) {
-	@include respond-to($from, 'between', $to) {
-		@content;
-	}
-}
-</file>
-
 <file path=".husky/commit-msg">
 pnpm exec commitlint --edit "$1"
 </file>
@@ -938,6 +841,10 @@ backspaceCompare_2('ab#c', 'ad#c');
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.25 8A.75.75 0 0 1 2 7.25h10.19L9.47 4.53a.75.75 0 0 1 1.06-1.06l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 1 1-1.06-1.06l2.72-2.72H2A.75.75 0 0 1 1.25 8" clip-rule="evenodd"/></svg>
 </file>
 
+<file path="public/assets/bars.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.25 3.25A.75.75 0 0 1 2 2.5h12A.75.75 0 0 1 14 4H2a.75.75 0 0 1-.75-.75m0 4.75A.75.75 0 0 1 2 7.25h12a.75.75 0 0 1 0 1.5H2A.75.75 0 0 1 1.25 8M2 12a.75.75 0 0 0 0 1.5h12a.75.75 0 0 0 0-1.5z" clip-rule="evenodd"/></svg>
+</file>
+
 <file path="public/assets/book-open.svg">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M7.345 2.634q.136.069.268.145L8 3l.387-.221q.133-.076.268-.145a6.7 6.7 0 0 1 6.052-.03c.486.242.793.74.793 1.283v8.938c0 .65-.526 1.175-1.175 1.175h-.04c-.187 0-.37-.05-.529-.146a4.8 4.8 0 0 0-4.61-.177l-.199.1A2.1 2.1 0 0 1 8 14h-.117a1.6 1.6 0 0 1-.726-.171l-.233-.117a4.94 4.94 0 0 0-4.748.183.74.74 0 0 1-.381.105h-.12A1.175 1.175 0 0 1 .5 12.825V3.887c0-.543.307-1.04.793-1.284a6.7 6.7 0 0 1 6.052.03m1.405 9.572V4.3l.382-.218A5.2 5.2 0 0 1 14 3.927v8.357a6.3 6.3 0 0 0-5.25-.078m-1.5.005V4.299l-.382-.218A5.2 5.2 0 0 0 2 3.927v8.365a6.44 6.44 0 0 1 5.25-.082" clip-rule="evenodd"/></svg>
 </file>
@@ -1110,53 +1017,6 @@ export interface CourseProgress {
 </div>
 </file>
 
-<file path="src/entities/course/ui/course-progress/course-progress.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.course-progress-card {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-6);
-	padding: var(--unit-6) var(--unit-6) var(--unit-4) var(--unit-6);
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-}
-
-.title {
-	margin: 0;
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
-
-.chart-container {
-	display: flex;
-	justify-content: center;
-	width: 100%;
-}
-
-.stats {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding-top: var(--unit-4);
-	font-size: var(--font-size-sm);
-	color: var(--text-secondary);
-	border-top: 1px solid var(--border-light);
-
-	.stats-value {
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-	}
-}
-</file>
-
 <file path="src/entities/course/ui/course-progress/course-progress.component.ts">
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
@@ -1204,90 +1064,6 @@ export * from './model/types/course-progress.types';
 </div>
 </file>
 
-<file path="src/entities/lesson/ui/lesson-card/lesson-card.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.lesson-box {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	padding-right: var(--unit-4);
-	border-radius: var(--radius-md);
-	transition: background-color var(--transition-fast);
-
-	@include m.media-below('lg') {
-		padding-right: var(--unit-2);
-	}
-
-	&:hover:not(.is-locked) {
-		background-color: var(--brand-light);
-
-		.lesson-card {
-			color: var(--brand-hover);
-		}
-	}
-
-	&.is-active {
-		background-color: var(--brand-light);
-
-		.lesson-card {
-			font-weight: var(--font-weight-medium);
-			color: var(--brand-primary);
-		}
-	}
-
-	&.is-locked {
-		opacity: var(--opacity-disabled);
-		cursor: not-allowed;
-	}
-}
-
-.lesson-card {
-	display: flex;
-	flex-grow: 1;
-	justify-content: flex-start;
-	padding: var(--unit-2);
-	color: var(--text-primary);
-	text-align: left;
-	cursor: pointer;
-}
-
-.lesson-title {
-	display: block;
-	width: 100%;
-	font-size: var(--font-size-sm);
-	line-height: var(--line-height-normal);
-	text-align: left;
-}
-
-.lesson-status {
-	display: flex;
-	align-items: center;
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-muted);
-
-	app-icon {
-		display: flex;
-		color: inherit;
-	}
-
-	&.is-free {
-		color: var(--brand-primary);
-	}
-
-	&.is-completed {
-		color: var(--status-success);
-	}
-}
-</file>
-
 <file path="src/entities/lesson/ui/lesson-header/lesson-header.component.html">
 <header class="lesson-header">
 	<div class="header-top">
@@ -1302,69 +1078,6 @@ export * from './model/types/course-progress.types';
 		{{ lesson().description }}
 	</p>
 </header>
-</file>
-
-<file path="src/entities/lesson/ui/lesson-header/lesson-header.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-:host {
-	display: block;
-}
-
-.header-top {
-	display: flex;
-	gap: var(--unit-4);
-	justify-content: space-between;
-	align-items: center;
-	padding-bottom: var(--unit-4);
-
-	@include m.media-below('lg') {
-		gap: var(--unit-2);
-		padding-bottom: var(--unit-2);
-	}
-}
-
-.title {
-	margin: 0;
-	font-size: var(--font-size-xxl);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-primary);
-
-	@include m.media-below('lg') {
-		font-size: var(--font-size-lg);
-	}
-}
-
-.duration {
-	display: flex;
-	flex-shrink: 0;
-	gap: var(--unit-2);
-	align-items: center;
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--status-success);
-	white-space: nowrap;
-
-	@include m.media-below('lg') {
-		font-size: var(--font-size-xs);
-	}
-}
-
-.description {
-	margin: 0;
-	font-size: var(--font-size-sm);
-	line-height: var(--line-height-relaxed);
-	color: var(--text-muted);
-
-	@include m.media-below('lg') {
-		font-size: var(--font-size-xs);
-	}
-}
 </file>
 
 <file path="src/entities/lesson/ui/lesson-header/lesson-header.component.ts">
@@ -1451,37 +1164,6 @@ export class MarkLessonWatchedComponent {
 export * from './ui/mark-lesson-watched.component';
 </file>
 
-<file path="src/pages/course-page/ui/course-page.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.course-page {
-	&__sidebar {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		height: 100%;
-		padding: 0;
-	}
-
-	&__mobile-action {
-		display: none;
-		justify-content: flex-end;
-		width: 100%;
-
-		@include m.media-below('lg') {
-			display: flex;
-			margin-bottom: var(--unit-4);
-			padding: 0 var(--unit-1);
-		}
-	}
-}
-</file>
-
 <file path="src/shared/config/index.ts">
 export * from './routes.config';
 </file>
@@ -1502,79 +1184,6 @@ export * from './sidebar-layout.component';
 		<ng-content></ng-content>
 	</section>
 </div>
-</file>
-
-<file path="src/shared/layouts/sidebar-layout/sidebar-layout.component.scss">
-@use 'media' as m;
-
-:host {
-	--sidebar-width: 18rem;
-
-	display: block;
-	width: 100%;
-	background-color: var(--bg-main);
-}
-
-.sidebar-layout {
-	display: grid;
-	grid-template-columns: var(--sidebar-width) 1fr;
-	gap: var(--unit-8);
-	align-items: start;
-	width: 100%;
-
-	@include m.media-below('lg') {
-		grid-template-columns: 1fr;
-		gap: var(--unit-4);
-	}
-
-	&__sidebar {
-		position: sticky;
-		top: var(--unit-4);
-		z-index: var(--z-sticky);
-		height: calc(100dvh - var(--unit-8));
-		padding: 0;
-		background-color: transparent;
-		border: none;
-		border-radius: 0;
-
-		@include m.media-below('lg') {
-			display: none;
-		}
-	}
-
-	&__sidebar-content {
-		height: 100%;
-		overflow: visible;
-		scrollbar-width: none;
-		scrollbar-color: var(--text-muted) transparent;
-
-		&::-webkit-scrollbar {
-			display: none;
-		}
-
-		&::-webkit-scrollbar-thumb {
-			background-color: var(--text-muted);
-			border-radius: var(--radius-full);
-
-			&:hover {
-				background-color: var(--text-secondary);
-			}
-		}
-	}
-
-	&__content {
-		min-width: 0;
-		padding: var(--unit-6);
-		background-color: var(--bg-card);
-		border: 1px solid var(--border-light);
-		border-radius: var(--radius-lg);
-		box-shadow: var(--shadow-sm);
-
-		@include m.media-below('lg') {
-			padding: var(--unit-4);
-		}
-	}
-}
 </file>
 
 <file path="src/shared/layouts/sidebar-layout/sidebar-layout.component.ts">
@@ -1869,169 +1478,6 @@ export class CircularProgressComponent {
 export * from './circular-progress.component';
 </file>
 
-<file path="src/shared/ui/drawer/drawer.component.html">
-@if (isOpen()) {
-	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
-}
-
-<aside class="drawer-panel" [class.drawer-panel--open]="isOpen()" [attr.aria-hidden]="!isOpen()" role="dialog">
-	@if (showCloseBtn()) {
-		<button
-			app-button
-			type="button"
-			variant="clear"
-			color="default"
-			size="s"
-			(click)="close()"
-			class="drawer-panel__close"
-			[class.drawer-panel__close--left]="closeBtnPosition() === 'left'"
-			[class.drawer-panel__close--right]="closeBtnPosition() === 'right'"
-			aria-label="Закрыть панель"
-		>
-			<app-icon [name]="'xmark'" size="l" />
-		</button>
-	}
-
-	<header class="drawer-panel__header">
-		<ng-content select="[drawer-header]"></ng-content>
-	</header>
-
-	<main class="drawer-panel__content">
-		<ng-content></ng-content>
-	</main>
-</aside>
-</file>
-
-<file path="src/shared/ui/drawer/drawer.component.scss">
-:host {
-	display: block;
-}
-
-.drawer-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: var(--z-modal-backdrop);
-	width: 100vw;
-	height: 100vh;
-	background-color: rgb(0 0 0 / 20%);
-	animation: drawer-fade-in var(--transition-fast) forwards;
-	backdrop-filter: blur(2px);
-}
-
-.drawer-panel {
-	position: fixed;
-	top: 0;
-	right: 0;
-	z-index: var(--z-modal);
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	max-width: 26rem;
-	height: 100vh;
-	background-color: var(--bg-card);
-	box-shadow: var(--shadow-md);
-	transition: transform var(--transition-base);
-	border-left: 1px solid var(--border-light);
-	transform: translateX(100%);
-
-	&--open {
-		transform: translateX(0);
-	}
-
-	&__close {
-		position: absolute;
-		top: var(--unit-4);
-		left: var(--unit-4);
-		z-index: var(--z-elevate);
-		font-size: var(--font-size-base);
-		color: var(--text-secondary);
-
-		&--left {
-			right: auto; // Явно сбрасываем правый край
-			left: var(--unit-4);
-		}
-
-		&--right {
-			right: var(--unit-4);
-			left: auto;
-		}
-	}
-
-	&__header {
-		display: flex;
-		flex-direction: column;
-		padding: var(--unit-6) var(--unit-6);
-	}
-
-	&__content {
-		flex-grow: 1;
-		padding: var(--unit-6);
-		overflow-y: auto;
-		scrollbar-width: thin;
-		scrollbar-color: var(--text-muted) transparent;
-
-		&::-webkit-scrollbar {
-			width: var(--unit-1);
-		}
-
-		&::-webkit-scrollbar-thumb {
-			background-color: var(--text-muted);
-			border-radius: var(--radius-full);
-
-			&:hover {
-				background-color: var(--text-secondary);
-			}
-		}
-	}
-}
-
-@keyframes drawer-fade-in {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
-}
-</file>
-
-<file path="src/shared/ui/drawer/drawer.component.ts">
-import { ChangeDetectionStrategy, Component, HostListener, input, model } from '@angular/core';
-
-import { ButtonComponent } from '../button';
-import { IconComponent } from '../icon';
-
-export type DrawerCloseBtnPosition = 'left' | 'right';
-
-@Component({
-	selector: 'app-drawer',
-	standalone: true,
-	imports: [ButtonComponent, IconComponent],
-	templateUrl: './drawer.component.html',
-	styleUrl: './drawer.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class DrawerComponent {
-	readonly isOpen = model<boolean>(false);
-
-	readonly closeBtnPosition = input<DrawerCloseBtnPosition>('right');
-	readonly showCloseBtn = input<boolean>(true);
-
-	protected close(): void {
-		this.isOpen.set(false);
-	}
-
-	@HostListener('window:keydown.escape')
-	protected onEscapePressed(): void {
-		if (this.isOpen()) {
-			this.close();
-		}
-	}
-}
-</file>
-
 <file path="src/shared/ui/drawer/index.ts">
 export * from './drawer.component';
 </file>
@@ -2191,40 +1637,6 @@ export * from './video-player.component';
 </div>
 </file>
 
-<file path="src/shared/ui/video-player/video-player.component.scss">
-:host {
-	display: block;
-	width: 100%;
-}
-
-.video-container {
-	position: relative;
-	width: 100%;
-	background-color: var(--bg-code);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-lg);
-	box-shadow: var(--shadow-md);
-	aspect-ratio: 16 / 9;
-	overflow: hidden;
-}
-
-.video-element {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: contain;
-}
-
-.video-placeholder {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100%;
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-}
-</file>
-
 <file path="src/shared/ui/video-player/video-player.component.ts">
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
@@ -2297,6 +1709,99 @@ export class VideoPlayerComponent {
 	--font-family-mono:
 		'Geist Mono', ui-monospace, sfmono-regular, 'Roboto Mono', menlo, monaco, consolas,
 		monospace;
+}
+</file>
+
+<file path="src/styles/_media.scss">
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+
+$screen-xs: 320px !default;
+$screen-sm: 576px !default;
+$screen-md: 768px !default;
+$screen-lg: 1024px !default;
+$screen-xl: 1280px !default;
+$screen-xxl: 1440px !default;
+$screen-xxxl: 1920px !default;
+$breakpoints: (
+	'xs': $screen-xs,
+	'sm': $screen-sm,
+	'md': $screen-md,
+	'lg': $screen-lg,
+	'xl': $screen-xl,
+	'xxl': $screen-xxl,
+	'xxxl': $screen-xxxl,
+) !default;
+
+@function -get-breakpoint-value($key) {
+	@if map.has-key($breakpoints, $key) {
+		@return map.get($breakpoints, $key);
+	} @else if meta.type-of($key) == 'number' {
+		@return $key;
+	} @else {
+		@error "НЕДОПУСТИМОЕ ЗНАЧЕНИЕ: '#{$key}'. Допустимы ключи: #{map.keys($breakpoints)} или числа (px, rem, em).";
+	}
+}
+
+@function -decrement-width($value) {
+	$unit: math.unit($value);
+
+	@if $unit == 'px' {
+		@return $value - 0.02px;
+	} @else if $unit == 'rem' {
+		@return $value - 0.001rem;
+	} @else if $unit == 'em' {
+		@return $value - 0.001em;
+	}
+
+	@return $value - 0.02;
+}
+
+@mixin respond-to($breakpoint, $direction: 'min', $next-breakpoint: null) {
+	$width: -get-breakpoint-value($breakpoint);
+
+	@if $direction == 'min' or $direction == 'above' {
+		@media (min-width: $width) {
+			@content;
+		}
+	} @else if $direction == 'max' or $direction == 'below' {
+		$max-width: -decrement-width($width);
+
+		@media (max-width: $max-width) {
+			@content;
+		}
+	} @else if $direction == 'between' {
+		@if $next-breakpoint == null {
+			@error "ОШИБКА: Для стратегии 'between' требуется передать аргумент $next-breakpoint.";
+		}
+
+		$max-width: -decrement-width(-get-breakpoint-value($next-breakpoint));
+
+		@media (min-width: $width) and (max-width: $max-width) {
+			@content;
+		}
+	} @else {
+		@error "НЕИЗВЕСТНОЕ НАПРАВЛЕНИЕ: '#{$direction}'. Допустимы: 'min', 'max', 'above', 'below', 'between'.";
+	}
+}
+
+@mixin media-above($breakpoint) {
+	@include respond-to($breakpoint, 'min') {
+		@content;
+	}
+}
+
+@mixin media-below($breakpoint) {
+	@include respond-to($breakpoint, 'max') {
+		@content;
+	}
+}
+
+@mixin media-between($from, $to) {
+	@include respond-to($from, 'between', $to) {
+		@content;
+	}
 }
 </file>
 
@@ -2557,45 +2062,6 @@ jobs:
                   retention-days: 7
 </file>
 
-<file path="src/app/layouts/main-layout/main-layout.component.scss">
-:host {
-	display: block;
-	width: 100%;
-}
-
-.app-layout {
-	display: flex;
-	flex-direction: column;
-	min-height: 100dvh;
-	background-color: var(--bg-main);
-	color: var(--text-primary);
-	transition:
-		background-color var(--transition-base),
-		color var(--transition-base);
-
-	&__main {
-		display: flex;
-		flex-direction: column;
-		flex-grow: 1;
-		padding-top: var(--unit-6);
-		padding-bottom: var(--unit-8);
-	}
-
-	&__container {
-		width: 100%;
-		max-width: var(--container-xxl);
-		margin: 0 auto;
-		padding-right: var(--unit-8);
-		padding-left: var(--unit-8);
-	}
-
-	&__header {
-		flex-shrink: 0;
-		width: 100%;
-	}
-}
-</file>
-
 <file path="src/app/providers/app.config.ts">
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -2661,6 +2127,144 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {}
 </file>
 
+<file path="src/entities/course/ui/course-progress/course-progress.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.course-progress-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	padding: var(--unit-6) var(--unit-6) var(--unit-4) var(--unit-6);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+
+	@include m.media-below('lg') {
+		padding: var(--unit-4);
+		background-color: unset;
+		border: unset;
+		border-radius: unset;
+	}
+}
+
+.title {
+	margin: 0;
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.chart-container {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.stats {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: var(--unit-4);
+	font-size: var(--font-size-sm);
+	color: var(--text-secondary);
+	border-top: 1px solid var(--border-light);
+
+	.stats-value {
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+}
+</file>
+
+<file path="src/entities/lesson/ui/lesson-card/lesson-card.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.lesson-box {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	padding-right: var(--unit-4);
+	border-radius: var(--radius-md);
+	transition: background-color var(--transition-fast);
+
+	@include m.media-below('lg') {
+		padding-right: var(--unit-2);
+	}
+
+	&:hover:not(.is-locked) {
+		background-color: var(--brand-light);
+
+		.lesson-card {
+			color: var(--brand-hover);
+		}
+	}
+
+	&.is-active {
+		background-color: var(--brand-light);
+
+		.lesson-card {
+			font-weight: var(--font-weight-medium);
+			color: var(--brand-primary);
+		}
+	}
+
+	&.is-locked {
+		opacity: var(--opacity-disabled);
+		cursor: not-allowed;
+	}
+}
+
+.lesson-card {
+	display: flex;
+	flex-grow: 1;
+	justify-content: flex-start;
+	padding: var(--unit-2);
+	color: var(--text-primary);
+	text-align: left;
+	cursor: pointer;
+}
+
+.lesson-title {
+	display: block;
+	width: 100%;
+	font-size: var(--font-size-sm);
+	line-height: var(--line-height-normal);
+	text-align: left;
+}
+
+.lesson-status {
+	display: flex;
+	align-items: center;
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-muted);
+
+	app-icon {
+		display: flex;
+		color: inherit;
+	}
+
+	&.is-free {
+		color: var(--brand-primary);
+	}
+
+	&.is-completed {
+		color: var(--status-success);
+	}
+}
+</file>
+
 <file path="src/entities/lesson/ui/lesson-card/lesson-card.component.ts">
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
@@ -2679,6 +2283,69 @@ import { IconComponent } from '@shared/ui/icon';
 export class LessonCardComponent {
 	readonly lesson = input.required<CourseSkeletonLesson>();
 	readonly isActive = input<boolean>(false);
+}
+</file>
+
+<file path="src/entities/lesson/ui/lesson-header/lesson-header.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+:host {
+	display: block;
+}
+
+.header-top {
+	display: flex;
+	gap: var(--unit-4);
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: var(--unit-4);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-2);
+		padding-bottom: var(--unit-2);
+	}
+}
+
+.title {
+	margin: 0;
+	font-size: var(--font-size-xxl);
+	font-weight: var(--font-weight-medium);
+	color: var(--text-primary);
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-lg);
+	}
+}
+
+.duration {
+	display: flex;
+	flex-shrink: 0;
+	gap: var(--unit-2);
+	align-items: center;
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	color: var(--status-success);
+	white-space: nowrap;
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-xs);
+	}
+}
+
+.description {
+	margin: 0;
+	font-size: var(--font-size-sm);
+	line-height: var(--line-height-relaxed);
+	color: var(--text-muted);
+
+	@include m.media-below('lg') {
+		font-size: var(--font-size-xs);
+	}
 }
 </file>
 
@@ -3014,153 +2681,222 @@ export class ButtonComponent {
 }
 </file>
 
-<file path="src/styles/_reset.scss">
-*,
-*::before,
-*::after {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+<file path="src/shared/ui/drawer/drawer.component.html">
+@if (isOpen()) {
+	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
 }
 
-html {
-	height: 100%;
-	scroll-behavior: smooth;
-	scrollbar-gutter: stable;
-	text-size-adjust: 100%;
-	tab-size: 4;
-}
+<aside class="drawer-panel" [class.drawer-panel--open]="isOpen()" [attr.aria-hidden]="!isOpen()" role="dialog">
+	@if (showCloseBtn()) {
+		<button
+			app-button
+			type="button"
+			variant="clear"
+			color="default"
+			size="s"
+			(click)="close()"
+			class="drawer-panel__close"
+			[class.drawer-panel__close--left]="closeBtnPosition() === 'left'"
+			[class.drawer-panel__close--right]="closeBtnPosition() === 'right'"
+			aria-label="Закрыть панель"
+		>
+			<app-icon [name]="'xmark'" size="l" />
+		</button>
+	}
 
-body {
-	min-height: 100%;
-	background-color: var(--bg-main);
-	font-family: var(--font-family-sans);
-	font-size: var(--font-size-base);
-	font-weight: var(--font-weight-regular);
-	line-height: var(--line-height-base);
-	color: var(--text-primary);
-	transition:
-		background-color var(--transition-base),
-		color var(--transition-base);
-	font-synthesis: none;
-	text-rendering: optimizelegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	overflow-x: clip;
-}
+	<header class="drawer-panel__header">
+		<ng-content select="[drawer-header]"></ng-content>
+	</header>
 
-ul[class],
-ol[class] {
-	list-style: none;
-}
+	<main class="drawer-panel__content">
+		<ng-content></ng-content>
+	</main>
+</aside>
+</file>
 
-a {
-	color: inherit;
-	transition:
-		color var(--transition-fast),
-		opacity var(--transition-fast);
-	cursor: pointer;
-	text-decoration: none;
-}
+<file path="src/shared/ui/drawer/drawer.component.scss">
+@use 'media' as m;
 
-a:not([class]) {
-	text-decoration: underline;
-	text-decoration-skip-ink: auto;
-	text-underline-offset: 3px;
-}
-
-a:not([class]):hover {
-	text-decoration: none;
-}
-
-img,
-picture,
-video,
-canvas {
+:host {
 	display: block;
-	max-width: 100%;
-	height: auto;
 }
 
-body.lock-scroll {
+.drawer-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: var(--z-modal-backdrop);
+	width: 100vw;
+	height: 100vh;
+	background-color: rgb(0 0 0 / 20%);
+	animation: drawer-fade-in var(--transition-fast) forwards;
+	backdrop-filter: blur(2px);
+}
+
+.drawer-panel {
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: var(--z-modal);
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 26rem;
+	height: 100vh;
+	background-color: var(--bg-card);
+	box-shadow: var(--shadow-md);
+	transition: transform var(--transition-base);
+	border-left: 1px solid var(--border-light);
+	transform: translateX(100%);
+
+	&--open {
+		transform: translateX(0);
+	}
+
+	&__close {
+		position: absolute;
+		top: var(--unit-4);
+		left: var(--unit-4);
+		z-index: var(--z-elevate);
+		font-size: var(--font-size-base);
+		color: var(--text-secondary);
+
+		&--left {
+			right: auto;
+			left: var(--unit-4);
+		}
+
+		&--right {
+			right: var(--unit-4);
+			left: auto;
+		}
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: var(--unit-6);
+
+		@include m.media-below('lg') {
+			padding: var(--unit-0);
+		}
+	}
+
+	&__content {
+		flex-grow: 1;
+		padding: var(--unit-6);
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: var(--text-muted) transparent;
+
+		@include m.media-below('lg') {
+			padding: var(--unit-0);
+		}
+
+		&::-webkit-scrollbar {
+			width: var(--unit-1);
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: var(--text-muted);
+			border-radius: var(--radius-full);
+
+			&:hover {
+				background-color: var(--text-secondary);
+			}
+		}
+	}
+}
+
+@keyframes drawer-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+</file>
+
+<file path="src/shared/ui/drawer/drawer.component.ts">
+import { ChangeDetectionStrategy, Component, HostListener, input, model } from '@angular/core';
+
+import { ButtonComponent } from '../button';
+import { IconComponent } from '../icon';
+
+export type DrawerCloseBtnPosition = 'left' | 'right';
+
+@Component({
+	selector: 'app-drawer',
+	standalone: true,
+	imports: [ButtonComponent, IconComponent],
+	templateUrl: './drawer.component.html',
+	styleUrl: './drawer.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DrawerComponent {
+	readonly isOpen = model<boolean>(false);
+
+	readonly closeBtnPosition = input<DrawerCloseBtnPosition>('right');
+	readonly showCloseBtn = input<boolean>(true);
+
+	protected close(): void {
+		this.isOpen.set(false);
+	}
+
+	@HostListener('window:keydown.escape')
+	protected onEscapePressed(): void {
+		if (this.isOpen()) {
+			this.close();
+		}
+	}
+}
+</file>
+
+<file path="src/shared/ui/video-player/video-player.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.video-container {
+	position: relative;
+	width: 100%;
+	background-color: var(--bg-code);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-md);
+	aspect-ratio: 16 / 9;
 	overflow: hidden;
-}
 
-svg {
-	display: inline-block;
-	max-width: 100%;
-	height: auto;
-	vertical-align: middle;
-	fill: currentcolor;
-}
-
-input,
-button,
-textarea,
-select {
-	background: transparent;
-	border: none;
-	color: inherit;
-	font: inherit;
-	appearance: none;
-}
-
-textarea {
-	resize: vertical;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-	margin: 0;
-	appearance: none;
-}
-
-input[type='number'] {
-	appearance: textfield;
-}
-
-button,
-[role='button'] {
-	cursor: pointer;
-	user-select: none;
-	touch-action: manipulation;
-}
-
-button:disabled,
-input:disabled,
-select:disabled,
-textarea:disabled {
-	opacity: var(--opacity-disabled);
-	cursor: not-allowed;
-}
-
-:focus {
-	outline: none;
-}
-
-:focus-visible {
-	border-radius: inherit;
-	box-shadow: var(--focus-ring, 0 0 0 4px rgb(99 102 241 / 15%));
-	outline: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	html:focus-within {
-		scroll-behavior: auto;
+	@include m.media-below('lg') {
+		min-height: 200px;
 	}
 
-	*,
-	*::before,
-	*::after {
-		/* stylelint-disable-next-line declaration-no-important */
-		animation-duration: 0.01ms !important;
-		/* stylelint-disable-next-line declaration-no-important */
-		animation-iteration-count: 1 !important;
-		/* stylelint-disable-next-line declaration-no-important */
-		transition-duration: 0.01ms !important;
-		/* stylelint-disable-next-line declaration-no-important */
-		scroll-behavior: auto !important;
+	@include m.media-below('sm') {
+		min-height: 180px;
 	}
+}
+
+.video-element {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.video-placeholder {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	font-size: var(--font-size-sm);
+	color: var(--text-muted);
 }
 </file>
 
@@ -3221,57 +2957,6 @@ textarea:disabled {
 		<app-lesson-navigation-controls [nextLesson]="nextLesson()" (nextLessonSelect)="selectLesson.emit($event)" />
 	</div>
 </div>
-</file>
-
-<file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.lesson-box {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-8);
-
-	@include m.media-below('lg') {
-		gap: var(--unit-4);
-	}
-}
-
-.lesson-content {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-6);
-	padding: var(--unit-8);
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-	font-family: var(--font-family-sans);
-
-	@include m.media-below('lg') {
-		gap: var(--unit-4);
-		padding: var(--unit-4);
-	}
-
-	&__actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--unit-4);
-		justify-content: flex-end;
-		align-items: center;
-		margin-top: var(--unit-2);
-		padding-top: var(--unit-6);
-		border-top: 1px solid var(--border-light);
-	}
-}
-
-.lesson-button-next {
-	display: flex;
-	justify-content: end;
-}
 </file>
 
 <file path="src/widgets/lesson-content/ui/lesson-content.component.ts">
@@ -3645,120 +3330,90 @@ allowBuilds:
 }
 </file>
 
-<file path="src/pages/course-page/ui/course-page.component.html">
-<div class="course-page__mobile-action">
-	<button app-button type="button" (click)="toggleMobileMenu()" aria-label="Открыть меню курса">
-		<app-icon name="bars" size="m" />
-	</button>
-</div>
+<file path="src/app/layouts/main-layout/main-layout.component.scss">
+@use 'media' as m;
 
-<app-sidebar-layout class="course-page">
-	<div sidebar class="course-page__sidebar">
-		<app-course-sidebar
-			[lessons]="lessons()"
-			[progress]="progress()"
-			[activeLessonId]="currentLesson().id"
-			(selectLesson)="onSelectLesson($event)"
-		/>
-	</div>
+:host {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-height: 100dvh;
+}
 
-	<app-lesson-content
-		[lesson]="currentLesson()"
-		[videoUrl]="currentLesson().videoUrl"
-		[nextLesson]="nextLesson()"
-		(toggleComplete)="onToggleComplete($event)"
-		(selectLesson)="onSelectLesson($event)"
-	/>
+.app-layout {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
 
-	<app-drawer-sidebar />
-</app-sidebar-layout>
+	&__main {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		padding-top: var(--unit-6);
+		padding-bottom: var(--unit-8);
 
-<app-drawer [(isOpen)]="isMobileMenuOpen" [showCloseBtn]="true">
-	<div class="mobile-sidebar-container">
-		<app-course-sidebar
-			[lessons]="lessons()"
-			[progress]="progress()"
-			[activeLessonId]="currentLesson().id"
-			(selectLesson)="onSelectLesson($event)"
-		/>
-	</div>
-</app-drawer>
-</file>
-
-<file path="src/pages/course-page/ui/course-page.component.ts">
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
-
-import { CourseSidebarComponent } from '@widgets/course-sidebar';
-import { DrawerSidebarComponent } from '@widgets/drawer-sidebar';
-import { LessonContentComponent } from '@widgets/lesson-content';
-
-import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
-import { CourseSkeletonLesson } from '@shared/types/course.types';
-import { ButtonComponent } from '@shared/ui/button';
-import { DrawerComponent } from '@shared/ui/drawer';
-import { IconComponent } from '@shared/ui/icon';
-
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } from '../mock';
-
-@Component({
-	selector: 'app-course-page',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './course-page.component.html',
-	styleUrl: './course-page.component.scss',
-	imports: [
-		SidebarLayoutComponent,
-		CourseSidebarComponent,
-		LessonContentComponent,
-		DrawerSidebarComponent,
-		DrawerComponent,
-		IconComponent,
-		ButtonComponent,
-	],
-})
-export class CoursePageComponent {
-	readonly isMobileMenuOpen = signal<boolean>(false);
-
-	readonly progress = signal(MOCK_COURSE_PROGRESS);
-	readonly lessons = signal<CourseSkeletonLesson[]>(MOCK_LESSONS);
-	readonly currentLesson = signal(MOCK_LESSON);
-	readonly nextLesson = signal<CourseSkeletonLesson | null>(MOCK_NEXT_LESSON);
-
-	constructor() {
-		effect(() => {
-			if (this.isMobileMenuOpen()) {
-				document.body.classList.add('lock-scroll');
-			} else {
-				document.body.classList.remove('lock-scroll');
-			}
-		});
-	}
-
-	protected toggleMobileMenu(): void {
-		this.isMobileMenuOpen.update((state) => !state);
-	}
-
-	protected onSelectLesson(lessonId: string): void {
-		this.isMobileMenuOpen.set(false);
-		const found = this.lessons().find((l) => l.id === lessonId);
-		if (found) {
-			this.currentLesson.set({
-				...found,
-				description: found.description ?? '',
-				courseId: this.currentLesson().courseId,
-				videoUrl: '',
-			});
+		@include m.media-below('lg') {
+			padding-top: var(--unit-4);
+			padding-bottom: var(--unit-4);
 		}
 	}
 
-	protected onToggleComplete(event: { id: string; completed: boolean }): void {
-		this.lessons.update((list) =>
-			list.map((l) => (l.id === event.id ? { ...l, isCompleted: event.completed } : l)),
-		);
+	&__container {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		width: 100%;
+		max-width: var(--container-xxl);
+		margin: 0 auto;
+		padding-right: var(--unit-8);
+		padding-left: var(--unit-8);
 
-		if (this.currentLesson().id === event.id) {
-			this.currentLesson.update((l) => ({ ...l, isCompleted: event.completed }));
+		@include m.media-below('lg') {
+			padding-right: var(--unit-4);
+			padding-left: var(--unit-4);
+		}
+	}
+
+	&__header {
+		flex-shrink: 0;
+		width: 100%;
+	}
+}
+</file>
+
+<file path="src/pages/course-page/ui/course-page.component.scss">
+@use 'media' as m;
+
+:host {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	width: 100%;
+}
+
+.course-page {
+	&__sidebar {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		height: 100%;
+		padding: 0;
+	}
+
+	&__mobile-action {
+		display: none;
+		justify-content: flex-end;
+		width: 100%;
+
+		@include m.media-below('lg') {
+			display: flex;
+			margin-bottom: var(--unit-4);
+			padding: 0 var(--unit-1);
 		}
 	}
 }
@@ -3823,25 +3478,154 @@ export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
 };
 </file>
 
-<file path="src/shared/ui/icon/icon.types.ts">
-export type IconName =
-	| 'sun'
-	| 'moon'
-	| 'logo'
-	| 'eye-opened'
-	| 'eye-closed'
-	| 'person'
-	| 'credit-card'
-	| 'pencil-to-square'
-	| 'floppy-disk'
-	| 'check'
-	| 'lock'
-	| 'clock'
-	| 'envelope'
-	| 'arrow-right'
-	| 'book-open'
-	| 'xmark'
-	| 'bars';
+<file path="src/styles/_reset.scss">
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	height: 100%;
+	scroll-behavior: smooth;
+	scrollbar-gutter: stable;
+	text-size-adjust: 100%;
+	tab-size: 4;
+}
+
+body {
+	min-height: 100%;
+	background-color: var(--bg-main);
+	font-family: var(--font-family-sans);
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-base);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
+	font-synthesis: none;
+	text-rendering: optimizelegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-x: clip;
+}
+
+ul[class],
+ol[class] {
+	list-style: none;
+}
+
+a {
+	color: inherit;
+	transition:
+		color var(--transition-fast),
+		opacity var(--transition-fast);
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a:not([class]) {
+	text-decoration: underline;
+	text-decoration-skip-ink: auto;
+	text-underline-offset: 3px;
+}
+
+a:not([class]):hover {
+	text-decoration: none;
+}
+
+img,
+picture,
+video,
+canvas {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+body.lock-scroll {
+	overflow: hidden;
+}
+
+svg {
+	display: inline-block;
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
+	fill: currentcolor;
+}
+
+input,
+button,
+textarea,
+select {
+	background: transparent;
+	border: none;
+	color: inherit;
+	font: inherit;
+	appearance: none;
+}
+
+textarea {
+	resize: vertical;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	margin: 0;
+	appearance: none;
+}
+
+input[type='number'] {
+	appearance: textfield;
+}
+
+button,
+[role='button'] {
+	cursor: pointer;
+	user-select: none;
+	touch-action: manipulation;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+	opacity: var(--opacity-disabled);
+	cursor: not-allowed;
+}
+
+:focus {
+	outline: none;
+}
+
+:focus-visible {
+	border-radius: inherit;
+	box-shadow: var(--focus-ring, 0 0 0 4px rgb(99 102 241 / 15%));
+	outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html:focus-within {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-iteration-count: 1 !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		transition-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		scroll-behavior: auto !important;
+	}
+}
 </file>
 
 <file path="src/styles/_tokens.scss">
@@ -3978,10 +3762,16 @@ export type IconName =
 </file>
 
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
+@use 'media' as m;
+
 :host {
 	display: block;
 	width: 100%;
 	height: calc(100dvh - var(--unit-8));
+
+	@include m.media-below('lg') {
+		height: calc(100dvh - var(--unit-4));
+	}
 }
 
 .sidebar {
@@ -3989,6 +3779,10 @@ export type IconName =
 	flex-direction: column;
 	gap: var(--unit-4);
 	height: 100%;
+
+	@include m.media-below('lg') {
+		gap: var(--unit-2);
+	}
 }
 
 app-course-progress {
@@ -4005,12 +3799,18 @@ app-course-progress {
 	background-color: var(--bg-card);
 	border: 1px solid var(--border-light);
 	border-radius: var(--radius-md);
+
+	@include m.media-below('lg') {
+		background-color: unset;
+		border: unset;
+		border-radius: unset;
+	}
 }
 
 .section-title {
 	flex-shrink: 0;
 	margin: 0;
-	padding: 0 var(--unit-6);
+	padding: 0 var(--unit-4);
 	font-size: var(--font-size-lg);
 	font-weight: var(--font-weight-bold);
 	color: var(--text-primary);
@@ -4023,8 +3823,7 @@ app-course-progress {
 	gap: var(--unit-1);
 	width: 100%;
 	min-height: 0;
-	padding-right: var(--unit-4);
-	padding-left: var(--unit-6);
+	padding: 0 var(--unit-4);
 	overflow-y: auto;
 	scrollbar-width: thin;
 	scrollbar-color: var(--text-muted) transparent;
@@ -4067,104 +3866,6 @@ export class CourseSidebarComponent {
 	readonly activeLessonId = input<string | null>(null);
 
 	readonly selectLesson = output<string>();
-}
-</file>
-
-<file path="angular.json">
-{
-	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-	"version": 1,
-	"cli": {
-		"packageManager": "pnpm",
-		"analytics": false
-	},
-	"newProjectRoot": "projects",
-	"projects": {
-		"ngalg": {
-			"projectType": "application",
-			"schematics": {
-				"@schematics/angular:component": {
-					"style": "scss",
-					"changeDetection": "OnPush",
-					"displayBlock": true,
-					"skipTests": false
-				}
-			},
-			"root": "",
-			"sourceRoot": "src",
-			"prefix": "app",
-			"architect": {
-				"build": {
-					"builder": "@angular/build:application",
-					"options": {
-						"outputPath": "dist/ngalg",
-						"index": "src/index.html",
-						"browser": "src/index.ts",
-						"tsConfig": "tsconfig.app.json",
-						"inlineStyleLanguage": "scss",
-						"styles": ["src/index.scss"],
-						"stylePreprocessorOptions": {
-							"includePaths": ["src/styles"]
-						},
-						"assets": [
-							{
-								"glob": "**/*",
-								"input": "public"
-							}
-						]
-					},
-					"configurations": {
-						"production": {
-							"budgets": [
-								{
-									"type": "initial",
-									"maximumWarning": "500kB",
-									"maximumError": "1MB"
-								},
-								{
-									"type": "anyComponentStyle",
-									"maximumWarning": "4kB",
-									"maximumError": "8kB"
-								}
-							],
-							"outputHashing": "all",
-							"optimization": true,
-							"sourceMap": false,
-							"namedChunks": false
-						},
-						"development": {
-							"optimization": false,
-							"extractLicenses": false,
-							"sourceMap": {
-								"scripts": true,
-								"styles": true
-							},
-							"namedChunks": true
-						}
-					},
-					"defaultConfiguration": "production"
-				},
-				"serve": {
-					"builder": "@angular/build:dev-server",
-					"configurations": {
-						"production": {
-							"buildTarget": "ngalg:build:production"
-						},
-						"development": {
-							"buildTarget": "ngalg:build:development"
-						}
-					},
-					"defaultConfiguration": "development"
-				},
-				"lint": {
-					"builder": "@angular-eslint/builder:lint",
-					"options": {
-						"lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
-					}
-				}
-			}
-		}
-	}
 }
 </file>
 
@@ -4310,6 +4011,369 @@ export default defineConfig([
 	"files": ["src/index.ts"],
 	"include": ["src/**/*.d.ts", "src/**/*.ts", "eslint.config.ts"],
 	"exclude": ["node_modules", "dist"]
+}
+</file>
+
+<file path="src/pages/course-page/ui/course-page.component.html">
+<div class="course-page__mobile-action">
+	<button app-button type="button" (click)="toggleMobileMenu()" aria-label="Открыть меню курса">
+		<app-icon name="bars" size="m" />
+	</button>
+</div>
+
+<app-sidebar-layout class="course-page">
+	<div sidebar class="course-page__sidebar">
+		<app-course-sidebar
+			[lessons]="lessons()"
+			[progress]="progress()"
+			[activeLessonId]="currentLesson().id"
+			(selectLesson)="onSelectLesson($event)"
+		/>
+	</div>
+
+	<app-lesson-content
+		[lesson]="currentLesson()"
+		[videoUrl]="currentLesson().videoUrl"
+		[nextLesson]="nextLesson()"
+		(toggleComplete)="onToggleComplete($event)"
+		(selectLesson)="onSelectLesson($event)"
+	/>
+
+	<app-drawer-sidebar />
+</app-sidebar-layout>
+
+<app-drawer [(isOpen)]="isMobileMenuOpen" [showCloseBtn]="true">
+	<div class="mobile-sidebar-container">
+		<app-course-sidebar
+			[lessons]="lessons()"
+			[progress]="progress()"
+			[activeLessonId]="currentLesson().id"
+			(selectLesson)="onSelectLesson($event)"
+		/>
+	</div>
+</app-drawer>
+</file>
+
+<file path="src/pages/course-page/ui/course-page.component.ts">
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+
+import { CourseSidebarComponent } from '@widgets/course-sidebar';
+import { DrawerSidebarComponent } from '@widgets/drawer-sidebar';
+import { LessonContentComponent } from '@widgets/lesson-content';
+
+import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
+import { CourseSkeletonLesson } from '@shared/types/course.types';
+import { ButtonComponent } from '@shared/ui/button';
+import { DrawerComponent } from '@shared/ui/drawer';
+import { IconComponent } from '@shared/ui/icon';
+
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
+import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } from '../mock';
+
+@Component({
+	selector: 'app-course-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './course-page.component.html',
+	styleUrl: './course-page.component.scss',
+	imports: [
+		SidebarLayoutComponent,
+		CourseSidebarComponent,
+		LessonContentComponent,
+		DrawerSidebarComponent,
+		DrawerComponent,
+		IconComponent,
+		ButtonComponent,
+	],
+})
+export class CoursePageComponent {
+	readonly isMobileMenuOpen = signal<boolean>(false);
+
+	readonly progress = signal(MOCK_COURSE_PROGRESS);
+	readonly lessons = signal<CourseSkeletonLesson[]>(MOCK_LESSONS);
+	readonly currentLesson = signal(MOCK_LESSON);
+	readonly nextLesson = signal<CourseSkeletonLesson | null>(MOCK_NEXT_LESSON);
+
+	constructor() {
+		effect(() => {
+			if (this.isMobileMenuOpen()) {
+				document.body.classList.add('lock-scroll');
+			} else {
+				document.body.classList.remove('lock-scroll');
+			}
+		});
+	}
+
+	protected toggleMobileMenu(): void {
+		this.isMobileMenuOpen.update((state) => !state);
+	}
+
+	protected onSelectLesson(lessonId: string): void {
+		this.isMobileMenuOpen.set(false);
+		const found = this.lessons().find((l) => l.id === lessonId);
+		if (found) {
+			this.currentLesson.set({
+				...found,
+				description: found.description ?? '',
+				courseId: this.currentLesson().courseId,
+				videoUrl: '',
+			});
+		}
+	}
+
+	protected onToggleComplete(event: { id: string; completed: boolean }): void {
+		this.lessons.update((list) =>
+			list.map((l) => (l.id === event.id ? { ...l, isCompleted: event.completed } : l)),
+		);
+
+		if (this.currentLesson().id === event.id) {
+			this.currentLesson.update((l) => ({ ...l, isCompleted: event.completed }));
+		}
+	}
+}
+</file>
+
+<file path="src/shared/layouts/sidebar-layout/sidebar-layout.component.scss">
+@use 'media' as m;
+
+:host {
+	--sidebar-width: 18rem;
+
+	display: block;
+	flex-grow: 1;
+	width: 100%;
+	background-color: var(--bg-main);
+}
+
+.sidebar-layout {
+	display: grid;
+	flex-grow: 1;
+	grid-template-columns: var(--sidebar-width) 1fr;
+	gap: var(--unit-8);
+	align-items: start;
+	width: 100%;
+
+	@include m.media-below('lg') {
+		grid-template-columns: 1fr;
+		gap: var(--unit-4);
+	}
+
+	&__sidebar {
+		position: sticky;
+		top: var(--unit-4);
+		z-index: var(--z-sticky);
+		height: calc(100dvh - var(--unit-8));
+		padding: 0;
+		background-color: transparent;
+		border: none;
+		border-radius: 0;
+
+		@include m.media-below('lg') {
+			display: none;
+		}
+	}
+
+	&__sidebar-content {
+		height: 100%;
+		overflow: visible;
+		scrollbar-width: none;
+		scrollbar-color: var(--text-muted) transparent;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: var(--text-muted);
+			border-radius: var(--radius-full);
+
+			&:hover {
+				background-color: var(--text-secondary);
+			}
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		min-width: 0;
+		padding: var(--unit-6);
+
+		@include m.media-below('lg') {
+			padding: var(--unit-0);
+		}
+	}
+}
+</file>
+
+<file path="src/shared/ui/icon/icon.types.ts">
+export type IconName =
+	| 'sun'
+	| 'moon'
+	| 'logo'
+	| 'eye-opened'
+	| 'eye-closed'
+	| 'person'
+	| 'credit-card'
+	| 'pencil-to-square'
+	| 'floppy-disk'
+	| 'check'
+	| 'lock'
+	| 'clock'
+	| 'envelope'
+	| 'arrow-right'
+	| 'book-open'
+	| 'xmark'
+	| 'bars';
+</file>
+
+<file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.lesson-box {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-8);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+	}
+}
+
+.lesson-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	padding: var(--unit-8);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	font-family: var(--font-family-sans);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+		padding: var(--unit-3);
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--unit-4);
+		justify-content: flex-end;
+		align-items: center;
+		margin-top: var(--unit-2);
+		padding-top: var(--unit-6);
+		border-top: 1px solid var(--border-light);
+	}
+}
+
+.lesson-button-next {
+	display: flex;
+	justify-content: end;
+}
+</file>
+
+<file path="angular.json">
+{
+	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+	"version": 1,
+	"cli": {
+		"packageManager": "pnpm",
+		"analytics": false
+	},
+	"newProjectRoot": "projects",
+	"projects": {
+		"ngalg": {
+			"projectType": "application",
+			"schematics": {
+				"@schematics/angular:component": {
+					"style": "scss",
+					"changeDetection": "OnPush",
+					"displayBlock": true,
+					"skipTests": false
+				}
+			},
+			"root": "",
+			"sourceRoot": "src",
+			"prefix": "app",
+			"architect": {
+				"build": {
+					"builder": "@angular/build:application",
+					"options": {
+						"outputPath": "dist/ngalg",
+						"index": "src/index.html",
+						"browser": "src/index.ts",
+						"tsConfig": "tsconfig.app.json",
+						"inlineStyleLanguage": "scss",
+						"styles": ["src/index.scss"],
+						"stylePreprocessorOptions": {
+							"includePaths": ["src/styles"]
+						},
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "public"
+							}
+						]
+					},
+					"configurations": {
+						"production": {
+							"budgets": [
+								{
+									"type": "initial",
+									"maximumWarning": "500kB",
+									"maximumError": "1MB"
+								},
+								{
+									"type": "anyComponentStyle",
+									"maximumWarning": "4kB",
+									"maximumError": "8kB"
+								}
+							],
+							"outputHashing": "all",
+							"optimization": true,
+							"sourceMap": false,
+							"namedChunks": false
+						},
+						"development": {
+							"optimization": false,
+							"extractLicenses": false,
+							"sourceMap": {
+								"scripts": true,
+								"styles": true
+							},
+							"namedChunks": true
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve": {
+					"builder": "@angular/build:dev-server",
+					"configurations": {
+						"production": {
+							"buildTarget": "ngalg:build:production"
+						},
+						"development": {
+							"buildTarget": "ngalg:build:development"
+						}
+					},
+					"defaultConfiguration": "development"
+				},
+				"lint": {
+					"builder": "@angular-eslint/builder:lint",
+					"options": {
+						"lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+					}
+				}
+			}
+		}
+	}
 }
 </file>
 

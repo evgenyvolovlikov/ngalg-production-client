@@ -13,9 +13,17 @@
 	background-color: var(--bg-card);
 	border: 1px solid var(--border-light);
 	border-radius: var(--radius-md);
+
+	@include m.media-below('lg') {
+		padding: var(--unit-4);
+		background-color: unset;
+		border: unset;
+		border-radius: unset;
+	}
 }
 
 .title {
+	display: flex;
 	margin: 0;
 	font-size: var(--font-size-lg);
 	font-weight: var(--font-weight-bold);
