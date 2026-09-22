@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 
-import { RouteSegments } from '@shared/config';
+import { courseSlugGuard } from '@pages/course-page';
+
+import { RouteSegments } from '@shared/config/routes.config';
 
 export const APP_ROUTES: Routes = [
 	{
@@ -13,25 +15,18 @@ export const APP_ROUTES: Routes = [
 			{
 				path: '',
 				pathMatch: 'full',
-				redirectTo: RouteSegments.FRONTEND,
+				redirectTo: 'frontend',
 			},
 			{
-				path: RouteSegments.FRONTEND,
+				path: ':slug',
+				canActivate: [courseSlugGuard],
 				loadComponent: () =>
 					import('@pages/course-page').then((c) => c.CoursePageComponent),
-				children: [
-					{
-						path: '',
-						redirectTo: 'overview',
-						pathMatch: 'full',
-					},
-				],
 			},
 		],
 	},
-
 	{
 		path: RouteSegments.WILDCARD,
-		redirectTo: RouteSegments.FRONTEND,
+		redirectTo: 'frontend',
 	},
 ];
