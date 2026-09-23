@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { AuthByOauthComponent } from '@features/auth-by-oauth';
 
@@ -14,9 +15,14 @@ import { ButtonComponent } from '@shared/ui/button';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
+	readonly router = inject(Router);
 	readonly isAuthOpen = signal<boolean>(false);
 
 	protected openAuth(): void {
 		this.isAuthOpen.set(true);
+	}
+
+	protected openProfile(): void {
+		this.router.navigate(['/', 'account', 'overview']);
 	}
 }

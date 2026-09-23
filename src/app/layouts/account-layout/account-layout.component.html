@@ -1,0 +1,18 @@
+<div class="account-layout">
+	<div class="account-layout__header">
+		<div class="account-layout__hero-container">
+			<app-user-profile-hero />
+		</div>
+	</div>
+
+	<main class="account-layout__main">
+		<div class="account-layout__container">
+			<aside class="account-layout__sidebar">
+				<app-account-navigation />
+			</aside>
+			<div class="account-layout__content">
+				<router-outlet />
+			</div>
+		</div>
+	</main>
+</div>

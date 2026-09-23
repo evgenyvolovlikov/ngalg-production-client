@@ -1,0 +1,14 @@
+<div class="avatar">
+	@if (avatarUrl()) {
+		<img [src]="avatarUrl()" [alt]="name()" class="avatar__img" />
+	} @else {
+		{{ initial() }}
+	}
+</div>
+
+<div class="info">
+	<h1 class="name">{{ name() }}</h1>
+	<p class="account-type">
+		Account type: <span class="account-type__value">{{ accountType() }}</span>
+	</p>
+</div>

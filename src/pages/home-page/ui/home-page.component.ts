@@ -14,5 +14,5 @@ import { ButtonComponent } from '@shared/ui/button';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePageComponent {
-	protected readonly frontendRoute = `/${RouteSegments.FRONTEND}`;
+	protected readonly frontendRoute = `/${RouteSegments.COURSES}/${RouteSegments.FRONTEND}`;
 }

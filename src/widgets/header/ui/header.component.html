@@ -2,7 +2,15 @@
 	<div class="header__container">
 		<app-logo />
 
-		<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">Войти</button>
+		<div style="display: flex; gap: var(--unit-2)">
+			<button app-button type="button" variant="filled" color="default" size="m" (click)="openProfile()">
+				Профиль
+			</button>
+
+			<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">
+				Войти
+			</button>
+		</div>
 	</div>
 </header>
 

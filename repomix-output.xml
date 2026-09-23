@@ -94,6 +94,10 @@ public/
 src/
   app/
     layouts/
+      account-layout/
+        account-layout.component.html
+        account-layout.component.scss
+        account-layout.component.ts
       main-layout/
         main-layout.component.html
         main-layout.component.scss
@@ -158,6 +162,10 @@ src/
         mark-lesson-watched.component.ts
       index.ts
   pages/
+    account-overview-page/
+      account-overview-page.component.ts
+    account-transactions-page/
+      account-transactions-page.component.ts
     course-page/
       lib/
         guards/
@@ -282,60 +290,160 @@ vercel.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="src/shared/ui/app-logo/app-logo.component.html">
-<a routerLink="/" class="app-logo" aria-label="На главную NgAlg">
-	<span class="app-logo__accent">Ng</span><span class="app-logo__main">Alg</span>
-</a>
+<file path="src/app/layouts/account-layout/account-layout.component.html">
+<div class="account-layout">
+	<!-- Блок Hero ведёт себя аналогично шапке, но имеет нижнюю рамку -->
+	<div class="account-layout__header">
+		<div class="account-layout__hero-container">Hero</div>
+	</div>
+
+	<!-- Основная рабочая область, полностью копирующая app-layout__main -->
+	<main class="account-layout__main">
+		<div class="account-layout__container">
+			<aside class="account-layout__sidebar">Sidebar</aside>
+			<div class="account-layout__content">
+				<router-outlet />
+			</div>
+		</div>
+	</main>
+</div>
 </file>
 
-<file path="src/shared/ui/app-logo/app-logo.component.scss">
+<file path="src/app/layouts/account-layout/account-layout.component.scss">
+@use 'media' as m;
+
 :host {
-	display: inline-block;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-height: 100dvh;
 }
 
-.app-logo {
+.account-layout {
 	display: flex;
-	align-items: center;
-	font-family: var(--font-family-sans);
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-bold);
-	line-height: var(--line-height-none);
-	transition: opacity var(--transition-fast);
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	text-decoration: none;
+	flex-direction: column;
+	flex-grow: 1;
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
 
-	&:hover {
-		opacity: var(--opacity-hover);
+	&__header {
+		flex-shrink: 0;
+		width: 100%;
+		background-color: transparent;
+		border-bottom: none;
 	}
 
-	&__accent {
-		color: var(--brand-primary);
+	&__hero-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		max-width: var(--container-xxl);
+		height: var(--unit-16);
+		margin: 0 auto;
+		padding: 0 var(--unit-8);
+
+		@include m.media-below('lg') {
+			padding: 0 var(--unit-4);
+		}
 	}
 
 	&__main {
-		color: var(--text-primary);
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		padding-top: var(--unit-6);
+		padding-bottom: var(--unit-8);
+
+		@include m.media-below('lg') {
+			padding-top: var(--unit-4);
+			padding-bottom: var(--unit-4);
+		}
+	}
+
+	&__container {
+		display: grid;
+		flex-grow: 1;
+		grid-template-columns: 18rem 1fr;
+		gap: var(--unit-8);
+		align-items: start;
+		width: 100%;
+		max-width: var(--container-xxl);
+		margin: 0 auto;
+		padding-right: var(--unit-8);
+		padding-left: var(--unit-8);
+
+		@include m.media-below('lg') {
+			grid-template-columns: 1fr;
+			gap: var(--unit-4);
+			padding-right: var(--unit-4);
+			padding-left: var(--unit-4);
+		}
+	}
+
+	&__sidebar {
+		position: sticky;
+		top: var(--unit-4);
+		z-index: var(--z-sticky);
+		height: calc(100dvh - var(--unit-8));
+		padding: 0;
+
+		@include m.media-below('lg') {
+			position: static;
+			height: auto;
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		min-width: 0;
 	}
 }
 </file>
 
-<file path="src/shared/ui/app-logo/app-logo.component.ts">
+<file path="src/app/layouts/account-layout/account-layout.component.ts">
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-	selector: 'app-logo',
+	selector: 'app-account-layout',
 	standalone: true,
-	imports: [RouterLink],
-	templateUrl: './app-logo.component.html',
-	styleUrl: './app-logo.component.scss',
+	imports: [RouterOutlet],
+	templateUrl: './account-layout.component.html',
+	styleUrl: './account-layout.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppLogoComponent {}
+export class AccountLayoutComponent {}
 </file>
 
-<file path="src/shared/ui/app-logo/index.ts">
-export * from './app-logo.component';
+<file path="src/pages/account-overview-page/account-overview-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+	selector: 'app-account-overview-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<div>Account Overview</div>`,
+	imports: [],
+})
+export class AccountOverviewPageComponent {}
+</file>
+
+<file path="src/pages/account-transactions-page/account-transactions-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+	selector: 'app-account-transactions-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<div>Account Transactions</div>`,
+})
+export class AccountTransactionsPageComponent {}
 </file>
 
 <file path=".husky/commit-msg">
@@ -1532,209 +1640,6 @@ export const courseSlugGuard: CanActivateFn = (route) => {
 };
 </file>
 
-<file path="src/pages/home-page/ui/home-page.component.html">
-<div class="hero-page">
-	<header class="hero-page__header">
-		<app-logo />
-	</header>
-
-	<div class="hero-page__content">
-		<h1 class="hero-page__title">
-			Фундаментальный курс <br class="hero-page__br" />
-			по <span class="hero-page__accent">Frontend</span> разработке от А до Я
-		</h1>
-		<p class="hero-page__subtitle">
-			Cистемный подход, позволяющий освоить сложные концепты и закрепить их на реальных задачах.
-		</p>
-		<div class="hero-page__actions">
-			<a app-button [routerLink]="frontendRoute" size="xl" color="primary" class="hero-page__start-btn">
-				Начать обучение
-			</a>
-		</div>
-	</div>
-</div>
-</file>
-
-<file path="src/pages/home-page/ui/home-page.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.hero-page {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 100%;
-	min-height: 100dvh;
-	padding: var(--unit-8);
-	background-color: var(--bg-main);
-	text-align: center;
-
-	@include m.media-above('md') {
-		padding: var(--unit-4);
-	}
-
-	&__header {
-		position: absolute;
-		top: var(--unit-4);
-		left: var(--unit-4);
-		display: flex;
-		justify-content: flex-start;
-		width: auto;
-		padding: 0;
-	}
-
-	&__logo {
-		display: flex;
-		align-items: center;
-		font-family: var(--font-family-sans);
-		font-size: var(--font-size-lg);
-		font-weight: var(--font-weight-bold);
-		line-height: var(--line-height-none);
-		transition: opacity var(--transition-fast);
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
-		text-decoration: none;
-
-		&:hover {
-			opacity: var(--opacity-hover);
-		}
-	}
-
-	&__logo-accent {
-		color: var(--brand-primary);
-	}
-
-	&__logo-main {
-		color: var(--text-primary);
-	}
-
-	&__content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: 100%;
-		max-width: var(--container-xl);
-		margin-top: 25dvh;
-		margin-bottom: auto;
-		animation: hero-fade-up var(--transition-slow) forwards;
-
-		@include m.media-above('md') {
-			margin: auto;
-		}
-	}
-
-	&__title {
-		margin-bottom: var(--unit-6);
-		font-size: var(--font-size-xl);
-		font-weight: var(--font-weight-bold);
-		line-height: var(--line-height-tight);
-		color: var(--text-primary);
-		letter-spacing: -0.02em;
-
-		@include m.media-above('sm') {
-			font-size: var(--font-size-xxl);
-		}
-
-		@include m.media-above('md') {
-			font-size: calc(var(--font-size-xxxl) * 1.5);
-		}
-	}
-
-	&__br {
-		display: none;
-
-		@include m.media-above('md') {
-			display: inline;
-		}
-	}
-
-	&__accent {
-		color: var(--brand-primary);
-	}
-
-	&__subtitle {
-		max-width: var(--container-md);
-		margin-bottom: var(--unit-8);
-		font-size: var(--font-size-xs);
-		line-height: var(--line-height-relaxed);
-		color: var(--text-secondary);
-
-		@include m.media-above('sm') {
-			font-size: var(--font-size-sm);
-		}
-
-		@include m.media-above('md') {
-			margin-bottom: var(--unit-10);
-			font-size: var(--font-size-lg);
-		}
-	}
-
-	&__actions {
-		display: flex;
-		justify-content: center;
-		width: 100%;
-	}
-
-	&__start-btn {
-		transition:
-			transform var(--transition-fast),
-			box-shadow var(--transition-fast),
-			background-color var(--transition-fast);
-
-		@include m.media-below('sm') {
-			width: 100%;
-		}
-
-		&:hover {
-			box-shadow: 0 10px 20px -10px rgb(99 102 241 / 40%);
-			transform: translateY(-2px);
-		}
-
-		&:active {
-			transform: translateY(0);
-		}
-	}
-}
-
-@keyframes hero-fade-up {
-	from {
-		opacity: 0;
-		transform: translateY(24px);
-	}
-
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-</file>
-
-<file path="src/pages/home-page/ui/home-page.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-import { RouteSegments } from '@shared/config/routes.config';
-import { AppLogoComponent } from '@shared/ui/app-logo';
-import { ButtonComponent } from '@shared/ui/button';
-
-@Component({
-	selector: 'app-home-page',
-	standalone: true,
-	imports: [RouterLink, ButtonComponent, AppLogoComponent],
-	templateUrl: './home-page.component.html',
-	styleUrl: './home-page.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HomePageComponent {
-	protected readonly frontendRoute = `/${RouteSegments.FRONTEND}`;
-}
-</file>
-
 <file path="src/pages/home-page/index.ts">
 export * from './ui/home-page.component';
 </file>
@@ -1899,6 +1804,62 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarLayoutComponent {}
+</file>
+
+<file path="src/shared/ui/app-logo/app-logo.component.html">
+<a routerLink="/" class="app-logo" aria-label="На главную NgAlg">
+	<span class="app-logo__accent">Ng</span><span class="app-logo__main">Alg</span>
+</a>
+</file>
+
+<file path="src/shared/ui/app-logo/app-logo.component.scss">
+:host {
+	display: inline-block;
+}
+
+.app-logo {
+	display: flex;
+	align-items: center;
+	font-family: var(--font-family-sans);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	line-height: var(--line-height-none);
+	transition: opacity var(--transition-fast);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	text-decoration: none;
+
+	&:hover {
+		opacity: var(--opacity-hover);
+	}
+
+	&__accent {
+		color: var(--brand-primary);
+	}
+
+	&__main {
+		color: var(--text-primary);
+	}
+}
+</file>
+
+<file path="src/shared/ui/app-logo/app-logo.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+@Component({
+	selector: 'app-logo',
+	standalone: true,
+	imports: [RouterLink],
+	templateUrl: './app-logo.component.html',
+	styleUrl: './app-logo.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AppLogoComponent {}
+</file>
+
+<file path="src/shared/ui/app-logo/index.ts">
+export * from './app-logo.component';
 </file>
 
 <file path="src/shared/ui/button/button.component.html">
@@ -3041,11 +3002,244 @@ export class LessonNavigationControlsComponent {
 }
 </file>
 
+<file path="src/pages/home-page/ui/home-page.component.html">
+<div class="hero-page">
+	<header class="hero-page__header">
+		<div class="hero-page__header-container">
+			<app-logo />
+		</div>
+	</header>
+
+	<div class="hero-page__content">
+		<h1 class="hero-page__title">
+			Фундаментальный курс <br class="hero-page__br" />
+			по <span class="hero-page__accent">Frontend</span> разработке
+			<span class="hero-page__nowrap">от А до Я</span>
+		</h1>
+		<p class="hero-page__subtitle">
+			Cистемный подход, позволяющий освоить сложные концепты и закрепить их на реальных задачах.
+		</p>
+		<div class="hero-page__actions">
+			<a app-button [routerLink]="frontendRoute" size="xl" color="primary" class="hero-page__start-btn">
+				Начать обучение
+			</a>
+		</div>
+	</div>
+</div>
+</file>
+
+<file path="src/pages/home-page/ui/home-page.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.hero-page {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	min-height: 100dvh;
+	padding: var(--unit-8);
+	background-color: var(--bg-main);
+	text-align: center;
+
+	@include m.media-above('md') {
+		padding: var(--unit-4);
+	}
+
+	&__header {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: var(--z-elevate);
+		width: 100%;
+		background-color: transparent;
+	}
+
+	&__header-container {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		width: 100%;
+		max-width: var(--container-xxl);
+		height: var(--unit-16);
+		margin: 0 auto;
+		padding: 0 var(--unit-8);
+
+		@include m.media-below('lg') {
+			padding: 0 var(--unit-4);
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+		max-width: var(--container-xl);
+		margin-top: 25dvh;
+		margin-bottom: auto;
+		padding: 0 var(--unit-4);
+		animation: hero-fade-up var(--transition-slow) forwards;
+
+		@include m.media-above('md') {
+			margin: auto;
+			padding: 0;
+		}
+	}
+
+	&__title {
+		margin-bottom: var(--unit-6);
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+		letter-spacing: -0.02em;
+
+		@include m.media-above('sm') {
+			font-size: var(--font-size-xxl);
+		}
+
+		@include m.media-above('md') {
+			font-size: calc(var(--font-size-xxxl) * 1.5);
+		}
+	}
+
+	&__nowrap {
+		white-space: nowrap;
+	}
+
+	&__br {
+		display: none;
+
+		@include m.media-above('md') {
+			display: inline;
+		}
+	}
+
+	&__accent {
+		color: var(--brand-primary);
+	}
+
+	&__subtitle {
+		max-width: var(--container-md);
+		margin-bottom: var(--unit-8);
+		font-size: var(--font-size-xs);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-secondary);
+
+		@include m.media-above('sm') {
+			font-size: var(--font-size-sm);
+		}
+
+		@include m.media-above('md') {
+			margin-bottom: var(--unit-10);
+			font-size: var(--font-size-lg);
+		}
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	&__start-btn {
+		transition:
+			transform var(--transition-fast),
+			box-shadow var(--transition-fast),
+			background-color var(--transition-fast);
+
+		@include m.media-below('sm') {
+			width: 100%;
+		}
+
+		&:hover {
+			box-shadow: 0 10px 20px -10px rgb(99 102 241 / 40%);
+			transform: translateY(-2px);
+		}
+
+		&:active {
+			transform: translateY(0);
+		}
+	}
+}
+
+@keyframes hero-fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+</file>
+
+<file path="src/pages/home-page/ui/home-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { RouteSegments } from '@shared/config/routes.config';
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+
+@Component({
+	selector: 'app-home-page',
+	standalone: true,
+	imports: [RouterLink, ButtonComponent, AppLogoComponent],
+	templateUrl: './home-page.component.html',
+	styleUrl: './home-page.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HomePageComponent {
+	protected readonly frontendRoute = `/${RouteSegments.COURSES}/${RouteSegments.FRONTEND}`;
+}
+</file>
+
 <file path="src/shared/config/routes.config.ts">
+import { IconName } from '../ui/icon';
+
+export interface NavItem {
+	path: string;
+	label: string;
+	icon?: IconName;
+}
+
 export const RouteSegments = {
+	ROOT: '',
+
+	COURSES: 'courses',
+
 	FRONTEND: 'frontend',
+	BACKEND: 'backend',
+
+	ACCOUNT: 'account',
+	OVERVIEW: 'overview',
+	TRANSACTIONS: 'transactions',
+
 	WILDCARD: '**',
 } as const;
+
+export const RouteBuilder = {
+	HOME: () => '/',
+
+	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
+	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,
+
+	COURSE_DETAILS: (slug: string) => `/${RouteSegments.COURSES}/${slug}`,
+} as const;
+
+export const ACCOUNT_SIDEBAR_ITEMS: NavItem[] = [
+	{ path: RouteBuilder.ACCOUNT_OVERVIEW(), label: 'Профиль', icon: 'person' },
+	{ path: RouteBuilder.ACCOUNT_TRANSACTIONS(), label: 'Подписки', icon: 'credit-card' },
+];
 </file>
 
 <file path="src/shared/ui/button/button.component.ts">
@@ -4419,48 +4613,6 @@ export class CourseSidebarComponent {
 }
 </file>
 
-<file path="src/widgets/header/ui/header.component.html">
-<header class="header">
-	<div class="header__container">
-		<app-logo />
-
-		<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">Войти</button>
-	</div>
-</header>
-
-<app-auth-by-oauth [(isOpen)]="isAuthOpen" />
-</file>
-
-<file path="src/widgets/header/ui/header.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.header {
-	position: relative;
-	z-index: var(--z-elevate);
-	width: 100%;
-	background-color: transparent;
-
-	&__container {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		max-width: var(--container-xxl);
-		height: var(--unit-16);
-		margin: 0 auto;
-		padding: 0 var(--unit-8);
-
-		@include m.media-below('lg') {
-			padding: 0 var(--unit-4);
-		}
-	}
-}
-</file>
-
 <file path=".stylelintrc.json">
 {
 	"extends": ["stylelint-config-standard-scss"],
@@ -4726,50 +4878,6 @@ export default defineConfig([
 }
 </file>
 
-<file path="src/app/routes/app.routes.ts">
-import { Routes } from '@angular/router';
-
-import { courseSlugGuard } from '@pages/course-page';
-
-import { RouteSegments } from '@shared/config/routes.config';
-
-export const APP_ROUTES: Routes = [
-	{
-		path: '',
-		pathMatch: 'full',
-		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
-	},
-	{
-		path: '',
-		loadComponent: () =>
-			import('../layouts/main-layout/main-layout.component').then(
-				(m) => m.MainLayoutComponent,
-			),
-		children: [
-			{
-				path: ':slug',
-				canActivate: [courseSlugGuard],
-				children: [
-					{
-						path: '',
-						loadComponent: () =>
-							import('@pages/course-page').then((c) => c.CoursePageComponent),
-					},
-					{
-						path: RouteSegments.WILDCARD,
-						redirectTo: '',
-					},
-				],
-			},
-		],
-	},
-	{
-		path: RouteSegments.WILDCARD,
-		redirectTo: '',
-	},
-];
-</file>
-
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
 @use 'media' as m;
 
@@ -4852,27 +4960,44 @@ app-course-progress {
 }
 </file>
 
-<file path="src/widgets/header/ui/header.component.ts">
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+<file path="src/widgets/header/ui/header.component.html">
+<header class="header">
+	<div class="header__container">
+		<app-logo />
 
-import { AuthByOauthComponent } from '@features/auth-by-oauth';
+		<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">Войти</button>
+	</div>
+</header>
 
-import { AppLogoComponent } from '@shared/ui/app-logo';
-import { ButtonComponent } from '@shared/ui/button';
+<app-auth-by-oauth [(isOpen)]="isAuthOpen" />
+</file>
 
-@Component({
-	selector: 'app-header',
-	standalone: true,
-	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HeaderComponent {
-	readonly isAuthOpen = signal<boolean>(false);
+<file path="src/widgets/header/ui/header.component.scss">
+@use 'media' as m;
 
-	protected openAuth(): void {
-		this.isAuthOpen.set(true);
+:host {
+	display: block;
+	width: 100%;
+}
+
+.header {
+	position: relative;
+	z-index: var(--z-elevate);
+	width: 100%;
+	background-color: transparent;
+
+	&__container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		max-width: var(--container-xxl);
+		height: var(--unit-16);
+		margin: 0 auto;
+		padding: 0 var(--unit-8);
+
+		@include m.media-below('lg') {
+			padding: 0 var(--unit-4);
+		}
 	}
 }
 </file>
@@ -4926,6 +5051,83 @@ export class HeaderComponent {
 	display: flex;
 	justify-content: end;
 }
+</file>
+
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
+
+import { courseSlugGuard } from '@pages/course-page';
+
+import { RouteSegments } from '@shared/config/routes.config';
+
+import { AccountLayoutComponent } from '../layouts/account-layout/account-layout.component';
+import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
+
+export const COURSE_ROUTES: Routes = [
+	{
+		path: ':slug',
+		canActivate: [courseSlugGuard],
+		children: [
+			{
+				path: RouteSegments.ROOT,
+				loadComponent: () =>
+					import('@pages/course-page').then((c) => c.CoursePageComponent),
+				title: 'Course',
+			},
+			{
+				path: RouteSegments.WILDCARD,
+				redirectTo: '',
+			},
+		],
+	},
+];
+
+export const ACCOUNT_ROUTES: Routes = [
+	{
+		path: RouteSegments.ROOT,
+		redirectTo: RouteSegments.OVERVIEW,
+		pathMatch: 'full',
+	},
+	{
+		path: RouteSegments.OVERVIEW,
+		loadComponent: () =>
+			import('@pages/account-overview-page/account-overview-page.component').then(
+				(c) => c.AccountOverviewPageComponent,
+			),
+		title: 'Account Overview',
+	},
+	{
+		path: RouteSegments.TRANSACTIONS,
+		loadComponent: () =>
+			import('@pages/account-transactions-page/account-transactions-page.component').then(
+				(c) => c.AccountTransactionsPageComponent,
+			),
+		title: 'Account Transactions',
+	},
+];
+
+export const APP_ROUTES: Routes = [
+	{
+		path: RouteSegments.ROOT,
+		pathMatch: 'full',
+		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
+	},
+	{
+		path: RouteSegments.COURSES,
+		component: MainLayoutComponent,
+		children: COURSE_ROUTES,
+	},
+
+	{
+		path: RouteSegments.ACCOUNT,
+		component: AccountLayoutComponent,
+		children: ACCOUNT_ROUTES,
+	},
+	{
+		path: RouteSegments.WILDCARD,
+		redirectTo: RouteSegments.ROOT,
+	},
+];
 </file>
 
 <file path="src/pages/course-page/ui/course-page.component.html">
@@ -5231,6 +5433,31 @@ export class CoursePageComponent {
 	--container-lg: 960px;
 	--container-xl: 1200px;
 	--container-xxl: 1400px;
+}
+</file>
+
+<file path="src/widgets/header/ui/header.component.ts">
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+
+import { AuthByOauthComponent } from '@features/auth-by-oauth';
+
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+
+@Component({
+	selector: 'app-header',
+	standalone: true,
+	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent],
+	templateUrl: './header.component.html',
+	styleUrl: './header.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HeaderComponent {
+	readonly isAuthOpen = signal<boolean>(false);
+
+	protected openAuth(): void {
+		this.isAuthOpen.set(true);
+	}
 }
 </file>
 
