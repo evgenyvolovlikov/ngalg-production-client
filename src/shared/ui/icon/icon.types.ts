@@ -16,4 +16,5 @@ export type IconName =
 	| 'book-open'
 	| 'xmark'
 	| 'bars'
-	| 'logo-github';
+	| 'logo-github'
+	| 'logo-google';

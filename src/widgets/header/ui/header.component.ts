@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { AuthByGithubComponent } from '@features/auth-by-github';
+import { AuthByOAuthComponent } from '@features/auth-by-oauth';
 
 import { ButtonComponent } from '@shared/ui/button';
 
 @Component({
 	selector: 'app-header',
 	standalone: true,
-	imports: [RouterLink, AuthByGithubComponent, ButtonComponent],
+	imports: [RouterLink, AuthByOAuthComponent, ButtonComponent],
 	templateUrl: './header.component.html',
 	styleUrl: './header.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

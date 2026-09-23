@@ -1,3 +1,5 @@
+@use 'media' as m;
+
 .auth-dialog {
 	display: flex;
 	flex-direction: column;
@@ -17,7 +19,6 @@
 		width: 100%;
 		max-width: 100%;
 		margin-bottom: var(--unit-6);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: clamp(0.8rem, 1.1vw, var(--font-size-sm));
 		line-height: var(--line-height-normal);
 		color: var(--text-secondary);
@@ -32,23 +33,16 @@
 		width: 100%;
 	}
 
-	button[app-button].github-provider {
+	button[app-button].auth-dialog__btn {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		height: 2.875rem;
 		padding: 0;
-		background-color: var(--social-github);
 		transition:
 			background-color var(--transition-fast),
 			border-color var(--transition-fast);
-		border-color: var(--social-github);
 		overflow: hidden;
-
-		&:hover {
-			background-color: var(--social-github-hover);
-			border-color: var(--social-github-hover);
-		}
 
 		::ng-deep .app-button__content {
 			display: block;
@@ -56,21 +50,45 @@
 			height: 100%;
 		}
 	}
+
+	button[app-button].google-provider {
+		background-color: var(--social-google);
+		border-color: var(--social-google);
+
+		&:hover {
+			background-color: var(--social-google-hover);
+			border-color: var(--social-google-hover);
+		}
+
+		.provider-layout__icon-box {
+			background-color: var(--bg-card);
+			border-top-left-radius: var(--radius-sm);
+			border-bottom-left-radius: var(--radius-sm);
+		}
+	}
+
+	button[app-button].github-provider {
+		background-color: var(--social-github);
+		border-color: var(--social-github);
+
+		&:hover {
+			background-color: var(--social-github-hover);
+			border-color: var(--social-github-hover);
+		}
+
+		.provider-layout__icon-box {
+			background-color: transparent;
+		}
+	}
 }
 
 .provider-layout {
-	position: relative;
 	display: flex;
-	justify-content: center;
 	align-items: center;
 	width: 100%;
 	height: 100%;
 
 	&__icon-box {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
 		display: flex;
 		flex-shrink: 0;
 		justify-content: center;
@@ -79,13 +97,13 @@
 		height: 100%;
 
 		app-icon {
-			display: flex;
-			color: #fff;
+			color: var(--text-on-dark);
 		}
 	}
 
 	&__text {
-		font-size: var(--font-size-sm);
+		flex-grow: 1;
+		margin-right: 2.875rem;
 		font-weight: var(--font-weight-medium);
 		color: var(--text-on-dark);
 		text-align: center;

@@ -96,13 +96,18 @@
 		"declaration-block-no-redundant-longhand-properties": true,
 		"no-empty-source": null,
 
-		"declaration-property-unit-allowed-list": {
-			"font-size": ["px", "rem", "em"],
-			"margin": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
-			"padding": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
-			"width": ["px", "rem", "%", "vw", "vh", "dvh", "em", "fr"],
-			"height": ["px", "rem", "%", "vh", "vw", "dvh", "em", "fr"]
-		},
+		"declaration-property-unit-allowed-list": [
+			{
+				"font-size": ["px", "rem", "em"],
+				"margin": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+				"padding": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
+				"width": ["px", "rem", "%", "vw", "vh", "dvh", "em", "fr"],
+				"height": ["px", "rem", "%", "vh", "vw", "dvh", "em", "fr"]
+			},
+			{
+				"ignore": ["inside-function"]
+			}
+		],
 
 		"selector-class-pattern": "^[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
 		"scss/selector-no-redundant-nesting-selector": null,
