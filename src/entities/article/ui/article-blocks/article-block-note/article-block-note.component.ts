@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
+import { IconComponent } from '@shared/ui/icon';
+
 import { NoteBlockData } from '../../../model/types/article.types';
 
 @Component({
@@ -8,6 +10,7 @@ import { NoteBlockData } from '../../../model/types/article.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './article-block-note.component.html',
 	styleUrl: './article-block-note.component.scss',
+	imports: [IconComponent],
 })
 export class ArticleBlockNoteComponent {
 	readonly data = input.required<NoteBlockData>();

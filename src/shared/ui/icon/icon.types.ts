@@ -17,4 +17,8 @@ export type IconName =
 	| 'xmark'
 	| 'bars'
 	| 'logo-github'
-	| 'logo-google';
+	| 'logo-google'
+	| 'triangle-exclamation'
+	| 'triangle-exclamation-fill'
+	| 'circle-xmark-fill'
+	| 'circle-info-fill';
