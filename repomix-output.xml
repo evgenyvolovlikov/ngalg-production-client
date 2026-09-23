@@ -168,6 +168,12 @@ src/
         course-page.component.ts
       index.ts
       mock.ts
+    home-page/
+      ui/
+        home-page.component.html
+        home-page.component.scss
+        home-page.component.ts
+      index.ts
   shared/
     api/
       api.interceptor.ts
@@ -184,6 +190,11 @@ src/
     types/
       course.types.ts
     ui/
+      app-logo/
+        app-logo.component.html
+        app-logo.component.scss
+        app-logo.component.ts
+        index.ts
       button/
         button.component.html
         button.component.scss
@@ -271,97 +282,60 @@ vercel.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.html">
-<div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
-	<button
-		app-button
-		type="button"
-		variant="fab"
-		color="primary"
-		(click)="toggleArticlesOpen()"
-		aria-label="Открыть глоссарий"
-	>
-		<span class="draw-sidebar__content">
-			<app-icon name="book-open" size="m" />
-			<span>A-Z</span>
-		</span>
-	</button>
-</div>
-
-<app-drawer [(isOpen)]="isArticlesOpen">
-	<div drawer-header></div>
-
-	<div class="drawer-inner-content"></div>
-</app-drawer>
+<file path="src/shared/ui/app-logo/app-logo.component.html">
+<a routerLink="/" class="app-logo" aria-label="На главную NgAlg">
+	<span class="app-logo__accent">Ng</span><span class="app-logo__main">Alg</span>
+</a>
 </file>
 
-<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.scss">
+<file path="src/shared/ui/app-logo/app-logo.component.scss">
 :host {
-	display: block;
+	display: inline-block;
 }
 
-.draw-sidebar {
-	position: fixed;
-	right: var(--unit-4);
-	bottom: var(--unit-4);
-	z-index: var(--z-fixed);
-	display: block;
-	border-radius: var(--radius-full);
-	box-shadow: var(--shadow-md);
-	transition:
-		transform var(--transition-base),
-		opacity var(--transition-fast);
+.app-logo {
+	display: flex;
+	align-items: center;
+	font-family: var(--font-family-sans);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	line-height: var(--line-height-none);
+	transition: opacity var(--transition-fast);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	text-decoration: none;
 
-	&:active {
-		transform: scale(0.95);
+	&:hover {
+		opacity: var(--opacity-hover);
 	}
 
-	&--hidden {
-		opacity: 0;
-		pointer-events: none;
-		transform: scale(0.8) translateY(24px);
+	&__accent {
+		color: var(--brand-primary);
 	}
 
-	&__content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--unit-1);
-		justify-content: center;
-		align-items: center;
-		font-size: 0.65rem;
-		font-weight: var(--font-weight-bold);
-		line-height: var(--line-height-none);
-		letter-spacing: 0.5px;
+	&__main {
+		color: var(--text-primary);
 	}
 }
 </file>
 
-<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.ts">
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-
-import { ButtonComponent } from '@shared/ui/button';
-import { DrawerComponent } from '@shared/ui/drawer';
-import { IconComponent } from '@shared/ui/icon';
+<file path="src/shared/ui/app-logo/app-logo.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
-	selector: 'app-articles-drawer-sidebar',
+	selector: 'app-logo',
 	standalone: true,
-	templateUrl: './articles-drawer-sidebar.component.html',
-	styleUrl: './articles-drawer-sidebar.component.scss',
+	imports: [RouterLink],
+	templateUrl: './app-logo.component.html',
+	styleUrl: './app-logo.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [IconComponent, DrawerComponent, ButtonComponent],
 })
-export class ArticlesDrawerSidebarComponent {
-	readonly isArticlesOpen = signal<boolean>(false);
-
-	protected toggleArticlesOpen(): void {
-		this.isArticlesOpen.update((state) => !state);
-	}
-}
+export class AppLogoComponent {}
 </file>
 
-<file path="src/widgets/articles-drawer-sidebar/index.ts">
-export * from './ui/articles-drawer-sidebar.component';
+<file path="src/shared/ui/app-logo/index.ts">
+export * from './app-logo.component';
 </file>
 
 <file path=".husky/commit-msg">
@@ -1558,6 +1532,213 @@ export const courseSlugGuard: CanActivateFn = (route) => {
 };
 </file>
 
+<file path="src/pages/home-page/ui/home-page.component.html">
+<div class="hero-page">
+	<header class="hero-page__header">
+		<app-logo />
+	</header>
+
+	<div class="hero-page__content">
+		<h1 class="hero-page__title">
+			Фундаментальный курс <br class="hero-page__br" />
+			по <span class="hero-page__accent">Frontend</span> разработке от А до Я
+		</h1>
+		<p class="hero-page__subtitle">
+			Cистемный подход, позволяющий освоить сложные концепты и закрепить их на реальных задачах.
+		</p>
+		<div class="hero-page__actions">
+			<a app-button [routerLink]="frontendRoute" size="xl" color="primary" class="hero-page__start-btn">
+				Начать обучение
+			</a>
+		</div>
+	</div>
+</div>
+</file>
+
+<file path="src/pages/home-page/ui/home-page.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.hero-page {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	min-height: 100dvh;
+	padding: var(--unit-8);
+	background-color: var(--bg-main);
+	text-align: center;
+
+	@include m.media-above('md') {
+		padding: var(--unit-4);
+	}
+
+	&__header {
+		position: absolute;
+		top: var(--unit-4);
+		left: var(--unit-4);
+		display: flex;
+		justify-content: flex-start;
+		width: auto;
+		padding: 0;
+	}
+
+	&__logo {
+		display: flex;
+		align-items: center;
+		font-family: var(--font-family-sans);
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-none);
+		transition: opacity var(--transition-fast);
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		text-decoration: none;
+
+		&:hover {
+			opacity: var(--opacity-hover);
+		}
+	}
+
+	&__logo-accent {
+		color: var(--brand-primary);
+	}
+
+	&__logo-main {
+		color: var(--text-primary);
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+		max-width: var(--container-xl);
+		margin-top: 25dvh;
+		margin-bottom: auto;
+		animation: hero-fade-up var(--transition-slow) forwards;
+
+		@include m.media-above('md') {
+			margin: auto;
+		}
+	}
+
+	&__title {
+		margin-bottom: var(--unit-6);
+		font-size: var(--font-size-xl);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+		letter-spacing: -0.02em;
+
+		@include m.media-above('sm') {
+			font-size: var(--font-size-xxl);
+		}
+
+		@include m.media-above('md') {
+			font-size: calc(var(--font-size-xxxl) * 1.5);
+		}
+	}
+
+	&__br {
+		display: none;
+
+		@include m.media-above('md') {
+			display: inline;
+		}
+	}
+
+	&__accent {
+		color: var(--brand-primary);
+	}
+
+	&__subtitle {
+		max-width: var(--container-md);
+		margin-bottom: var(--unit-8);
+		font-size: var(--font-size-xs);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-secondary);
+
+		@include m.media-above('sm') {
+			font-size: var(--font-size-sm);
+		}
+
+		@include m.media-above('md') {
+			margin-bottom: var(--unit-10);
+			font-size: var(--font-size-lg);
+		}
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	&__start-btn {
+		transition:
+			transform var(--transition-fast),
+			box-shadow var(--transition-fast),
+			background-color var(--transition-fast);
+
+		@include m.media-below('sm') {
+			width: 100%;
+		}
+
+		&:hover {
+			box-shadow: 0 10px 20px -10px rgb(99 102 241 / 40%);
+			transform: translateY(-2px);
+		}
+
+		&:active {
+			transform: translateY(0);
+		}
+	}
+}
+
+@keyframes hero-fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+</file>
+
+<file path="src/pages/home-page/ui/home-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { RouteSegments } from '@shared/config/routes.config';
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+
+@Component({
+	selector: 'app-home-page',
+	standalone: true,
+	imports: [RouterLink, ButtonComponent, AppLogoComponent],
+	templateUrl: './home-page.component.html',
+	styleUrl: './home-page.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HomePageComponent {
+	protected readonly frontendRoute = `/${RouteSegments.FRONTEND}`;
+}
+</file>
+
+<file path="src/pages/home-page/index.ts">
+export * from './ui/home-page.component';
+</file>
+
 <file path="src/shared/api/api.interceptor.ts">
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
@@ -2330,6 +2511,99 @@ $breakpoints: (
 }
 </file>
 
+<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.html">
+<div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
+	<button
+		app-button
+		type="button"
+		variant="fab"
+		color="primary"
+		(click)="toggleArticlesOpen()"
+		aria-label="Открыть глоссарий"
+	>
+		<span class="draw-sidebar__content">
+			<app-icon name="book-open" size="m" />
+			<span>A-Z</span>
+		</span>
+	</button>
+</div>
+
+<app-drawer [(isOpen)]="isArticlesOpen">
+	<div drawer-header></div>
+
+	<div class="drawer-inner-content"></div>
+</app-drawer>
+</file>
+
+<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.scss">
+:host {
+	display: block;
+}
+
+.draw-sidebar {
+	position: fixed;
+	right: var(--unit-4);
+	bottom: var(--unit-4);
+	z-index: var(--z-fixed);
+	display: block;
+	border-radius: var(--radius-full);
+	box-shadow: var(--shadow-md);
+	transition:
+		transform var(--transition-base),
+		opacity var(--transition-fast);
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	&--hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: scale(0.8) translateY(24px);
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-1);
+		justify-content: center;
+		align-items: center;
+		font-size: 0.65rem;
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-none);
+		letter-spacing: 0.5px;
+	}
+}
+</file>
+
+<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.ts">
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+
+import { ButtonComponent } from '@shared/ui/button';
+import { DrawerComponent } from '@shared/ui/drawer';
+import { IconComponent } from '@shared/ui/icon';
+
+@Component({
+	selector: 'app-articles-drawer-sidebar',
+	standalone: true,
+	templateUrl: './articles-drawer-sidebar.component.html',
+	styleUrl: './articles-drawer-sidebar.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [IconComponent, DrawerComponent, ButtonComponent],
+})
+export class ArticlesDrawerSidebarComponent {
+	readonly isArticlesOpen = signal<boolean>(false);
+
+	protected toggleArticlesOpen(): void {
+		this.isArticlesOpen.update((state) => !state);
+	}
+}
+</file>
+
+<file path="src/widgets/articles-drawer-sidebar/index.ts">
+export * from './ui/articles-drawer-sidebar.component';
+</file>
+
 <file path="src/widgets/course-sidebar/index.ts">
 export * from './ui/course-sidebar.component';
 </file>
@@ -2772,42 +3046,6 @@ export const RouteSegments = {
 	FRONTEND: 'frontend',
 	WILDCARD: '**',
 } as const;
-</file>
-
-<file path="src/shared/types/course.types.ts">
-export interface BaseEntity {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-}
-
-export interface CourseEntity extends BaseEntity {
-	slug: string;
-	title: string;
-	description: string;
-	isPublished: boolean;
-}
-
-export interface LessonEntity extends BaseEntity {
-	courseId: string;
-	sequenceOrder: number;
-	title: string;
-	description: string | null;
-	videoUrl: string | null;
-	durationSeconds: number;
-	isFree: boolean;
-	hasCodeEditor: boolean;
-}
-
-export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
-	isCompleted: boolean;
-};
-
-export type CourseSkeletonLesson = Omit<LessonDetail, 'courseId' | 'videoUrl'>;
-
-export type CourseSkeleton = Omit<CourseEntity, 'createdAt' | 'updatedAt'> & {
-	lessons: CourseSkeletonLesson[];
-};
 </file>
 
 <file path="src/shared/ui/button/button.component.ts">
@@ -3506,41 +3744,6 @@ export const appConfig: ApplicationConfig = {
 };
 </file>
 
-<file path="src/app/routes/app.routes.ts">
-import { Routes } from '@angular/router';
-
-import { courseSlugGuard } from '@pages/course-page';
-
-import { RouteSegments } from '@shared/config/routes.config';
-
-export const APP_ROUTES: Routes = [
-	{
-		path: '',
-		loadComponent: () =>
-			import('../layouts/main-layout/main-layout.component').then(
-				(m) => m.MainLayoutComponent,
-			),
-		children: [
-			{
-				path: '',
-				pathMatch: 'full',
-				redirectTo: 'frontend',
-			},
-			{
-				path: ':slug',
-				canActivate: [courseSlugGuard],
-				loadComponent: () =>
-					import('@pages/course-page').then((c) => c.CoursePageComponent),
-			},
-		],
-	},
-	{
-		path: RouteSegments.WILDCARD,
-		redirectTo: 'frontend',
-	},
-];
-</file>
-
 <file path="src/entities/course/ui/course-progress/course-progress.component.scss">
 @use 'media' as m;
 
@@ -3690,6 +3893,42 @@ export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
 	isFree: true,
 	hasCodeEditor: true,
 	isCompleted: false,
+};
+</file>
+
+<file path="src/shared/types/course.types.ts">
+export interface BaseEntity {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface CourseEntity extends BaseEntity {
+	slug: string;
+	title: string;
+	description: string;
+	isPublished: boolean;
+}
+
+export interface LessonEntity extends BaseEntity {
+	courseId: string;
+	sequenceOrder: number;
+	title: string;
+	description: string | null;
+	videoUrl: string | null;
+	durationSeconds: number;
+	isFree: boolean;
+	hasCodeEditor: boolean;
+}
+
+export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
+	isCompleted: boolean;
+};
+
+export type CourseSkeletonLesson = Omit<LessonDetail, 'courseId' | 'videoUrl'>;
+
+export type CourseSkeleton = Omit<CourseEntity, 'createdAt' | 'updatedAt'> & {
+	lessons: CourseSkeletonLesson[];
 };
 </file>
 
@@ -4183,9 +4422,7 @@ export class CourseSidebarComponent {
 <file path="src/widgets/header/ui/header.component.html">
 <header class="header">
 	<div class="header__container">
-		<a routerLink="/" class="header__logo">
-			<span>NGALG</span>
-		</a>
+		<app-logo />
 
 		<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">Войти</button>
 	</div>
@@ -4219,21 +4456,6 @@ export class CourseSidebarComponent {
 
 		@include m.media-below('lg') {
 			padding: 0 var(--unit-4);
-		}
-	}
-
-	&__logo {
-		display: flex;
-		align-items: center;
-		font-size: var(--font-size-lg);
-		font-weight: var(--font-weight-bold);
-		color: var(--text-primary);
-		transition: color var(--transition-fast);
-		text-decoration: none;
-		letter-spacing: -0.5px;
-
-		&:hover {
-			color: var(--brand-hover);
 		}
 	}
 }
@@ -4504,6 +4726,208 @@ export default defineConfig([
 }
 </file>
 
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
+
+import { courseSlugGuard } from '@pages/course-page';
+
+import { RouteSegments } from '@shared/config/routes.config';
+
+export const APP_ROUTES: Routes = [
+	{
+		path: '',
+		pathMatch: 'full',
+		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
+	},
+	{
+		path: '',
+		loadComponent: () =>
+			import('../layouts/main-layout/main-layout.component').then(
+				(m) => m.MainLayoutComponent,
+			),
+		children: [
+			{
+				path: ':slug',
+				canActivate: [courseSlugGuard],
+				children: [
+					{
+						path: '',
+						loadComponent: () =>
+							import('@pages/course-page').then((c) => c.CoursePageComponent),
+					},
+					{
+						path: RouteSegments.WILDCARD,
+						redirectTo: '',
+					},
+				],
+			},
+		],
+	},
+	{
+		path: RouteSegments.WILDCARD,
+		redirectTo: '',
+	},
+];
+</file>
+
+<file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+	height: calc(100dvh - var(--unit-8));
+
+	@include m.media-below('lg') {
+		height: calc(100dvh - var(--unit-4));
+	}
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+	height: 100%;
+
+	@include m.media-below('lg') {
+		gap: var(--unit-2);
+	}
+}
+
+app-course-progress {
+	flex-shrink: 0;
+}
+
+.lessons-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	gap: var(--unit-4);
+	min-height: 0;
+	padding: var(--unit-5) 0;
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+
+	@include m.media-below('lg') {
+		background-color: unset;
+		border: unset;
+		border-radius: unset;
+	}
+}
+
+.section-title {
+	flex-shrink: 0;
+	margin: 0;
+	padding: 0 var(--unit-4);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.lessons-list {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	gap: var(--unit-1);
+	width: 100%;
+	min-height: 0;
+	padding: 0 var(--unit-4);
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--text-muted) transparent;
+
+	&::-webkit-scrollbar {
+		width: var(--unit-1);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--text-muted);
+		border-radius: var(--radius-full);
+
+		&:hover {
+			background-color: var(--text-secondary);
+		}
+	}
+}
+</file>
+
+<file path="src/widgets/header/ui/header.component.ts">
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+
+import { AuthByOauthComponent } from '@features/auth-by-oauth';
+
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+
+@Component({
+	selector: 'app-header',
+	standalone: true,
+	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent],
+	templateUrl: './header.component.html',
+	styleUrl: './header.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HeaderComponent {
+	readonly isAuthOpen = signal<boolean>(false);
+
+	protected openAuth(): void {
+		this.isAuthOpen.set(true);
+	}
+}
+</file>
+
+<file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.lesson-box {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-8);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+	}
+}
+
+.lesson-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	padding: var(--unit-8);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	font-family: var(--font-family-sans);
+
+	@include m.media-below('lg') {
+		gap: var(--unit-4);
+		padding: var(--unit-3);
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--unit-4);
+		justify-content: flex-end;
+		align-items: center;
+		margin-top: var(--unit-2);
+		padding-top: var(--unit-6);
+		border-top: 1px solid var(--border-light);
+	}
+}
+
+.lesson-button-next {
+	display: flex;
+	justify-content: end;
+}
+</file>
+
 <file path="src/pages/course-page/ui/course-page.component.html">
 <div class="course-page__mobile-action">
 	<button app-button type="button" (click)="toggleMobileMenu()" aria-label="Открыть меню курса">
@@ -4620,164 +5044,6 @@ export class CoursePageComponent {
 			this.currentLesson.update((l) => ({ ...l, isCompleted: event.completed }));
 		}
 	}
-}
-</file>
-
-<file path="src/widgets/course-sidebar/ui/course-sidebar.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-	height: calc(100dvh - var(--unit-8));
-
-	@include m.media-below('lg') {
-		height: calc(100dvh - var(--unit-4));
-	}
-}
-
-.sidebar {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-4);
-	height: 100%;
-
-	@include m.media-below('lg') {
-		gap: var(--unit-2);
-	}
-}
-
-app-course-progress {
-	flex-shrink: 0;
-}
-
-.lessons-container {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	gap: var(--unit-4);
-	min-height: 0;
-	padding: var(--unit-5) 0;
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-
-	@include m.media-below('lg') {
-		background-color: unset;
-		border: unset;
-		border-radius: unset;
-	}
-}
-
-.section-title {
-	flex-shrink: 0;
-	margin: 0;
-	padding: 0 var(--unit-4);
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-bold);
-	color: var(--text-primary);
-}
-
-.lessons-list {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	gap: var(--unit-1);
-	width: 100%;
-	min-height: 0;
-	padding: 0 var(--unit-4);
-	overflow-y: auto;
-	scrollbar-width: thin;
-	scrollbar-color: var(--text-muted) transparent;
-
-	&::-webkit-scrollbar {
-		width: var(--unit-1);
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: var(--text-muted);
-		border-radius: var(--radius-full);
-
-		&:hover {
-			background-color: var(--text-secondary);
-		}
-	}
-}
-</file>
-
-<file path="src/widgets/header/ui/header.component.ts">
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-import { AuthByOauthComponent } from '@features/auth-by-oauth';
-
-import { ButtonComponent } from '@shared/ui/button';
-
-@Component({
-	selector: 'app-header',
-	standalone: true,
-	imports: [RouterLink, AuthByOauthComponent, ButtonComponent],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HeaderComponent {
-	readonly isAuthOpen = signal<boolean>(false);
-
-	protected openAuth(): void {
-		this.isAuthOpen.set(true);
-	}
-}
-</file>
-
-<file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.lesson-box {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-8);
-
-	@include m.media-below('lg') {
-		gap: var(--unit-4);
-	}
-}
-
-.lesson-content {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-6);
-	padding: var(--unit-8);
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-	font-family: var(--font-family-sans);
-
-	@include m.media-below('lg') {
-		gap: var(--unit-4);
-		padding: var(--unit-3);
-	}
-
-	&__actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--unit-4);
-		justify-content: flex-end;
-		align-items: center;
-		margin-top: var(--unit-2);
-		padding-top: var(--unit-6);
-		border-top: 1px solid var(--border-light);
-	}
-}
-
-.lesson-button-next {
-	display: flex;
-	justify-content: end;
 }
 </file>
 

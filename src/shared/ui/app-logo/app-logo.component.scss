@@ -1,0 +1,28 @@
+:host {
+	display: inline-block;
+}
+
+.app-logo {
+	display: flex;
+	align-items: center;
+	font-family: var(--font-family-sans);
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-bold);
+	line-height: var(--line-height-none);
+	transition: opacity var(--transition-fast);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	text-decoration: none;
+
+	&:hover {
+		opacity: var(--opacity-hover);
+	}
+
+	&__accent {
+		color: var(--brand-primary);
+	}
+
+	&__main {
+		color: var(--text-primary);
+	}
+}

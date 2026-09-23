@@ -7,6 +7,7 @@ import { RouteSegments } from '@shared/config/routes.config';
 export const APP_ROUTES: Routes = [
 	{
 		path: '',
+		pathMatch: 'full',
 		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
 	},
 	{
@@ -19,8 +20,17 @@ export const APP_ROUTES: Routes = [
 			{
 				path: ':slug',
 				canActivate: [courseSlugGuard],
-				loadComponent: () =>
-					import('@pages/course-page').then((c) => c.CoursePageComponent),
+				children: [
+					{
+						path: '',
+						loadComponent: () =>
+							import('@pages/course-page').then((c) => c.CoursePageComponent),
+					},
+					{
+						path: RouteSegments.WILDCARD,
+						redirectTo: '',
+					},
+				],
 			},
 		],
 	},
