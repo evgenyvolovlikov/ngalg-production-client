@@ -1,0 +1,22 @@
+<div class="hero-page">
+	<header class="hero-page__header">
+		<a routerLink="/" class="hero-page__logo" aria-label="На главную NgAlg">
+			<span class="hero-page__logo-main">NgAlg</span>
+		</a>
+	</header>
+
+	<div class="hero-page__content">
+		<h1 class="hero-page__title">
+			Фундаментальный курс <br class="hero-page__br" />
+			по <span class="hero-page__accent">Frontend</span> разработке от А до Я
+		</h1>
+		<p class="hero-page__subtitle">
+			Cистемный подход, позволяющий освоить сложные концепции и закрепить их на реальных задачах.
+		</p>
+		<div class="hero-page__actions">
+			<a app-button [routerLink]="frontendRoute" size="xl" color="primary" class="hero-page__start-btn">
+				Начать обучение
+			</a>
+		</div>
+	</div>
+</div>

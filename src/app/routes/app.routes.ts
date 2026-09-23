@@ -7,16 +7,15 @@ import { RouteSegments } from '@shared/config/routes.config';
 export const APP_ROUTES: Routes = [
 	{
 		path: '',
+		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
+	},
+	{
+		path: '',
 		loadComponent: () =>
 			import('../layouts/main-layout/main-layout.component').then(
 				(m) => m.MainLayoutComponent,
 			),
 		children: [
-			{
-				path: '',
-				pathMatch: 'full',
-				redirectTo: 'frontend',
-			},
 			{
 				path: ':slug',
 				canActivate: [courseSlugGuard],
@@ -27,6 +26,6 @@ export const APP_ROUTES: Routes = [
 	},
 	{
 		path: RouteSegments.WILDCARD,
-		redirectTo: 'frontend',
+		redirectTo: '',
 	},
 ];

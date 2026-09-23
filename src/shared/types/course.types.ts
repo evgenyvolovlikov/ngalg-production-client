@@ -31,28 +31,3 @@ export type CourseSkeletonLesson = Omit<LessonDetail, 'courseId' | 'videoUrl'>;
 export type CourseSkeleton = Omit<CourseEntity, 'createdAt' | 'updatedAt'> & {
 	lessons: CourseSkeletonLesson[];
 };
-
-export interface ToggleLessonProgressResponse {
-	completed: boolean;
-}
-
-export interface CreateCourseDto {
-	slug: string;
-	title: string;
-	description: string;
-	isPublished?: boolean;
-}
-
-export type UpdateCourseDto = Partial<CreateCourseDto>;
-
-export interface CreateLessonDto {
-	sequenceOrder: number;
-	title: string;
-	description?: string;
-	videoUrl?: string;
-	durationSeconds?: number;
-	isFree?: boolean;
-	hasCodeEditor?: boolean;
-}
-
-export type UpdateLessonDto = Partial<CreateLessonDto>;

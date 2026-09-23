@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 
+import { ArticlesDrawerSidebarComponent } from '@widgets/articles-drawer-sidebar';
 import { CourseSidebarComponent } from '@widgets/course-sidebar';
-import { DrawerSidebarComponent } from '@widgets/drawer-sidebar';
 import { LessonContentComponent } from '@widgets/lesson-content';
 
 import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
@@ -23,7 +23,7 @@ import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } fro
 		SidebarLayoutComponent,
 		CourseSidebarComponent,
 		LessonContentComponent,
-		DrawerSidebarComponent,
+		ArticlesDrawerSidebarComponent,
 		DrawerComponent,
 		IconComponent,
 		ButtonComponent,
