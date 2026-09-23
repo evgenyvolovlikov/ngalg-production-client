@@ -1,0 +1,9 @@
+<div class="text-block-content">
+	@if (data().format === "MARKDOWN") {
+		<app-markdown-renderer [rawMarkdown]="data().content" />
+	} @else if (data().format === "HTML") {
+		<div [innerHTML]="sanitizedHtml()"></div>
+	} @else {
+		<p class="error-text">Неизвестный формат текста</p>
+	}
+</div>

@@ -1,0 +1,6 @@
+<figure class="content-figure">
+	<app-cover-image [src]="data().url" [alt]="data().alt" [priority]="false" />
+	@if (data().caption) {
+		<figcaption class="caption">{{ data().caption }}</figcaption>
+	}
+</figure>

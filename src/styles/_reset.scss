@@ -32,6 +32,10 @@ body {
 	overflow-x: clip;
 }
 
+body.lock-scroll {
+	overflow: hidden;
+}
+
 ul[class],
 ol[class] {
 	list-style: none;

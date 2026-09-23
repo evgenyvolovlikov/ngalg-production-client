@@ -1,0 +1,23 @@
+<section class="article-content">
+	<div class="article-content__hero">
+		@if (article().coverImage; as cover) {
+			<app-cover-image [src]="cover.url" [alt]="cover.alt" [priority]="true" />
+		} @else {
+			<app-cover-image [src]="null" alt="Изображение по умолчанию" [priority]="true" />
+		}
+	</div>
+
+	<article class="article-content__main">
+		<app-article-header [article]="article()" />
+
+		<hr class="article-content__divider" aria-hidden="true" />
+
+		<div class="article-content__blocks">
+			@for (block of article().blocks; track $index) {
+				<app-article-block-renderer [block]="block" />
+			}
+		</div>
+	</article>
+
+	<footer class="admin-panel"></footer>
+</section>

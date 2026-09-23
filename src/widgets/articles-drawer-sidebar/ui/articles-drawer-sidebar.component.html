@@ -15,7 +15,9 @@
 </div>
 
 <app-drawer [(isOpen)]="isArticlesOpen">
-	<div drawer-header></div>
+	<div drawer-header>Header</div>
 
-	<div class="drawer-inner-content"></div>
+	<div class="drawer-inner-content">
+		<app-article-content [article]="mockArticle" />
+	</div>
 </app-drawer>

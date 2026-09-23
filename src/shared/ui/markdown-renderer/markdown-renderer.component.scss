@@ -1,0 +1,145 @@
+:host {
+	display: block;
+	width: 100%;
+}
+
+.markdown-body {
+	font-size: var(--font-size-base);
+	line-height: var(--line-height-relaxed);
+	color: var(--text-primary); // 👈 Использование твоего токена #1e293b
+
+	::ng-deep {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			margin-top: var(--unit-8);
+			margin-bottom: var(--unit-4);
+			font-weight: var(--font-weight-bold);
+			line-height: var(--line-height-tight);
+			color: var(--text-primary);
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+
+		h1 {
+			font-size: var(--font-size-xxxl);
+		}
+
+		h2 {
+			padding-bottom: var(--unit-2);
+			font-size: var(--font-size-xxl);
+			border-bottom: 1px solid var(--border-light); // 👈 Заменено на твой токен границ #e2e8f0
+		}
+
+		h3 {
+			font-size: var(--font-size-xl);
+		}
+
+		h4 {
+			font-size: var(--font-size-lg);
+		}
+
+		p,
+		ul,
+		ol {
+			margin-top: 0;
+			margin-bottom: var(--unit-4);
+		}
+
+		ul,
+		ol {
+			padding-left: var(--unit-6);
+
+			li {
+				margin-bottom: var(--unit-2);
+			}
+		}
+
+		a {
+			color: var(--brand-primary); // 👈 Подсветка ссылок брендовым индиго
+			transition: opacity var(--transition-fast);
+			text-decoration: underline;
+			text-underline-offset: 2px;
+
+			&:hover {
+				opacity: var(--opacity-hover);
+			}
+		}
+
+		// Инлайновые фрагменты кода в тексте (например, `this.user()`)
+		code {
+			padding: 0.2em 0.4em;
+			background-color: var(--bg-main); // Мягкая серая подложка для встроенного кода
+			border-radius: var(--radius-sm);
+			font-family: var(--font-family-mono, monospace);
+			font-size: var(--font-size-sm);
+			color: var(--brand-primary); // Выделяем инлайн-код фиолетовым оттенком
+		}
+
+		// Полноценные многострочные блоки кода (без использования app-article-block-code)
+		pre {
+			margin-top: 0;
+			margin-bottom: var(--unit-4);
+			padding: var(--unit-4);
+			background-color: var(--bg-code); // 👈 Твой токен для блоков кода #0f172a
+			border: 1px solid var(--border-light);
+			border-radius: var(--radius-md);
+			overflow-x: auto;
+
+			code {
+				padding: 0;
+				background-color: transparent;
+				border-radius: 0;
+				color: var(--text-on-dark); // Светлый контрастный текст на темном фоне кода
+			}
+		}
+
+		blockquote {
+			margin: 0 0 var(--unit-4) 0;
+			padding: var(--unit-3) var(--unit-4);
+			background-color: var(--brand-light); // Мягкий индиго-фон для цитат
+			border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+			color: var(--text-secondary);
+			border-left: var(--unit-1) solid var(--brand-primary); // 👈 Акцентная фиолетовая черта слева
+
+			p:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		table {
+			width: 100%;
+			margin-bottom: var(--unit-4);
+			border-collapse: collapse;
+
+			th,
+			td {
+				padding: var(--unit-3);
+				border: 1px solid var(--border-light);
+				text-align: left;
+			}
+
+			th {
+				background-color: var(--bg-main);
+				font-weight: var(--font-weight-bold);
+				color: var(--text-primary);
+			}
+
+			td {
+				color: var(--text-secondary);
+			}
+		}
+
+		hr {
+			height: 1px;
+			margin: var(--unit-8) 0;
+			background-color: var(--border-light);
+			border: none;
+		}
+	}
+}

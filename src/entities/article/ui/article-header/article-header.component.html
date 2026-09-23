@@ -1,0 +1,29 @@
+<header class="article-header">
+	<div class="article-header__meta">
+		@if (tags().length) {
+			<div class="article-header__tags" aria-label="Теги статьи">
+				@for (tag of tags(); track tag) {
+					<app-badge variant="primary">{{ tag }}</app-badge>
+				}
+			</div>
+		}
+
+		<div class="article-header__info">
+			<app-badge variant="outline" [attr.data-level]="levelData()">
+				{{ levelData() }}
+			</app-badge>
+
+			<span class="article-header__reading-time"> ~ {{ article().readingTimeMinutes }} мин </span>
+		</div>
+	</div>
+
+	<h1 class="article-header__title">{{ article().title }}</h1>
+	<p class="article-header__lead">{{ article().leadText }}</p>
+
+	@if (article().description) {
+		<section class="article-header__summary" aria-labelledby="article-summary-title">
+			<h2 id="article-summary-title" class="article-header__summary-label">Краткое содержание</h2>
+			<p class="article-header__summary-text">{{ article().description }}</p>
+		</section>
+	}
+</header>

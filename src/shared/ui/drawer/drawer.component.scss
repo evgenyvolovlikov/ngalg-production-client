@@ -39,7 +39,6 @@
 	&__close {
 		position: absolute;
 		top: var(--unit-4);
-		left: var(--unit-4);
 		z-index: var(--z-elevate);
 		font-size: var(--font-size-base);
 		color: var(--text-secondary);
@@ -63,19 +62,19 @@
 		padding: var(--unit-6);
 
 		@include m.media-below('lg') {
-			padding: var(--unit-0);
+			padding: var(--unit-4) var(--unit-4) var(--unit-2) var(--unit-4); // 👈 Добавляем аккуратный отступ для мобильной шапки
 		}
 	}
 
 	&__content {
 		flex-grow: 1;
 		padding: var(--unit-6);
-		overflow-y: auto;
+		overflow-y: auto; // 👈 Включает вертикальную прокрутку статьи
 		scrollbar-width: thin;
 		scrollbar-color: var(--text-muted) transparent;
 
 		@include m.media-below('lg') {
-			padding: var(--unit-0);
+			padding: var(--unit-4) var(--unit-4) var(--unit-10) var(--unit-4); // 👈 Заменяем var(--unit-0) на var(--unit-4) по бокам и var(--unit-10) снизу, чтобы текст не обрезался
 		}
 
 		&::-webkit-scrollbar {

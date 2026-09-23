@@ -1,0 +1,13 @@
+<div class="features-list">
+	@if (data().sectionTitle) {
+		<h3 class="features-list__title">{{ data().sectionTitle }}</h3>
+	}
+	<ul class="features-list__wrapper">
+		@for (item of data().items; track item.title) {
+			<li class="features-list__item">
+				<strong class="keyword">{{ item.title }}</strong>
+				<span class="text"> — {{ item.text }}</span>
+			</li>
+		}
+	</ul>
+</div>

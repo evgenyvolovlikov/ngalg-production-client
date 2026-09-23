@@ -1,0 +1,52 @@
+:host {
+	display: block;
+	width: 100%;
+	min-width: 0;
+}
+
+.callout-box {
+	display: flex;
+	gap: var(--unit-3);
+	width: 100%;
+	min-width: 0;
+	padding: var(--unit-4);
+	border-radius: var(--radius-sm) var(--radius-md) var(--radius-md) var(--radius-sm);
+	box-shadow: var(--shadow-sm);
+	border-left: var(--unit-1) solid var(--border-light);
+
+	&[data-variant='INFO'] {
+		background-color: var(--status-success-bg);
+		color: var(--status-success);
+		border-left-color: var(--status-success);
+	}
+
+	&[data-variant='WARNING'] {
+		background-color: var(--status-warning-bg);
+		color: var(--status-warning);
+		border-left-color: var(--status-warning);
+	}
+
+	&[data-variant='ERROR'] {
+		background-color: var(--status-error-bg);
+		color: var(--status-error);
+		border-left-color: var(--status-error);
+	}
+
+	&__icon {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		width: var(--font-size-xl);
+		height: var(--font-size-xl);
+	}
+
+	&__content {
+		flex-grow: 1;
+		min-width: 0;
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-primary);
+		word-break: word-break;
+		overflow-wrap: anywhere;
+	}
+}

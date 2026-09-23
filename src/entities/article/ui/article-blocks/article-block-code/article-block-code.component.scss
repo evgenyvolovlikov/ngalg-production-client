@@ -1,0 +1,41 @@
+:host {
+	display: block;
+	width: 100%;
+}
+
+.code-snippet {
+	background-color: var(--bg-code);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-sm);
+	overflow: hidden;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		padding: var(--unit-2) var(--unit-4);
+		background-color: rgb(255 255 255 / 3%);
+		border-bottom: 1px solid rgb(226 232 240 / 10%);
+	}
+
+	&__filename {
+		font-family: var(--font-family-mono, monospace);
+		font-size: var(--font-size-xs);
+		font-weight: var(--font-weight-medium);
+		color: var(--text-muted);
+	}
+
+	&__body {
+		margin: 0;
+		padding: var(--unit-4);
+		background-color: transparent;
+		overflow-x: auto;
+	}
+
+	&__code {
+		font-family: var(--font-family-mono, monospace);
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-base);
+		color: var(--text-on-dark);
+	}
+}

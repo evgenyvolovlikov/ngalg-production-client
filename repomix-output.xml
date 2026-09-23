@@ -109,6 +109,47 @@ src/
     ui/
       app.component.ts
   entities/
+    article/
+      model/
+        types/
+          article.types.ts
+      ui/
+        article-blocks/
+          article-block-code/
+            article-block-code.component.html
+            article-block-code.component.scss
+            article-block-code.component.ts
+          article-block-complexity/
+            article-block-complexity.component.html
+            article-block-complexity.component.scss
+            article-block-complexity.ts
+          article-block-features/
+            article-block-features.component.html
+            article-block-features.component.scss
+            article-block-features.component.ts
+          article-block-image/
+            article-block-image.component.html
+            article-block-image.component.scss
+            article-block-image.component.ts
+          article-block-note/
+            article-block-note.component.html
+            article-block-note.component.scss
+            article-block-note.component.ts
+          article-block-text/
+            article-block-text.component.html
+            article-block-text.component.scss
+            article-block-text.component.ts
+          article-block-registry.ts
+          article-block-renderer.component.ts
+        article-content/
+          article.component.html
+          article.component.scss
+          article.component.ts
+        article-header/
+          article-header.component.html
+          article-header.component.scss
+          article-header.component.ts
+      index.ts
     course/
       api/
         course-api.service.ts
@@ -131,6 +172,13 @@ src/
           lesson-header.component.html
           lesson-header.component.scss
           lesson-header.component.ts
+      index.ts
+    user/
+      ui/
+        user-profile-hero/
+          user-profile-hero.component.html
+          user-profile-hero.component.scss
+          user-profile-hero.component.ts
       index.ts
   environments/
     environment.development.ts
@@ -203,6 +251,11 @@ src/
         app-logo.component.scss
         app-logo.component.ts
         index.ts
+      badge/
+        badge.component.scss
+        badge.component.ts
+        badge.types.ts
+        index.ts
       button/
         button.component.html
         button.component.scss
@@ -218,6 +271,11 @@ src/
         circular-progress.component.scss
         circular-progress.component.ts
         index.ts
+      cover-image/
+        cover-image.component.html
+        cover-image.component.scss
+        cover-image.component.ts
+        index.ts
       drawer/
         drawer.component.html
         drawer.component.scss
@@ -229,6 +287,11 @@ src/
         icon.service.ts
         icon.types.ts
         index.ts
+      markdown-renderer/
+        index.ts
+        markdown-renderer.component.html
+        markdown-renderer.component.scss
+        markdown-renderer.component.ts
       modal/
         index.ts
         modal.component.html
@@ -245,6 +308,11 @@ src/
     _reset.scss
     _tokens.scss
   widgets/
+    account-navigation/
+      ui/
+        account-navigation.component.scss
+        account-navigation.component.ts
+      index.ts
     articles-drawer-sidebar/
       ui/
         articles-drawer-sidebar.component.html
@@ -290,160 +358,1341 @@ vercel.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="src/app/layouts/account-layout/account-layout.component.html">
-<div class="account-layout">
-	<!-- Блок Hero ведёт себя аналогично шапке, но имеет нижнюю рамку -->
-	<div class="account-layout__header">
-		<div class="account-layout__hero-container">Hero</div>
-	</div>
+<file path="src/entities/article/model/types/article.types.ts">
+// --- Базовые типы и перечисления ---
 
-	<!-- Основная рабочая область, полностью копирующая app-layout__main -->
-	<main class="account-layout__main">
-		<div class="account-layout__container">
-			<aside class="account-layout__sidebar">Sidebar</aside>
-			<div class="account-layout__content">
-				<router-outlet />
-			</div>
-		</div>
-	</main>
+export type ArticleStatus = 'DRAFT' | 'ARCHIVED' | 'PUBLISHED';
+export type ArticleLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+export type NoteType = 'INFO' | 'WARNING' | 'ERROR';
+export type TextFormat = 'HTML' | 'MARKDOWN';
+
+// --- Данные отдельных блоков ---
+
+export interface TextBlockData {
+	format: string;
+	content: string;
+}
+
+export interface NoteBlockData {
+	text: string;
+	noteType: NoteType;
+}
+
+export interface CodeBlockData {
+	code: string;
+	language: string;
+	filename?: string;
+}
+
+export interface ImageBlockData {
+	url: string;
+	alt: string;
+	caption?: string;
+}
+
+export interface ComplexityBlockData {
+	time: string;
+	space: string;
+	description: string;
+}
+
+export interface FeatureItem {
+	title: string;
+	text: string;
+}
+
+export interface FeaturesBlockData {
+	sectionTitle: string;
+	items: FeatureItem[];
+}
+
+// --- Дискриминантные объединения блоков ---
+
+export interface TextBlock {
+	type: 'TEXT';
+	data: TextBlockData;
+}
+export interface NoteBlock {
+	type: 'NOTE';
+	data: NoteBlockData;
+}
+export interface CodeBlock {
+	type: 'CODE';
+	data: CodeBlockData;
+}
+export interface ImageBlock {
+	type: 'IMAGE';
+	data: ImageBlockData;
+}
+export interface ComplexityBlock {
+	type: 'COMPLEXITY';
+	data: ComplexityBlockData;
+}
+export interface FeaturesBlock {
+	type: 'FEATURES';
+	data: FeaturesBlockData;
+}
+
+export type ArticleContentBlock =
+	TextBlock | NoteBlock | CodeBlock | ImageBlock | ComplexityBlock | FeaturesBlock;
+
+export type ArticleBlockType = ArticleContentBlock['type'];
+
+// --- Метаданные и алиасы ---
+
+export interface ArticleImage {
+	url: string;
+	alt: string;
+	caption?: string;
+}
+
+export interface SeoMetadata {
+	description?: string;
+	keywords?: string[];
+}
+
+export type ProblemId = string;
+export type AuthorId = string;
+export type ArticleId = string;
+export type CategoryId = string;
+
+// --- Главная сущность статьи ---
+
+export type NavigationTag =
+	'THEORY' | 'COMPONENT' | 'EXAMPLE' | 'ALGORITHM' | 'STRUCTURE' | 'ARCHITECTURE' | 'PATTERNS';
+
+export interface Article {
+	id: ArticleId;
+	slug: string;
+	title: string;
+	leadText: string;
+	description: string;
+	problemId?: ProblemId;
+	authorId?: AuthorId;
+	categoryId: CategoryId;
+	tags: NavigationTag[];
+	status: ArticleStatus;
+	level: ArticleLevel;
+	coverImage?: ArticleImage;
+	readingTimeMinutes: number;
+	seo: SeoMetadata;
+	blocks: ArticleContentBlock[];
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface GetArticlesQueryDto {
+	status?: ArticleStatus;
+	categoryId?: string;
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-code/article-block-code.component.html">
+<div class="code-snippet">
+	<div class="code-snippet__header">
+		<span class="code-snippet__filename">
+			{{ data().filename || (data().language | lowercase) }}
+		</span>
+	</div>
+	<pre
+		class="code-snippet__body"
+	><code [class]="'code-snippet__code language-' + data().language">{{ data().code }}</code></pre>
 </div>
 </file>
 
-<file path="src/app/layouts/account-layout/account-layout.component.scss">
+<file path="src/entities/article/ui/article-blocks/article-block-code/article-block-code.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.code-snippet {
+	background-color: var(--bg-code);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-sm);
+	overflow: hidden;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		padding: var(--unit-2) var(--unit-4);
+		background-color: rgb(255 255 255 / 3%);
+		border-bottom: 1px solid rgb(226 232 240 / 10%);
+	}
+
+	&__filename {
+		font-family: var(--font-family-mono, monospace);
+		font-size: var(--font-size-xs);
+		font-weight: var(--font-weight-medium);
+		color: var(--text-muted);
+	}
+
+	&__body {
+		margin: 0;
+		padding: var(--unit-4);
+		background-color: transparent;
+		overflow-x: auto;
+	}
+
+	&__code {
+		font-family: var(--font-family-mono, monospace);
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-base);
+		color: var(--text-on-dark);
+	}
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-code/article-block-code.component.ts">
+import { LowerCasePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { CodeBlockData } from '../../../model/types/article.types';
+
+@Component({
+	selector: 'app-article-block-code',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [LowerCasePipe],
+	templateUrl: './article-block-code.component.html',
+	styleUrl: './article-block-code.component.scss',
+})
+export class ArticleBlockCodeComponent {
+	readonly data = input.required<CodeBlockData>();
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-complexity/article-block-complexity.component.html">
+<div class="complexity-widget">
+	<dl class="complexity-widget__grid">
+		<div class="complexity-card">
+			<dt class="complexity-card__label">Временная сложность</dt>
+			<dd class="complexity-card__value">{{ data().time }}</dd>
+		</div>
+		<div class="complexity-card">
+			<dt class="complexity-card__label">Пространственная сложность</dt>
+			<dd class="complexity-card__value">{{ data().space }}</dd>
+		</div>
+	</dl>
+	@if (data().description) {
+		<p class="complexity-widget__description">{{ data().description }}</p>
+	}
+</div>
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-complexity/article-block-complexity.component.scss">
 @use 'media' as m;
 
 :host {
-	display: flex;
-	flex-direction: column;
+	display: block;
 	width: 100%;
-	min-height: 100dvh;
 }
 
-.account-layout {
+.complexity-widget {
 	display: flex;
 	flex-direction: column;
-	flex-grow: 1;
-	background-color: var(--bg-main);
-	color: var(--text-primary);
-	transition:
-		background-color var(--transition-base),
-		color var(--transition-base);
+	gap: var(--unit-4);
+	padding: var(--unit-4);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-sm);
 
-	&__header {
-		flex-shrink: 0;
-		width: 100%;
-		background-color: transparent;
-		border-bottom: none;
+	@include m.media-above('md') {
+		padding: var(--unit-5);
 	}
 
-	&__hero-container {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-		max-width: var(--container-xxl);
-		height: var(--unit-16);
-		margin: 0 auto;
-		padding: 0 var(--unit-8);
+	&__grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--unit-3);
+		margin: 0;
 
-		@include m.media-below('lg') {
-			padding: 0 var(--unit-4);
+		@include m.media-above('sm') {
+			grid-template-columns: repeat(2, 1fr);
+			gap: var(--unit-4);
 		}
 	}
 
-	&__main {
+	&__description {
+		margin: 0;
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-base);
+		color: var(--text-secondary);
+	}
+}
+
+.complexity-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-1);
+	padding: var(--unit-3) var(--unit-4);
+	background-color: var(--bg-main);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+
+	&__label {
+		font-size: var(--font-size-xs);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-muted);
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	&__value {
+		margin: 0;
+		font-family: var(--font-family-mono, monospace);
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-none);
+		color: var(--brand-primary);
+	}
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-complexity/article-block-complexity.ts">
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { ComplexityBlockData } from '../../../model/types/article.types';
+
+@Component({
+	selector: 'app-article-block-complexity',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './article-block-complexity.component.html',
+	styleUrl: './article-block-complexity.component.scss',
+})
+export class ArticleBlockComplexityComponent {
+	readonly data = input.required<ComplexityBlockData>();
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-features/article-block-features.component.html">
+<div class="features-list">
+	@if (data().sectionTitle) {
+		<h3 class="features-list__title">{{ data().sectionTitle }}</h3>
+	}
+	<ul class="features-list__wrapper">
+		@for (item of data().items; track item.title) {
+			<li class="features-list__item">
+				<strong class="keyword">{{ item.title }}</strong>
+				<span class="text"> — {{ item.text }}</span>
+			</li>
+		}
+	</ul>
+</div>
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-features/article-block-features.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.features-list {
+	&__title {
+		margin: 0 0 var(--unit-3);
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+
+	&__wrapper {
 		display: flex;
 		flex-direction: column;
-		flex-grow: 1;
-		padding-top: var(--unit-6);
-		padding-bottom: var(--unit-8);
-
-		@include m.media-below('lg') {
-			padding-top: var(--unit-4);
-			padding-bottom: var(--unit-4);
-		}
+		gap: var(--unit-3);
+		margin: 0;
+		padding-left: var(--unit-4);
 	}
 
-	&__container {
-		display: grid;
-		flex-grow: 1;
-		grid-template-columns: 18rem 1fr;
-		gap: var(--unit-8);
-		align-items: start;
-		width: 100%;
-		max-width: var(--container-xxl);
-		margin: 0 auto;
-		padding-right: var(--unit-8);
-		padding-left: var(--unit-8);
+	&__item {
+		padding-left: var(--unit-1);
+		line-height: var(--line-height-relaxed);
+		list-style-type: '⚡ ';
+	}
+}
 
-		@include m.media-below('lg') {
-			grid-template-columns: 1fr;
-			gap: var(--unit-4);
-			padding-right: var(--unit-4);
-			padding-left: var(--unit-4);
+.keyword {
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+}
+
+.text {
+	color: var(--text-secondary);
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-features/article-block-features.component.ts">
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { FeaturesBlockData } from '../../../model/types/article.types';
+
+@Component({
+	selector: 'app-article-block-features',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './article-block-features.component.html',
+	styleUrl: './article-block-features.component.scss',
+})
+export class ArticleBlockFeaturesComponent {
+	readonly data = input.required<FeaturesBlockData>();
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-image/article-block-image.component.html">
+<figure class="content-figure">
+	<app-cover-image [src]="data().url" [alt]="data().alt" [priority]="false" />
+	@if (data().caption) {
+		<figcaption class="caption">{{ data().caption }}</figcaption>
+	}
+</figure>
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-image/article-block-image.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.content-figure {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-2);
+	margin: 0;
+}
+
+.caption {
+	font-size: var(--font-size-sm);
+	color: var(--text-secondary);
+	text-align: center;
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-image/article-block-image.component.ts">
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { CoverImageComponent } from '@shared/ui/cover-image';
+
+import { ImageBlockData } from '../../../model/types/article.types';
+
+@Component({
+	selector: 'app-article-block-image',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [CoverImageComponent],
+	templateUrl: './article-block-image.component.html',
+	styleUrl: './article-block-image.component.scss',
+})
+export class ArticleBlockImageComponent {
+	readonly data = input.required<ImageBlockData>();
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-note/article-block-note.component.html">
+<div class="callout-box" [attr.data-variant]="data().noteType">
+	<div class="callout-box__icon" aria-hidden="true">
+		@switch (data().noteType) {
+			@case ("WARNING") {
+				<svg
+					xmlns="http://w3.org"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+					<path d="M12 9v4" />
+					<path d="M12 17h.01" />
+				</svg>
+			}
+			@case ("ERROR") {
+				<svg
+					xmlns="http://w3.org"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<circle cx="12" cy="12" r="10" />
+					<path d="m15 9-6 6" />
+					<path d="m9 9 6 6" />
+				</svg>
+			}
+			@default {
+				<svg
+					xmlns="http://w3.org"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<circle cx="12" cy="12" r="10" />
+					<path d="M12 16v-4" />
+					<path d="M12 8h.01" />
+				</svg>
+			}
 		}
+	</div>
+	<div class="callout-box__content">{{ data().text }}</div>
+</div>
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-note/article-block-note.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.callout-box {
+	display: flex;
+	gap: var(--unit-3);
+	padding: var(--unit-4);
+	border-radius: var(--radius-sm) var(--radius-md) var(--radius-md) var(--radius-sm);
+	box-shadow: var(--shadow-sm);
+	border-left: var(--unit-1) solid var(--border-light);
+
+	&[data-variant='INFO'] {
+		background-color: var(--status-success-bg);
+		color: var(--status-success);
+		border-left-color: var(--status-success);
 	}
 
-	&__sidebar {
-		position: sticky;
-		top: var(--unit-4);
-		z-index: var(--z-sticky);
-		height: calc(100dvh - var(--unit-8));
-		padding: 0;
+	&[data-variant='WARNING'] {
+		background-color: var(--status-warning-bg);
+		color: var(--status-warning);
+		border-left-color: var(--status-warning);
+	}
 
-		@include m.media-below('lg') {
-			position: static;
-			height: auto;
-		}
+	&[data-variant='ERROR'] {
+		background-color: var(--status-error-bg);
+		color: var(--status-error);
+		border-left-color: var(--status-error);
+	}
+
+	&__icon {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		width: var(--font-size-xl);
+		height: var(--font-size-xl);
 	}
 
 	&__content {
-		display: flex;
-		flex-direction: column;
-		flex-grow: 1;
-		min-width: 0;
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-primary);
 	}
 }
 </file>
 
-<file path="src/app/layouts/account-layout/account-layout.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+<file path="src/entities/article/ui/article-blocks/article-block-note/article-block-note.component.ts">
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { NoteBlockData } from '../../../model/types/article.types';
 
 @Component({
-	selector: 'app-account-layout',
+	selector: 'app-article-block-note',
 	standalone: true,
-	imports: [RouterOutlet],
-	templateUrl: './account-layout.component.html',
-	styleUrl: './account-layout.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './article-block-note.component.html',
+	styleUrl: './article-block-note.component.scss',
 })
-export class AccountLayoutComponent {}
+export class ArticleBlockNoteComponent {
+	readonly data = input.required<NoteBlockData>();
+}
 </file>
 
-<file path="src/pages/account-overview-page/account-overview-page.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-@Component({
-	selector: 'app-account-overview-page',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	template: `<div>Account Overview</div>`,
-	imports: [],
-})
-export class AccountOverviewPageComponent {}
+<file path="src/entities/article/ui/article-blocks/article-block-text/article-block-text.component.html">
+<div class="text-block-content">
+	@if (data().format === "MARKDOWN") {
+		<app-markdown-renderer [rawMarkdown]="data().content" />
+	} @else if (data().format === "HTML") {
+		<div [innerHTML]="sanitizedHtml()"></div>
+	} @else {
+		<p class="error-text">Неизвестный формат текста</p>
+	}
+</div>
 </file>
 
-<file path="src/pages/account-transactions-page/account-transactions-page.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+<file path="src/entities/article/ui/article-blocks/article-block-text/article-block-text.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.text-block-content {
+	font-size: var(--font-size-base);
+	line-height: var(--line-height-relaxed);
+	color: var(--text-primary);
+
+	::ng-deep {
+		p {
+			margin-top: 0;
+			margin-bottom: var(--unit-4);
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		a {
+			color: var(--brand-primary);
+			transition: color var(--transition-fast);
+
+			&:hover {
+				color: var(--brand-hover);
+			}
+		}
+	}
+}
+
+.error-text {
+	margin: 0;
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	color: var(--status-error);
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-text/article-block-text.component.ts">
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+import DOMPurify from 'dompurify';
+
+import { MarkdownRendererComponent } from '@shared/ui/markdown-renderer';
+
+import { TextBlockData } from '../../../model/types/article.types';
 
 @Component({
-	selector: 'app-account-transactions-page',
+	selector: 'app-article-block-text',
 	standalone: true,
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	template: `<div>Account Transactions</div>`,
+	imports: [MarkdownRendererComponent],
+	templateUrl: './article-block-text.component.html',
+	styleUrl: './article-block-text.component.scss',
 })
-export class AccountTransactionsPageComponent {}
+export class ArticleBlockTextComponent {
+	readonly data = input.required<TextBlockData>();
+
+	readonly sanitizedHtml = computed(() => {
+		const blockData = this.data();
+		if (blockData.format === 'HTML' && blockData.content) {
+			return DOMPurify.sanitize(blockData.content);
+		}
+		return '';
+	});
+}
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-registry.ts">
+import { Type } from '@angular/core';
+
+import { ArticleBlockType } from '../../model/types/article.types';
+import { ArticleBlockCodeComponent } from './article-block-code/article-block-code.component';
+import { ArticleBlockComplexityComponent } from './article-block-complexity/article-block-complexity';
+import { ArticleBlockFeaturesComponent } from './article-block-features/article-block-features.component';
+import { ArticleBlockImageComponent } from './article-block-image/article-block-image.component';
+import { ArticleBlockNoteComponent } from './article-block-note/article-block-note.component';
+import { ArticleBlockTextComponent } from './article-block-text/article-block-text.component';
+
+export const ARTICLE_BLOCK_REGISTRY: Record<ArticleBlockType, Type<unknown>> = {
+	TEXT: ArticleBlockTextComponent,
+	CODE: ArticleBlockCodeComponent,
+	NOTE: ArticleBlockNoteComponent,
+	COMPLEXITY: ArticleBlockComplexityComponent,
+	IMAGE: ArticleBlockImageComponent,
+	FEATURES: ArticleBlockFeaturesComponent,
+};
+</file>
+
+<file path="src/entities/article/ui/article-blocks/article-block-renderer.component.ts">
+import { NgComponentOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+import { ArticleContentBlock } from '../../model/types/article.types';
+import { ARTICLE_BLOCK_REGISTRY } from './article-block-registry';
+
+@Component({
+	selector: 'app-article-block-renderer',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [NgComponentOutlet],
+	styles: `
+		:host {
+			display: block;
+			width: 100%;
+		}
+	`,
+	template: `
+		@if (componentType(); as cmp) {
+			<ng-container *ngComponentOutlet="cmp; inputs: { data: block().data }" />
+		}
+	`,
+})
+export class ArticleBlockRendererComponent {
+	readonly block = input.required<ArticleContentBlock>();
+	readonly componentType = computed(() => ARTICLE_BLOCK_REGISTRY[this.block().type] ?? null);
+}
+</file>
+
+<file path="src/entities/article/ui/article-content/article.component.html">
+<section class="article-content">
+	<div class="article-content__hero">
+		@if (article().coverImage; as cover) {
+			<app-cover-image [src]="cover.url" [alt]="cover.alt" [priority]="true" />
+		} @else {
+			<app-cover-image [src]="null" alt="Изображение по умолчанию" [priority]="true" />
+		}
+	</div>
+
+	<article class="article-content__main">
+		<app-article-header [article]="article()" />
+
+		<hr class="article-content__divider" aria-hidden="true" />
+
+		<div class="article-content__blocks">
+			@for (block of article().blocks; track $index) {
+				<app-article-block-renderer [block]="block" />
+			}
+		</div>
+	</article>
+
+	<footer class="admin-panel"></footer>
+</section>
+</file>
+
+<file path="src/entities/article/ui/article-content/article.component.scss">
+:host {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.article-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--unit-8);
+
+    &__hero {
+        display: flex;
+        flex-direction: column;
+        gap: var(--unit-4);
+    }
+
+    &__main {
+        width: 100%;
+    }
+
+    &__divider {
+        height: 1px;
+        margin: var(--unit-8) 0;
+        background-color: var(--border-color);
+        border: none;
+    }
+
+    &__blocks {
+        display: flex;
+        flex-direction: column;
+        gap: var(--unit-6);
+    }
+}
+</file>
+
+<file path="src/entities/article/ui/article-content/article.component.ts">
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+import { CoverImageComponent } from '@shared/ui/cover-image';
+
+import { Article } from '../../model/types/article.types';
+import { ArticleBlockRendererComponent } from '../article-blocks/article-block-renderer.component';
+import { ArticleHeaderComponent } from '../article-header/article-header.component';
+
+@Component({
+	selector: 'app-article-content',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './article.component.html',
+	styleUrl: './article.component.scss',
+	imports: [CoverImageComponent, ArticleHeaderComponent, ArticleBlockRendererComponent],
+})
+export class ArticleComponent {
+	readonly article = input.required<Article>();
+}
+</file>
+
+<file path="src/entities/article/ui/article-header/article-header.component.html">
+<header class="article-header">
+	<div class="article-header__meta">
+		@if (tags().length) {
+			<div class="article-header__tags" aria-label="Теги статьи">
+				@for (tag of tags(); track tag) {
+					<app-badge variant="primary">{{ tag }}</app-badge>
+				}
+			</div>
+		}
+
+		<div class="article-header__info">
+			<app-badge variant="outline" [attr.data-level]="levelData()">
+				{{ levelData() }}
+			</app-badge>
+
+			<span class="article-header__reading-time"> ~ {{ article().readingTimeMinutes }} мин </span>
+		</div>
+	</div>
+
+	<h1 class="article-header__title">{{ article().title }}</h1>
+	<p class="article-header__lead">{{ article().leadText }}</p>
+
+	@if (article().description) {
+		<section class="article-header__summary" aria-labelledby="article-summary-title">
+			<h2 id="article-summary-title" class="article-header__summary-label">Краткое содержание</h2>
+			<p class="article-header__summary-text">{{ article().description }}</p>
+		</section>
+	}
+</header>
+</file>
+
+<file path="src/entities/article/ui/article-header/article-header.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.article-header {
+	display: flex;
+	flex-direction: column;
+
+	&__meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--unit-4);
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: var(--unit-6);
+	}
+
+	&__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--unit-2);
+	}
+
+	&__info {
+		display: flex;
+		gap: var(--unit-3);
+		align-items: center;
+	}
+
+	&__reading-time {
+		font-size: var(--font-size-sm);
+		color: var(--text-secondary);
+	}
+
+	&__title {
+		margin: 0 0 var(--unit-4);
+		font-size: var(--font-size-xxl);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+		letter-spacing: -0.02em;
+
+		@include m.media-above('md') {
+			font-size: var(--font-size-xxxl);
+		}
+	}
+
+	&__lead {
+		margin: 0 0 var(--unit-6);
+		font-size: var(--font-size-lg);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-secondary);
+	}
+
+	&__summary {
+		padding: var(--unit-4);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-sm);
+
+		&-label {
+			margin: 0 0 var(--unit-2);
+			font-size: var(--font-size-xs);
+			font-weight: var(--font-weight-bold);
+			color: var(--text-muted);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		&-text {
+			margin: 0;
+			font-size: var(--font-size-base);
+			line-height: var(--line-height-base);
+			color: var(--text-primary);
+		}
+	}
+}
+</file>
+
+<file path="src/entities/article/ui/article-header/article-header.component.ts">
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+import { BadgeComponent } from '@shared/ui/badge';
+
+import { Article } from '../../model/types/article.types';
+
+@Component({
+	selector: 'app-article-header',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './article-header.component.html',
+	styleUrl: './article-header.component.scss',
+	imports: [BadgeComponent],
+})
+export class ArticleHeaderComponent {
+	readonly article = input.required<Article>();
+
+	readonly tags = computed(() => this.article().tags);
+	readonly levelData = computed(() => this.article().level);
+}
+</file>
+
+<file path="src/entities/article/index.ts">
+export * from './ui/article-content/article.component';
+export * from './model/types/article.types';
+</file>
+
+<file path="src/shared/ui/badge/badge.component.scss">
+:host {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: var(--radius-sm);
+	font-weight: var(--font-weight-medium);
+	line-height: var(--line-height-none);
+	white-space: nowrap;
+
+	&.badge--sm {
+		padding: var(--unit-1) var(--unit-2);
+		font-size: var(--font-size-xs);
+	}
+
+	&.badge--md {
+		padding: var(--unit-2) var(--unit-3);
+		font-size: var(--font-size-sm);
+	}
+
+	&.badge--lg {
+		padding: var(--unit-2) var(--unit-4);
+		font-size: var(--font-size-base);
+	}
+
+	&.badge--primary {
+		background-color: var(--brand-light);
+		color: var(--brand-primary);
+	}
+
+	&.badge--info {
+		background-color: var(--brand-primary);
+		color: var(--text-on-dark);
+	}
+
+	&.badge--success {
+		background-color: var(--status-success-bg);
+		color: var(--status-success);
+	}
+
+	&.badge--warning {
+		background-color: var(--status-warning-bg);
+		color: var(--status-warning);
+	}
+
+	&.badge--error {
+		background-color: var(--status-error-bg);
+		color: var(--status-error);
+	}
+
+	&.badge--outline {
+		background-color: transparent;
+		border: 1px solid var(--border-light);
+		color: var(--text-secondary);
+	}
+}
+</file>
+
+<file path="src/shared/ui/badge/badge.component.ts">
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+import { BadgeSize, BadgeVariant } from './badge.types';
+
+@Component({
+	selector: 'app-badge',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: '<ng-content />',
+	styleUrl: './badge.component.scss',
+	host: {
+		'[class]': 'hostClasses()',
+	},
+})
+export class BadgeComponent {
+	readonly variant = input<BadgeVariant>('primary');
+	readonly size = input<BadgeSize>('md');
+
+	protected readonly hostClasses = computed(() => {
+		return `badge badge--${this.variant()} badge--${this.size()}`;
+	});
+}
+</file>
+
+<file path="src/shared/ui/badge/badge.types.ts">
+export type BadgeVariant = 'primary' | 'info' | 'success' | 'warning' | 'error' | 'outline';
+export type BadgeSize = 'sm' | 'md' | 'lg';
+</file>
+
+<file path="src/shared/ui/badge/index.ts">
+export * from './badge.component';
+export * from './badge.types';
+</file>
+
+<file path="src/shared/ui/cover-image/cover-image.component.html">
+<div class="cover-image" [class.is-loading]="isLoading()">
+	@if (isLoading() && src() && !hasError()) {
+		<div aria-hidden="true" class="cover-image__skeleton"></div>
+	}
+
+	@if (!src() || hasError()) {
+		<div class="cover-image__fallback" aria-hidden="true">
+			<img [src]="fallbackImage" alt="" class="cover-image__fallback-img" />
+		</div>
+	} @else {
+		<img
+			[ngSrc]="src()!"
+			[alt]="alt()"
+			[priority]="priority()"
+			[sizes]="sizes()"
+			fill
+			(load)="onLoad()"
+			(error)="onError()"
+			class="cover-image__img"
+			[class.cover-image__img--loaded]="!isLoading()"
+		/>
+	}
+</div>
+</file>
+
+<file path="src/shared/ui/cover-image/cover-image.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.cover-image {
+	position: relative;
+	width: 100%;
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-lg);
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+
+	&__skeleton {
+		position: absolute;
+		z-index: var(--z-elevate);
+		background: linear-gradient(
+			90deg,
+			var(--bg-card) 25%,
+			var(--bg-main) 50%,
+			var(--bg-card) 75%
+		);
+		animation: shimmer 1.5s infinite linear;
+		inset: 0;
+		background-size: 200% 100%;
+	}
+
+	&__fallback {
+		position: absolute;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: var(--unit-4);
+		background: linear-gradient(135deg, var(--bg-card), var(--bg-main));
+		inset: 0;
+
+		&-img {
+			width: var(--unit-12);
+			height: var(--unit-12);
+			opacity: var(--opacity-disabled);
+			object-fit: contain;
+		}
+	}
+
+	&__img {
+		opacity: 0;
+		transition: opacity var(--transition-base);
+		object-fit: cover;
+
+		&--loaded {
+			opacity: 1;
+		}
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+
+	100% {
+		background-position: -200% 0;
+	}
+}
+</file>
+
+<file path="src/shared/ui/cover-image/cover-image.component.ts">
+import { NgOptimizedImage } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
+
+const FALLBACK_IMAGE = 'assets/icons/logo.svg';
+
+@Component({
+	selector: 'app-cover-image',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './cover-image.component.html',
+	styleUrl: './cover-image.component.scss',
+	imports: [NgOptimizedImage],
+})
+export class CoverImageComponent {
+	readonly src = input<string | null>(null);
+	readonly alt = input.required<string>();
+	readonly priority = input<boolean>(false);
+	readonly sizes = input<string>('(max-width: 768px) 100vw, 50vw');
+
+	protected readonly fallbackImage = FALLBACK_IMAGE;
+
+	readonly isLoading = signal<boolean>(true);
+	readonly hasError = signal<boolean>(false);
+
+	constructor() {
+		effect(() => {
+			this.src();
+			this.isLoading.set(true);
+			this.hasError.set(false);
+		});
+	}
+
+	onLoad(): void {
+		this.isLoading.set(false);
+	}
+
+	onError(): void {
+		this.hasError.set(true);
+		this.isLoading.set(false);
+	}
+}
+</file>
+
+<file path="src/shared/ui/cover-image/index.ts">
+export * from './cover-image.component';
+</file>
+
+<file path="src/shared/ui/markdown-renderer/index.ts">
+export * from './markdown-renderer.component';
+</file>
+
+<file path="src/shared/ui/markdown-renderer/markdown-renderer.component.html">
+<div class="markdown-body" [innerHTML]="parsedContent()"></div>
+</file>
+
+<file path="src/shared/ui/markdown-renderer/markdown-renderer.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.markdown-body {
+	font-size: var(--font-size-base);
+	line-height: var(--line-height-relaxed);
+	color: var(--text-primary); // 👈 Использование твоего токена #1e293b
+
+	::ng-deep {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			margin-top: var(--unit-8);
+			margin-bottom: var(--unit-4);
+			font-weight: var(--font-weight-bold);
+			line-height: var(--line-height-tight);
+			color: var(--text-primary);
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+
+		h1 {
+			font-size: var(--font-size-xxxl);
+		}
+
+		h2 {
+			padding-bottom: var(--unit-2);
+			font-size: var(--font-size-xxl);
+			border-bottom: 1px solid var(--border-light); // 👈 Заменено на твой токен границ #e2e8f0
+		}
+
+		h3 {
+			font-size: var(--font-size-xl);
+		}
+
+		h4 {
+			font-size: var(--font-size-lg);
+		}
+
+		p,
+		ul,
+		ol {
+			margin-top: 0;
+			margin-bottom: var(--unit-4);
+		}
+
+		ul,
+		ol {
+			padding-left: var(--unit-6);
+
+			li {
+				margin-bottom: var(--unit-2);
+			}
+		}
+
+		a {
+			color: var(--brand-primary); // 👈 Подсветка ссылок брендовым индиго
+			transition: opacity var(--transition-fast);
+			text-decoration: underline;
+			text-underline-offset: 2px;
+
+			&:hover {
+				opacity: var(--opacity-hover);
+			}
+		}
+
+		// Инлайновые фрагменты кода в тексте (например, `this.user()`)
+		code {
+			padding: 0.2em 0.4em;
+			background-color: var(--bg-main); // Мягкая серая подложка для встроенного кода
+			border-radius: var(--radius-sm);
+			font-family: var(--font-family-mono, monospace);
+			font-size: var(--font-size-sm);
+			color: var(--brand-primary); // Выделяем инлайн-код фиолетовым оттенком
+		}
+
+		// Полноценные многострочные блоки кода (без использования app-article-block-code)
+		pre {
+			margin-top: 0;
+			margin-bottom: var(--unit-4);
+			padding: var(--unit-4);
+			background-color: var(--bg-code); // 👈 Твой токен для блоков кода #0f172a
+			border: 1px solid var(--border-light);
+			border-radius: var(--radius-md);
+			overflow-x: auto;
+
+			code {
+				padding: 0;
+				background-color: transparent;
+				border-radius: 0;
+				color: var(--text-on-dark); // Светлый контрастный текст на темном фоне кода
+			}
+		}
+
+		blockquote {
+			margin: 0 0 var(--unit-4) 0;
+			padding: var(--unit-3) var(--unit-4);
+			background-color: var(--brand-light); // Мягкий индиго-фон для цитат
+			border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+			color: var(--text-secondary);
+			border-left: var(--unit-1) solid var(--brand-primary); // 👈 Акцентная фиолетовая черта слева
+
+			p:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		table {
+			width: 100%;
+			margin-bottom: var(--unit-4);
+			border-collapse: collapse;
+
+			th,
+			td {
+				padding: var(--unit-3);
+				border: 1px solid var(--border-light);
+				text-align: left;
+			}
+
+			th {
+				background-color: var(--bg-main);
+				font-weight: var(--font-weight-bold);
+				color: var(--text-primary);
+			}
+
+			td {
+				color: var(--text-secondary);
+			}
+		}
+
+		hr {
+			height: 1px;
+			margin: var(--unit-8) 0;
+			background-color: var(--border-light);
+			border: none;
+		}
+	}
+}
+</file>
+
+<file path="src/shared/ui/markdown-renderer/markdown-renderer.component.ts">
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+import DOMPurify from 'isomorphic-dompurify';
+import { marked } from 'marked';
+
+@Component({
+	selector: 'app-markdown-renderer',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './markdown-renderer.component.html',
+	styleUrl: './markdown-renderer.component.scss',
+})
+export class MarkdownRendererComponent {
+	readonly rawMarkdown = input.required<string>();
+	private readonly sanitizer = inject(DomSanitizer);
+
+	readonly parsedContent = computed<SafeHtml>(() => {
+		const rawText = this.rawMarkdown();
+
+		if (!rawText) {
+			return '';
+		}
+
+		const rawHtml = marked.parse(rawText) as string;
+		const cleanHtml = DOMPurify.sanitize(rawHtml);
+
+		return this.sanitizer.bypassSecurityTrustHtml(cleanHtml);
+	});
+}
 </file>
 
 <file path=".husky/commit-msg">
@@ -1178,6 +2427,152 @@ fill="#000000" stroke="none">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06" clip-rule="evenodd"/></svg>
 </file>
 
+<file path="src/app/layouts/account-layout/account-layout.component.html">
+<div class="account-layout">
+	<div class="account-layout__header">
+		<div class="account-layout__hero-container">
+			<app-user-profile-hero />
+		</div>
+	</div>
+
+	<main class="account-layout__main">
+		<div class="account-layout__container">
+			<aside class="account-layout__sidebar">
+				<app-account-navigation />
+			</aside>
+			<div class="account-layout__content">
+				<router-outlet />
+			</div>
+		</div>
+	</main>
+</div>
+</file>
+
+<file path="src/app/layouts/account-layout/account-layout.component.scss">
+@use 'media' as m;
+
+:host {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-height: 100dvh;
+}
+
+.account-layout {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	background-color: var(--bg-main);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
+
+	&__header {
+		flex-shrink: 0;
+		width: 100%;
+		background-color: transparent;
+		border-bottom: none;
+	}
+
+	&__hero-container {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		width: 100%;
+		max-width: var(--container-xxl);
+		margin: 0 auto;
+		padding: 0 var(--unit-8);
+
+		@include m.media-below('md') {
+			padding: 0 var(--unit-4);
+		}
+	}
+
+	&__main {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		padding-top: var(--unit-6);
+		padding-bottom: var(--unit-8);
+
+		@include m.media-below('md') {
+			padding-top: var(--unit-4);
+			padding-bottom: var(--unit-4);
+		}
+	}
+
+	&__container {
+		display: grid;
+		flex-grow: 1;
+		grid-template-columns: 18rem 1fr;
+		gap: var(--unit-8);
+		align-items: start;
+		width: 100%;
+		max-width: var(--container-xl);
+		margin: 0 auto;
+		padding-right: var(--unit-8);
+		padding-left: var(--unit-8);
+
+		@include m.media-below('md') {
+			display: flex;
+			flex-direction: column;
+			gap: 0;
+			align-items: stretch;
+			width: 100%;
+			padding-right: 0;
+			padding-left: 0;
+		}
+	}
+
+	&__sidebar {
+		position: sticky;
+		top: var(--unit-4);
+		z-index: var(--z-sticky);
+		height: calc(100dvh - var(--unit-8));
+		padding: 0;
+
+		@include m.media-below('md') {
+			position: static;
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		min-width: 0;
+
+		@include m.media-below('md') {
+			align-items: stretch;
+			padding-right: var(--unit-4);
+			padding-left: var(--unit-4);
+		}
+	}
+}
+</file>
+
+<file path="src/app/layouts/account-layout/account-layout.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+import { AccountNavigationComponent } from '@widgets/account-navigation';
+
+import { UserProfileHeroComponent } from '@entities/user';
+
+@Component({
+	selector: 'app-account-layout',
+	standalone: true,
+	imports: [RouterOutlet, AccountNavigationComponent, UserProfileHeroComponent],
+	templateUrl: './account-layout.component.html',
+	styleUrl: './account-layout.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AccountLayoutComponent {}
+</file>
+
 <file path="src/app/layouts/main-layout/main-layout.component.html">
 <div class="app-layout">
 	<div class="app-layout__header">
@@ -1326,6 +2721,150 @@ import { IconComponent } from '@shared/ui/icon';
 export class LessonHeaderComponent {
 	readonly lesson = input.required<CourseSkeletonLesson>();
 }
+</file>
+
+<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.html">
+<div class="avatar">
+	@if (avatarUrl()) {
+		<img [src]="avatarUrl()" [alt]="name()" class="avatar__img" />
+	} @else {
+		{{ initial() }}
+	}
+</div>
+
+<div class="info">
+	<h1 class="name">{{ name() }}</h1>
+	<p class="account-type">
+		Account type: <span class="account-type__value">{{ accountType() }}</span>
+	</p>
+</div>
+</file>
+
+<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.scss">
+@use 'media' as m;
+
+:host {
+	display: flex;
+	flex-direction: row;
+	gap: var(--unit-4);
+	justify-content: flex-start;
+	align-items: center;
+	width: 100%;
+	padding: var(--unit-8) 0 var(--unit-4) 0;
+	background-color: transparent;
+	text-align: left;
+
+	@include m.media-above('md') {
+		gap: var(--unit-5);
+		justify-content: center;
+		padding: var(--unit-16) 0 var(--unit-4) 0;
+	}
+}
+
+.avatar {
+	display: flex;
+	flex-shrink: 0;
+	justify-content: center;
+	align-items: center;
+	width: 4.5rem;
+	height: 4.5rem;
+	background-color: var(--brand-primary);
+	border-radius: var(--radius-full);
+	font-size: var(--font-size-xl);
+	font-weight: var(--font-weight-medium);
+	color: var(--text-on-dark);
+	overflow: hidden;
+
+	@include m.media-above('md') {
+		width: 5rem;
+		height: 5rem;
+		font-size: var(--font-size-xxl);
+	}
+
+	&__img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+
+.info {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-1);
+	justify-content: center;
+}
+
+.name {
+	margin: 0;
+	font-size: var(--font-size-xxl);
+	font-weight: var(--font-weight-medium);
+	line-height: var(--line-height-none);
+	color: var(--text-primary);
+	letter-spacing: -0.02em;
+
+	@include m.media-above('md') {
+		font-size: var(--font-size-xxxl);
+	}
+}
+
+.account-type {
+	margin: 0;
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-normal);
+	color: var(--text-secondary);
+
+	&__value {
+		font-weight: var(--font-weight-regular);
+		color: var(--text-secondary);
+	}
+}
+</file>
+
+<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.ts">
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+
+@Component({
+	selector: 'app-user-profile-hero',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './user-profile-hero.component.html',
+	styleUrl: './user-profile-hero.component.scss',
+})
+export class UserProfileHeroComponent {
+	private readonly mockProfile = signal({
+		firstName: 'Евгений',
+		lastName: 'Воловликов',
+		username: 'evgenyvolovlikov',
+		avatarUrl: null as string | null,
+	});
+
+	readonly name = computed(() => {
+		const p = this.mockProfile();
+		if (p.firstName || p.lastName) {
+			return `${p.firstName || ''} ${p.lastName || ''}`.trim();
+		}
+		return p.username;
+	});
+
+	readonly initial = computed(() => {
+		const userName = this.name();
+		return userName.charAt(0).toUpperCase();
+	});
+
+	readonly avatarUrl = computed(() => {
+		return this.mockProfile().avatarUrl;
+	});
+
+	readonly accountType = computed(() => {
+		return 'Google';
+	});
+}
+</file>
+
+<file path="src/entities/user/index.ts">
+export * from './ui/user-profile-hero/user-profile-hero.component';
 </file>
 
 <file path="src/environments/environment.development.ts">
@@ -1620,6 +3159,31 @@ export class MarkLessonWatchedComponent {
 
 <file path="src/features/mark-lesson-watched/index.ts">
 export * from './ui/mark-lesson-watched.component';
+</file>
+
+<file path="src/pages/account-overview-page/account-overview-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+	selector: 'app-account-overview-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<div>Account Overview</div>`,
+	imports: [],
+})
+export class AccountOverviewPageComponent {}
+</file>
+
+<file path="src/pages/account-transactions-page/account-transactions-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+	selector: 'app-account-transactions-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<div>Account Transactions</div>`,
+})
+export class AccountTransactionsPageComponent {}
 </file>
 
 <file path="src/pages/course-page/lib/guards/course.guard.ts">
@@ -2472,6 +4036,136 @@ $breakpoints: (
 }
 </file>
 
+<file path="src/widgets/account-navigation/ui/account-navigation.component.scss">
+@use 'media' as m;
+
+:host {
+	display: block;
+	width: 100%;
+}
+
+.account-nav {
+	display: flex;
+	gap: var(--unit-1);
+	width: 100%;
+	flex-flow: row nowrap;
+
+	@include m.media-above('md') {
+		flex-direction: column;
+		gap: var(--unit-2);
+	}
+
+	@include m.media-below('md') {
+		width: 100%;
+		padding-right: var(--unit-4);
+		padding-bottom: var(--unit-4);
+		padding-left: var(--unit-4);
+	}
+
+	&__link {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		flex-basis: 0;
+		gap: var(--unit-1);
+		justify-content: center;
+		align-items: center;
+		padding: var(--unit-2) var(--unit-1);
+		border-radius: var(--radius-md);
+		color: var(--text-primary);
+		transition:
+			background-color var(--transition-fast),
+			color var(--transition-fast);
+		text-decoration: none;
+
+		@include m.media-above('md') {
+			flex-direction: row;
+			flex-grow: 0;
+			flex-basis: auto;
+			gap: var(--unit-3);
+			justify-content: flex-start;
+			align-items: center;
+			padding: var(--unit-2) var(--unit-3);
+		}
+
+		&:hover {
+			background-color: var(--border-light);
+			font-weight: var(--font-weight-medium);
+			color: var(--brand-hover);
+
+			.account-nav__icon {
+				color: var(--brand-hover);
+			}
+		}
+
+		&.is-active {
+			background-color: var(--brand-light);
+			font-weight: var(--font-weight-medium);
+			color: var(--brand-primary);
+
+			.account-nav__icon {
+				color: var(--brand-primary);
+			}
+		}
+	}
+
+	&__icon {
+		display: flex;
+		flex-shrink: 0;
+		justify-content: center;
+		align-items: center;
+		width: var(--font-size-xl);
+		height: var(--font-size-xl);
+		color: var(--text-muted);
+		transition: color var(--transition-fast);
+	}
+
+	&__label {
+		font-size: var(--font-size-xs);
+		white-space: nowrap;
+
+		@include m.media-above('md') {
+			font-size: var(--font-size-base);
+		}
+	}
+}
+</file>
+
+<file path="src/widgets/account-navigation/ui/account-navigation.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+import { ACCOUNT_SIDEBAR_ITEMS } from '@shared/config/routes.config';
+import { IconComponent } from '@shared/ui/icon';
+
+@Component({
+	selector: 'app-account-navigation',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [RouterLink, RouterLinkActive, IconComponent],
+	template: `
+		<nav class="account-nav">
+			@for (item of accountNavigationElements; track item.path) {
+				<a [routerLink]="item.path" routerLinkActive="is-active" class="account-nav__link">
+					@if (item.icon) {
+						<app-icon [name]="item.icon" class="account-nav__icon" />
+					}
+					<span class="account-nav__label">{{ item.label }}</span>
+				</a>
+			}
+		</nav>
+	`,
+	styleUrl: './account-navigation.component.scss',
+})
+export class AccountNavigationComponent {
+	protected readonly accountNavigationElements = ACCOUNT_SIDEBAR_ITEMS;
+}
+</file>
+
+<file path="src/widgets/account-navigation/index.ts">
+export * from './ui/account-navigation.component';
+</file>
+
 <file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.html">
 <div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
 	<button
@@ -2490,9 +4184,11 @@ $breakpoints: (
 </div>
 
 <app-drawer [(isOpen)]="isArticlesOpen">
-	<div drawer-header></div>
+	<div drawer-header>Header</div>
 
-	<div class="drawer-inner-content"></div>
+	<div class="drawer-inner-content">
+		<app-article-content [article]="mockArticle" />
+	</div>
 </app-drawer>
 </file>
 
@@ -2540,9 +4236,132 @@ $breakpoints: (
 <file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.ts">
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
+import { ArticleComponent } from '@entities/article';
+import { Article } from '@entities/article';
+
 import { ButtonComponent } from '@shared/ui/button';
 import { DrawerComponent } from '@shared/ui/drawer';
 import { IconComponent } from '@shared/ui/icon';
+
+export const MOCK_ARTICLE_DETAILS: Article = {
+	id: 'art_9b1deb4d-3b7d-4bad',
+	slug: 'mastering-angular-signals-architecture',
+	title: 'Архитектура Angular Signals: Погружение в новую реактивность',
+	leadText:
+		'Подробный разбор работы новых примитивов реактивности в Angular. Узнайте, как оптимизировать Change Detection и спроектировать масштабируемый State Management без Zone.js.',
+	description:
+		'В этом практическом руководстве мы разберем внутреннее устройство Writable и Computed сигналов. Мы пройдем путь от базовых концепций до продвинутых паттернов архитектуры, включая оценку вычислительной сложности алгоритмов синхронизации графа зависимостей и интеграцию с внешними API.',
+	problemId: 'prob_reactive-counter-2026',
+	authorId: 'auth_evgeny-volovlikov',
+	categoryId: 'cat_frontend-advanced',
+	tags: ['ARCHITECTURE', 'COMPONENT', 'STRUCTURE', 'THEORY'],
+	status: 'PUBLISHED',
+	level: 'ADVANCED',
+	coverImage: {
+		url: 'https://unsplash.com',
+		alt: 'Абстрактное превью архитектуры Angular приложений',
+		caption: 'Граф зависимостей и реактивные узлы в Angular 17+',
+	},
+	readingTimeMinutes: 14,
+	seo: {
+		description:
+			'Глубокий анализ Angular Signals, примеры кода, оценка пространственной и временной сложности реактивного графа.',
+		keywords: ['Angular', 'Signals', 'Реактивность', 'State Management', 'Change Detection'],
+	},
+	createdAt: '2026-03-15T10:00:00.000Z',
+	updatedAt: '2026-09-23T18:30:00.000Z',
+	blocks: [
+		// 1. Блок текста (TEXT)
+		{
+			type: 'TEXT',
+			data: {
+				format: 'MARKDOWN',
+				content:
+					'### Введение в реактивный граф\n\nДо появления сигналов Angular полагался на **Zone.js**, которая перехватывала любые асинхронные события и запускала проверку всего дерева компонентов сверху вниз. Сигналы меняют эту парадигму, внедряя мелкозернистую (fine-grained) реактивность. Теперь фреймворк точечно знает, какой именно узел графа изменился и какую часть DOM необходимо обновить.',
+			},
+		},
+		// 2. Блок примечания (NOTE - WARNING)
+		{
+			type: 'NOTE',
+			data: {
+				noteType: 'WARNING',
+				text: 'Никогда не изменяйте значения Writable сигналов внутри `computed()` блоков. Это приведет к неконтролируемым сайд-эффектам и вызовет ошибку циклической зависимости в реактивном графе.',
+			},
+		},
+		// 3. Блок кода (CODE)
+		{
+			type: 'CODE',
+			data: {
+				language: 'typescript',
+				filename: 'reactive-store.ts',
+				code: `import { signal, computed } from '@angular/core';
+
+export class ReactiveState {
+  // Базовый Writable сигнал
+  private readonly _users = signal<string[]>(['Евгений', 'Алексей']);
+
+  // Зависимый Computed сигнал
+  readonly uppercaseUsers = computed(() =>
+    this._users().map(user => user.toUpperCase())
+  );
+
+  addUser(name: string): void {
+    this._users.update(current => [...current, name]);
+  }
+}`,
+			},
+		},
+		// 4. Блок сложности (COMPLEXITY)
+		{
+			type: 'COMPLEXITY',
+			data: {
+				time: 'O(1)',
+				space: 'O(N)',
+				description:
+					'Чтение значения `computed()` сигнала выполняется за константное время благодаря мемоизации. Алгоритм вычисления графа ленивый (lazy evaluative). Пространственная сложность линейно зависит от количества зарегистрированных зависимостей (активных слушателей и авторов).',
+			},
+		},
+		// 5. Блок изображения (IMAGE)
+		{
+			type: 'IMAGE',
+			data: {
+				url: 'https://unsplash.com',
+				alt: 'Диаграмма бенчмарков производительности Change Detection',
+				caption:
+					'Рис 1. Сравнение скорости рендеринга больших списков: Zone.js vs OnPush vs Signals',
+			},
+		},
+		// 6. Блок преимуществ / фич (FEATURES)
+		{
+			type: 'FEATURES',
+			data: {
+				sectionTitle: 'Ключевые преимущества архитектуры на сигналах',
+				items: [
+					{
+						title: 'Отсутствие Zone.js',
+						text: 'Возможность полной сборки zoneless-приложений, что существенно снижает итоговый размер бандла и ускоряет инициализацию.',
+					},
+					{
+						title: 'Мемоизация из коробки',
+						text: 'Повторные вызовы вычисляемых сигналов не запускают перерасчет, пока не изменятся исходные реактивные зависимости.',
+					},
+					{
+						title: 'Локальное обновление (Glitch-Free)',
+						text: 'Гарантированная защита от временных несоответствий данных при множественных параллельных вычислениях за счет алгоритма динамического отслеживания зависимостей.',
+					},
+				],
+			},
+		},
+		// 7. Блок примечания (NOTE - ERROR для демонстрации других статусов)
+		{
+			type: 'NOTE',
+			data: {
+				noteType: 'ERROR',
+				text: 'Если вы столкнулись с ошибкой "ExpressionChangedAfterItHasBeenCheckedError", это верный знак того, что вы пытаетесь использовать классический императивный подход управления состоянием параллельно с сигналами в рамках одного цикла рендеринга.',
+			},
+		},
+	],
+};
 
 @Component({
 	selector: 'app-articles-drawer-sidebar',
@@ -2550,10 +4369,12 @@ import { IconComponent } from '@shared/ui/icon';
 	templateUrl: './articles-drawer-sidebar.component.html',
 	styleUrl: './articles-drawer-sidebar.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [IconComponent, DrawerComponent, ButtonComponent],
+	imports: [IconComponent, DrawerComponent, ButtonComponent, ArticleComponent],
 })
 export class ArticlesDrawerSidebarComponent {
 	readonly isArticlesOpen = signal<boolean>(false);
+
+	readonly mockArticle = MOCK_ARTICLE_DETAILS;
 
 	protected toggleArticlesOpen(): void {
 		this.isArticlesOpen.update((state) => !state);
@@ -3180,66 +5001,6 @@ export class LessonNavigationControlsComponent {
 		transform: translateY(0);
 	}
 }
-</file>
-
-<file path="src/pages/home-page/ui/home-page.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-import { RouteSegments } from '@shared/config/routes.config';
-import { AppLogoComponent } from '@shared/ui/app-logo';
-import { ButtonComponent } from '@shared/ui/button';
-
-@Component({
-	selector: 'app-home-page',
-	standalone: true,
-	imports: [RouterLink, ButtonComponent, AppLogoComponent],
-	templateUrl: './home-page.component.html',
-	styleUrl: './home-page.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HomePageComponent {
-	protected readonly frontendRoute = `/${RouteSegments.COURSES}/${RouteSegments.FRONTEND}`;
-}
-</file>
-
-<file path="src/shared/config/routes.config.ts">
-import { IconName } from '../ui/icon';
-
-export interface NavItem {
-	path: string;
-	label: string;
-	icon?: IconName;
-}
-
-export const RouteSegments = {
-	ROOT: '',
-
-	COURSES: 'courses',
-
-	FRONTEND: 'frontend',
-	BACKEND: 'backend',
-
-	ACCOUNT: 'account',
-	OVERVIEW: 'overview',
-	TRANSACTIONS: 'transactions',
-
-	WILDCARD: '**',
-} as const;
-
-export const RouteBuilder = {
-	HOME: () => '/',
-
-	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
-	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,
-
-	COURSE_DETAILS: (slug: string) => `/${RouteSegments.COURSES}/${slug}`,
-} as const;
-
-export const ACCOUNT_SIDEBAR_ITEMS: NavItem[] = [
-	{ path: RouteBuilder.ACCOUNT_OVERVIEW(), label: 'Профиль', icon: 'person' },
-	{ path: RouteBuilder.ACCOUNT_TRANSACTIONS(), label: 'Подписки', icon: 'credit-card' },
-];
 </file>
 
 <file path="src/shared/ui/button/button.component.ts">
@@ -4090,6 +5851,66 @@ export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
 };
 </file>
 
+<file path="src/pages/home-page/ui/home-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { RouteSegments } from '@shared/config/routes.config';
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+
+@Component({
+	selector: 'app-home-page',
+	standalone: true,
+	imports: [RouterLink, ButtonComponent, AppLogoComponent],
+	templateUrl: './home-page.component.html',
+	styleUrl: './home-page.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HomePageComponent {
+	protected readonly frontendRoute = `/${RouteSegments.COURSES}/${RouteSegments.FRONTEND}`;
+}
+</file>
+
+<file path="src/shared/config/routes.config.ts">
+import { IconName } from '../ui/icon';
+
+export interface NavItem {
+	path: string;
+	label: string;
+	icon?: IconName;
+}
+
+export const RouteSegments = {
+	ROOT: '',
+
+	COURSES: 'courses',
+
+	FRONTEND: 'frontend',
+	BACKEND: 'backend',
+
+	ACCOUNT: 'account',
+	OVERVIEW: 'overview',
+	TRANSACTIONS: 'transactions',
+
+	WILDCARD: '**',
+} as const;
+
+export const RouteBuilder = {
+	HOME: () => '/',
+
+	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
+	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,
+
+	COURSE_DETAILS: (slug: string) => `/${RouteSegments.COURSES}/${slug}`,
+} as const;
+
+export const ACCOUNT_SIDEBAR_ITEMS: NavItem[] = [
+	{ path: RouteBuilder.ACCOUNT_OVERVIEW(), label: 'Профиль', icon: 'person' },
+	{ path: RouteBuilder.ACCOUNT_TRANSACTIONS(), label: 'Подписки', icon: 'credit-card' },
+];
+</file>
+
 <file path="src/shared/types/course.types.ts">
 export interface BaseEntity {
 	id: string;
@@ -4835,6 +6656,9 @@ export default defineConfig([
 		"@angular/forms": "^22.1.7",
 		"@angular/platform-browser": "^22.1.7",
 		"@angular/router": "^22.1.7",
+		"dompurify": "^3.4.15",
+		"isomorphic-dompurify": "^4.3.0",
+		"marked": "^18.0.14",
 		"rxjs": "^7.8.2",
 		"tslib": "^2.8.1"
 	},
@@ -4960,18 +6784,6 @@ app-course-progress {
 }
 </file>
 
-<file path="src/widgets/header/ui/header.component.html">
-<header class="header">
-	<div class="header__container">
-		<app-logo />
-
-		<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">Войти</button>
-	</div>
-</header>
-
-<app-auth-by-oauth [(isOpen)]="isAuthOpen" />
-</file>
-
 <file path="src/widgets/header/ui/header.component.scss">
 @use 'media' as m;
 
@@ -5051,83 +6863,6 @@ app-course-progress {
 	display: flex;
 	justify-content: end;
 }
-</file>
-
-<file path="src/app/routes/app.routes.ts">
-import { Routes } from '@angular/router';
-
-import { courseSlugGuard } from '@pages/course-page';
-
-import { RouteSegments } from '@shared/config/routes.config';
-
-import { AccountLayoutComponent } from '../layouts/account-layout/account-layout.component';
-import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
-
-export const COURSE_ROUTES: Routes = [
-	{
-		path: ':slug',
-		canActivate: [courseSlugGuard],
-		children: [
-			{
-				path: RouteSegments.ROOT,
-				loadComponent: () =>
-					import('@pages/course-page').then((c) => c.CoursePageComponent),
-				title: 'Course',
-			},
-			{
-				path: RouteSegments.WILDCARD,
-				redirectTo: '',
-			},
-		],
-	},
-];
-
-export const ACCOUNT_ROUTES: Routes = [
-	{
-		path: RouteSegments.ROOT,
-		redirectTo: RouteSegments.OVERVIEW,
-		pathMatch: 'full',
-	},
-	{
-		path: RouteSegments.OVERVIEW,
-		loadComponent: () =>
-			import('@pages/account-overview-page/account-overview-page.component').then(
-				(c) => c.AccountOverviewPageComponent,
-			),
-		title: 'Account Overview',
-	},
-	{
-		path: RouteSegments.TRANSACTIONS,
-		loadComponent: () =>
-			import('@pages/account-transactions-page/account-transactions-page.component').then(
-				(c) => c.AccountTransactionsPageComponent,
-			),
-		title: 'Account Transactions',
-	},
-];
-
-export const APP_ROUTES: Routes = [
-	{
-		path: RouteSegments.ROOT,
-		pathMatch: 'full',
-		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
-	},
-	{
-		path: RouteSegments.COURSES,
-		component: MainLayoutComponent,
-		children: COURSE_ROUTES,
-	},
-
-	{
-		path: RouteSegments.ACCOUNT,
-		component: AccountLayoutComponent,
-		children: ACCOUNT_ROUTES,
-	},
-	{
-		path: RouteSegments.WILDCARD,
-		redirectTo: RouteSegments.ROOT,
-	},
-];
 </file>
 
 <file path="src/pages/course-page/ui/course-page.component.html">
@@ -5436,29 +7171,24 @@ export class CoursePageComponent {
 }
 </file>
 
-<file path="src/widgets/header/ui/header.component.ts">
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+<file path="src/widgets/header/ui/header.component.html">
+<header class="header">
+	<div class="header__container">
+		<app-logo />
 
-import { AuthByOauthComponent } from '@features/auth-by-oauth';
+		<div style="display: flex; gap: var(--unit-2)">
+			<button app-button type="button" variant="filled" color="default" size="m" (click)="openProfile()">
+				Профиль
+			</button>
 
-import { AppLogoComponent } from '@shared/ui/app-logo';
-import { ButtonComponent } from '@shared/ui/button';
+			<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">
+				Войти
+			</button>
+		</div>
+	</div>
+</header>
 
-@Component({
-	selector: 'app-header',
-	standalone: true,
-	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HeaderComponent {
-	readonly isAuthOpen = signal<boolean>(false);
-
-	protected openAuth(): void {
-		this.isAuthOpen.set(true);
-	}
-}
+<app-auth-by-oauth [(isOpen)]="isAuthOpen" />
 </file>
 
 <file path="angular.json">
@@ -5565,6 +7295,83 @@ export class HeaderComponent {
 }
 </file>
 
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
+
+import { courseSlugGuard } from '@pages/course-page';
+
+import { RouteSegments } from '@shared/config/routes.config';
+
+import { AccountLayoutComponent } from '../layouts/account-layout/account-layout.component';
+import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
+
+export const COURSE_ROUTES: Routes = [
+	{
+		path: ':slug',
+		canActivate: [courseSlugGuard],
+		children: [
+			{
+				path: RouteSegments.ROOT,
+				loadComponent: () =>
+					import('@pages/course-page').then((c) => c.CoursePageComponent),
+				title: 'Course',
+			},
+			{
+				path: RouteSegments.WILDCARD,
+				redirectTo: '',
+			},
+		],
+	},
+];
+
+export const ACCOUNT_ROUTES: Routes = [
+	{
+		path: RouteSegments.ROOT,
+		redirectTo: RouteSegments.OVERVIEW,
+		pathMatch: 'full',
+	},
+	{
+		path: RouteSegments.OVERVIEW,
+		loadComponent: () =>
+			import('@pages/account-overview-page/account-overview-page.component').then(
+				(c) => c.AccountOverviewPageComponent,
+			),
+		title: 'Account Overview',
+	},
+	{
+		path: RouteSegments.TRANSACTIONS,
+		loadComponent: () =>
+			import('@pages/account-transactions-page/account-transactions-page.component').then(
+				(c) => c.AccountTransactionsPageComponent,
+			),
+		title: 'Account Transactions',
+	},
+];
+
+export const APP_ROUTES: Routes = [
+	{
+		path: RouteSegments.ROOT,
+		pathMatch: 'full',
+		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
+	},
+	{
+		path: RouteSegments.COURSES,
+		component: MainLayoutComponent,
+		children: COURSE_ROUTES,
+	},
+
+	{
+		path: RouteSegments.ACCOUNT,
+		component: AccountLayoutComponent,
+		children: ACCOUNT_ROUTES,
+	},
+	{
+		path: RouteSegments.WILDCARD,
+		redirectTo: RouteSegments.ROOT,
+	},
+];
+</file>
+
 <file path="src/shared/ui/icon/icon.types.ts">
 export type IconName =
 	| 'sun'
@@ -5586,6 +7393,37 @@ export type IconName =
 	| 'bars'
 	| 'logo-github'
 	| 'logo-google';
+</file>
+
+<file path="src/widgets/header/ui/header.component.ts">
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AuthByOauthComponent } from '@features/auth-by-oauth';
+
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+
+@Component({
+	selector: 'app-header',
+	standalone: true,
+	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent],
+	templateUrl: './header.component.html',
+	styleUrl: './header.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HeaderComponent {
+	readonly router = inject(Router);
+	readonly isAuthOpen = signal<boolean>(false);
+
+	protected openAuth(): void {
+		this.isAuthOpen.set(true);
+	}
+
+	protected openProfile(): void {
+		this.router.navigate(['/', 'account', 'overview']);
+	}
+}
 </file>
 
 </files>

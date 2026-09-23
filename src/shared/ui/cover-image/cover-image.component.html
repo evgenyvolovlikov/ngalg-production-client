@@ -1,0 +1,23 @@
+<div class="cover-image" [class.is-loading]="isLoading()">
+	@if (isLoading() && src() && !hasError()) {
+		<div aria-hidden="true" class="cover-image__skeleton"></div>
+	}
+
+	@if (!src() || hasError()) {
+		<div class="cover-image__fallback" aria-hidden="true">
+			<img [src]="fallbackImage" alt="" class="cover-image__fallback-img" />
+		</div>
+	} @else {
+		<img
+			[ngSrc]="src()!"
+			[alt]="alt()"
+			[priority]="priority()"
+			[sizes]="sizes()"
+			fill
+			(load)="onLoad()"
+			(error)="onError()"
+			class="cover-image__img"
+			[class.cover-image__img--loaded]="!isLoading()"
+		/>
+	}
+</div>
