@@ -1,42 +1,11 @@
-<app-modal [(isOpen)]="isOpen">
+<app-modal [(isOpen)]="isOpen" size="s">
 	<div class="auth-dialog">
 		<h2 class="auth-dialog__title">Войти в NgAlg</h2>
 		<p class="auth-dialog__subtitle">Войдите, чтобы сохранить свой прогресс обучения</p>
 
 		<div class="auth-dialog__providers">
-			<button
-				app-button
-				type="button"
-				variant="filled"
-				color="default"
-				fullWidth
-				(click)="loginWithGoogle()"
-				class="auth-dialog__btn google-provider"
-			>
-				<div class="provider-layout">
-					<div class="provider-layout__icon-box">
-						<app-icon name="logo-google" size="l" />
-					</div>
-					<span class="provider-layout__text">Google</span>
-				</div>
-			</button>
-
-			<button
-				app-button
-				type="button"
-				variant="filled"
-				color="default"
-				fullWidth
-				(click)="loginWithGitHub()"
-				class="auth-dialog__btn github-provider"
-			>
-				<div class="provider-layout">
-					<div class="provider-layout__icon-box">
-						<app-icon name="logo-github" size="l" />
-					</div>
-					<span class="provider-layout__text">GitHub</span>
-				</div>
-			</button>
+			<app-google-oauth-button (clickButton)="loginWithGoogle()" />
+			<app-github-oauth-button (clickButton)="loginWithGitHub()" />
 		</div>
 	</div>
 </app-modal>

@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, HostListener, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, input, model } from '@angular/core';
 
 import { IconComponent } from '../icon';
+
+export type ModalSize = 's' | 'm';
 
 @Component({
 	selector: 'app-modal',
@@ -12,6 +14,8 @@ import { IconComponent } from '../icon';
 })
 export class ModalComponent {
 	readonly isOpen = model<boolean>(false);
+
+	readonly size = input<ModalSize>('m');
 
 	protected close(): void {
 		this.isOpen.set(false);

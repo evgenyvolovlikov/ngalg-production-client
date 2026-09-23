@@ -1,0 +1,16 @@
+<button
+	app-button
+	type="button"
+	variant="filled"
+	color="default"
+	fullWidth
+	(click)="clickButton.emit()"
+	class="oauth-btn github-provider"
+>
+	<div class="provider-layout">
+		<div class="provider-layout__icon-box">
+			<app-icon name="logo-github" size="l" />
+		</div>
+		<span class="provider-layout__text">GitHub</span>
+	</div>
+</button>

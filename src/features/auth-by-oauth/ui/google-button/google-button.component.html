@@ -1,0 +1,16 @@
+<button
+	app-button
+	type="button"
+	variant="filled"
+	color="default"
+	fullWidth
+	(click)="clickButton.emit()"
+	class="oauth-btn google-provider"
+>
+	<div class="provider-layout">
+		<div class="provider-layout__icon-box">
+			<app-icon name="logo-google" size="l" />
+		</div>
+		<span class="provider-layout__text">Google</span>
+	</div>
+</button>
