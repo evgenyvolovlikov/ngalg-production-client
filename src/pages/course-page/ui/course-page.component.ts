@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 
 import { ArticlesDrawerSidebarComponent } from '@widgets/articles-drawer-sidebar';
 import { CourseSidebarComponent } from '@widgets/course-sidebar';
@@ -11,7 +11,7 @@ import { DrawerComponent } from '@shared/ui/drawer';
 import { IconComponent } from '@shared/ui/icon';
 
 // eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } from '../mock';
+import { MOCK_LESSONS } from '../mock';
 
 @Component({
 	selector: 'app-course-page',
@@ -32,10 +32,46 @@ import { MOCK_COURSE_PROGRESS, MOCK_LESSON, MOCK_LESSONS, MOCK_NEXT_LESSON } fro
 export class CoursePageComponent {
 	readonly isMobileMenuOpen = signal<boolean>(false);
 
-	readonly progress = signal(MOCK_COURSE_PROGRESS);
-	readonly lessons = signal<CourseSkeletonLesson[]>(MOCK_LESSONS);
-	readonly currentLesson = signal(MOCK_LESSON);
-	readonly nextLesson = signal<CourseSkeletonLesson | null>(MOCK_NEXT_LESSON);
+	readonly lessons = signal<any[]>(MOCK_LESSONS);
+
+	readonly activeLessonId = signal<string>(MOCK_LESSONS[0]?.id ?? '');
+
+	readonly progress = computed(() => {
+		const allLessons = this.lessons();
+		const totalLessons = allLessons.length;
+		const completedLessons = allLessons.filter((l) => l.isCompleted).length;
+		const percentage =
+			totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+		return { totalLessons, completedLessons, percentage };
+	});
+
+	readonly currentLesson = computed(() => {
+		const id = this.activeLessonId();
+		const found = this.lessons().find((l) => l.id === id);
+
+		console.log('found:', found);
+
+		return {
+			id: found?.id ?? '',
+			sequenceOrder: found?.sequenceOrder ?? 1,
+			title: found?.title ?? 'Урок не найден',
+			description: found?.description ?? '',
+			videoUrl: found?.videoUrl,
+			durationSeconds: found?.durationSeconds ?? 0,
+			isFree: found?.isFree ?? false,
+			isCompleted: found?.isCompleted ?? false,
+			hasCodeEditor: found?.hasCodeEditor ?? false,
+			courseId: 'mock-course-id',
+		};
+	});
+
+	readonly nextLesson = computed<CourseSkeletonLesson | null>(() => {
+		const current = this.lessons().find((l) => l.id === this.activeLessonId());
+		if (!current) return null;
+
+		return this.lessons().find((l) => l.sequenceOrder === current.sequenceOrder + 1) ?? null;
+	});
 
 	constructor() {
 		effect(() => {
@@ -52,25 +88,16 @@ export class CoursePageComponent {
 	}
 
 	protected onSelectLesson(lessonId: string): void {
+		const lesson = this.lessons().find((l) => l.id === lessonId);
+		if (!lesson || (!lesson.isFree && !lesson.isCompleted)) return;
+
 		this.isMobileMenuOpen.set(false);
-		const found = this.lessons().find((l) => l.id === lessonId);
-		if (found) {
-			this.currentLesson.set({
-				...found,
-				description: found.description ?? '',
-				courseId: this.currentLesson().courseId,
-				videoUrl: '',
-			});
-		}
+		this.activeLessonId.set(lessonId);
 	}
 
 	protected onToggleComplete(event: { id: string; completed: boolean }): void {
 		this.lessons.update((list) =>
 			list.map((l) => (l.id === event.id ? { ...l, isCompleted: event.completed } : l)),
 		);
-
-		if (this.currentLesson().id === event.id) {
-			this.currentLesson.update((l) => ({ ...l, isCompleted: event.completed }));
-		}
 	}
 }

@@ -9,7 +9,7 @@
 		<app-course-sidebar
 			[lessons]="lessons()"
 			[progress]="progress()"
-			[activeLessonId]="currentLesson().id"
+			[activeLessonId]="activeLessonId()"
 			(selectLesson)="onSelectLesson($event)"
 		/>
 	</div>
@@ -30,7 +30,7 @@
 		<app-course-sidebar
 			[lessons]="lessons()"
 			[progress]="progress()"
-			[activeLessonId]="currentLesson().id"
+			[activeLessonId]="activeLessonId()"
 			(selectLesson)="onSelectLesson($event)"
 		/>
 	</div>
