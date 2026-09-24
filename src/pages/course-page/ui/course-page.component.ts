@@ -50,8 +50,6 @@ export class CoursePageComponent {
 		const id = this.activeLessonId();
 		const found = this.lessons().find((l) => l.id === id);
 
-		console.log('found:', found);
-
 		return {
 			id: found?.id ?? '',
 			sequenceOrder: found?.sequenceOrder ?? 1,
