@@ -1,17 +1,35 @@
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	OnInit,
+	computed,
+	effect,
+	inject,
+	signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 
 import { ArticlesDrawerSidebarComponent } from '@widgets/articles-drawer-sidebar';
 import { CourseSidebarComponent } from '@widgets/course-sidebar';
 import { LessonContentComponent } from '@widgets/lesson-content';
 
+import { MarkLessonWatchedApiService } from '@features/mark-lesson-watched';
+
+import { CourseApiService } from '@entities/course';
+import { LessonApiService } from '@entities/lesson';
+
 import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
-import { CourseSkeletonLesson } from '@shared/types/course.types';
+import {
+	CourseProgress,
+	CourseSkeleton,
+	CourseSkeletonLesson,
+	LessonDetail,
+} from '@shared/types/course.types';
 import { ButtonComponent } from '@shared/ui/button';
 import { DrawerComponent } from '@shared/ui/drawer';
 import { IconComponent } from '@shared/ui/icon';
-
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { MOCK_LESSONS } from '../mock';
 
 @Component({
 	selector: 'app-course-page',
@@ -29,14 +47,21 @@ import { MOCK_LESSONS } from '../mock';
 		ButtonComponent,
 	],
 })
-export class CoursePageComponent {
-	readonly isMobileMenuOpen = signal<boolean>(false);
+export class CoursePageComponent implements OnInit {
+	private readonly route = inject(ActivatedRoute);
+	private readonly destroyRef = inject(DestroyRef);
 
-	readonly lessons = signal<any[]>(MOCK_LESSONS);
+	private readonly courseApi = inject(CourseApiService);
+	private readonly lessonApi = inject(LessonApiService);
+	private readonly markWatchedApi = inject(MarkLessonWatchedApiService);
 
-	readonly activeLessonId = signal<string>(MOCK_LESSONS[0]?.id ?? '');
+	readonly course = signal<CourseSkeleton | null>(null);
+	readonly lessons = signal<CourseSkeletonLesson[]>([]);
 
-	readonly progress = computed(() => {
+	readonly activeLessonId = signal<string | null>(null);
+	readonly activeLessonDetail = signal<LessonDetail | null>(null);
+
+	readonly progress = computed<CourseProgress>(() => {
 		const allLessons = this.lessons();
 		const totalLessons = allLessons.length;
 		const completedLessons = allLessons.filter((l) => l.isCompleted).length;
@@ -46,30 +71,64 @@ export class CoursePageComponent {
 		return { totalLessons, completedLessons, percentage };
 	});
 
-	readonly currentLesson = computed(() => {
+	readonly activeLessonSkeleton = computed(() => {
 		const id = this.activeLessonId();
-		const found = this.lessons().find((l) => l.id === id);
-
-		return {
-			id: found?.id ?? '',
-			sequenceOrder: found?.sequenceOrder ?? 1,
-			title: found?.title ?? 'Урок не найден',
-			description: found?.description ?? '',
-			videoUrl: found?.videoUrl,
-			durationSeconds: found?.durationSeconds ?? 0,
-			isFree: found?.isFree ?? false,
-			isCompleted: found?.isCompleted ?? false,
-			hasCodeEditor: found?.hasCodeEditor ?? false,
-			courseId: 'mock-course-id',
-		};
+		return this.lessons().find((l) => l.id === id) ?? null;
 	});
 
-	readonly nextLesson = computed<CourseSkeletonLesson | null>(() => {
-		const current = this.lessons().find((l) => l.id === this.activeLessonId());
+	readonly nextLesson = computed(() => {
+		const current = this.activeLessonSkeleton();
 		if (!current) return null;
-
 		return this.lessons().find((l) => l.sequenceOrder === current.sequenceOrder + 1) ?? null;
 	});
+
+	ngOnInit(): void {
+		this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+			const slug = params.get('slug');
+			if (slug) {
+				this.loadCourse(slug);
+			}
+		});
+	}
+
+	private loadCourse(slug: string): void {
+		this.courseApi
+			.getCourseSkeleton(slug)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (courseSkeleton) => {
+					this.course.set(courseSkeleton);
+					this.lessons.set(courseSkeleton.lessons);
+
+					const firstToWatch =
+						courseSkeleton.lessons.find((l) => !l.isCompleted) ??
+						courseSkeleton.lessons[0];
+
+					if (firstToWatch) {
+						this.selectLesson(firstToWatch.id);
+					}
+				},
+				error: (err) => console.error('Failed to load course:', err),
+			});
+	}
+
+	selectLesson(id: string): void {
+		const lesson = this.lessons().find((l) => l.id === id);
+		if (!lesson || (!lesson.isFree && !lesson.isCompleted)) return;
+
+		this.activeLessonId.set(id);
+		this.activeLessonDetail.set(null);
+
+		this.lessonApi
+			.getLessonDetail(id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (detail) => this.activeLessonDetail.set(detail),
+				error: (err) => console.error('Failed to load lesson detail:', err),
+			});
+	}
+
+	readonly isMobileMenuOpen = signal<boolean>(false);
 
 	constructor() {
 		effect(() => {
@@ -81,21 +140,30 @@ export class CoursePageComponent {
 		});
 	}
 
+	toggleLessonCompleted(payload: { id: string; completed: boolean }): void {
+		this.markWatchedApi
+			.toggleProgress(payload.id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (response) => {
+					this.lessons.update((lessons) =>
+						lessons.map((lesson) =>
+							lesson.id === payload.id
+								? { ...lesson, isCompleted: response.completed }
+								: lesson,
+						),
+					);
+
+					if (this.activeLessonDetail()?.id === payload.id) {
+						this.activeLessonDetail.update((detail) =>
+							detail ? { ...detail, isCompleted: response.completed } : null,
+						);
+					}
+				},
+				error: (err) => console.error('Failed to toggle progress:', err),
+			});
+	}
 	protected toggleMobileMenu(): void {
 		this.isMobileMenuOpen.update((state) => !state);
-	}
-
-	protected onSelectLesson(lessonId: string): void {
-		const lesson = this.lessons().find((l) => l.id === lessonId);
-		if (!lesson || (!lesson.isFree && !lesson.isCompleted)) return;
-
-		this.isMobileMenuOpen.set(false);
-		this.activeLessonId.set(lessonId);
-	}
-
-	protected onToggleComplete(event: { id: string; completed: boolean }): void {
-		this.lessons.update((list) =>
-			list.map((l) => (l.id === event.id ? { ...l, isCompleted: event.completed } : l)),
-		);
 	}
 }

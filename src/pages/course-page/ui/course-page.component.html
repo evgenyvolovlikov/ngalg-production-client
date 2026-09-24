@@ -7,20 +7,24 @@
 <app-sidebar-layout class="course-page">
 	<div sidebar class="course-page__sidebar">
 		<app-course-sidebar
-			[lessons]="lessons()"
 			[progress]="progress()"
+			[lessons]="lessons()"
 			[activeLessonId]="activeLessonId()"
-			(selectLesson)="onSelectLesson($event)"
+			(selectLesson)="selectLesson($event)"
 		/>
 	</div>
 
-	<app-lesson-content
-		[lesson]="currentLesson()"
-		[videoUrl]="currentLesson().videoUrl"
-		[nextLesson]="nextLesson()"
-		(toggleComplete)="onToggleComplete($event)"
-		(selectLesson)="onSelectLesson($event)"
-	/>
+	@if (activeLessonSkeleton(); as lesson) {
+		<app-lesson-content
+			[lesson]="lesson"
+			[nextLesson]="nextLesson()"
+			[videoUrl]="activeLessonDetail()?.videoUrl ?? null"
+			(toggleComplete)="toggleLessonCompleted($event)"
+			(selectLesson)="selectLesson($event)"
+		/>
+	} @else {
+		<div class="loading-state">Загрузка курса...</div>
+	}
 
 	<app-articles-drawer-sidebar />
 </app-sidebar-layout>
@@ -31,7 +35,7 @@
 			[lessons]="lessons()"
 			[progress]="progress()"
 			[activeLessonId]="activeLessonId()"
-			(selectLesson)="onSelectLesson($event)"
+			(selectLesson)="selectLesson($event)"
 		/>
 	</div>
 </app-drawer>

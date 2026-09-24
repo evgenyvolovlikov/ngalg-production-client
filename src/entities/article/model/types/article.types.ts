@@ -1,5 +1,3 @@
-// --- Базовые типы и перечисления ---
-
 export type ArticleStatus = 'DRAFT' | 'ARCHIVED' | 'PUBLISHED';
 export type ArticleLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
 export type NoteType = 'INFO' | 'WARNING' | 'ERROR';

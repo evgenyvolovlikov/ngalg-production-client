@@ -10,14 +10,19 @@ export const RouteSegments = {
 	ROOT: '',
 
 	COURSES: 'courses',
+	COURSE_DETAILS: ':slug',
+	COURSE_CREATE: 'create',
+	COURSE_EDIT: ':slug/edit',
+
+	LESSONS: 'lessons',
 
 	FRONTEND: 'frontend',
-	BACKEND: 'backend',
 
 	ACCOUNT: 'account',
 	OVERVIEW: 'overview',
 	TRANSACTIONS: 'transactions',
 
+	PROFILES: 'profiles',
 	WILDCARD: '**',
 } as const;
 

@@ -1,6 +1,4 @@
-import { CourseProgress } from '@entities/course';
-
-import { CourseSkeletonLesson } from '@shared/types/course.types';
+import { CourseProgress, CourseSkeletonLesson } from '@shared/types/course.types';
 
 /**
  * Исходный массив лекций курса.
@@ -104,6 +102,6 @@ export const MOCK_NEXT_LESSON: CourseSkeletonLesson = {
 		'Теоретический разбор парадигмы fine-grained реактивности. Сравнение классического Change Detection дерева и реактивного графа зависимостей.',
 	durationSeconds: 780,
 	isFree: true,
-	hasCodeEditor: false,
 	isCompleted: false,
+	hasCodeEditor: false,
 };
