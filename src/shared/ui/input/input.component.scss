@@ -1,0 +1,136 @@
+:host {
+	display: block;
+	width: 100%;
+}
+
+.app-input {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-1);
+	width: 100%;
+
+	&__label {
+		font-size: var(--font-size-sm);
+		font-weight: var(--font-weight-medium);
+		color: var(--text-secondary);
+		cursor: pointer;
+	}
+
+	&__required-mark {
+		margin-left: var(--unit-1);
+		color: var(--status-error);
+	}
+
+	&__wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		width: 100%;
+	}
+
+	&__field {
+		width: 100%;
+		height: var(--unit-10);
+		padding: 0 var(--unit-3);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-md);
+		font-family: inherit;
+		font-size: var(--font-size-sm);
+		color: var(--text-primary);
+		transition:
+			border-color var(--transition-fast),
+			background-color var(--transition-fast);
+
+		&::placeholder {
+			color: var(--text-muted);
+		}
+
+		&:focus {
+			outline: none;
+		}
+
+		&:focus-visible {
+			border-color: transparent;
+			outline: 2px solid var(--border-focus);
+			outline-offset: -1px;
+		}
+	}
+
+	&__toggle-password {
+		position: absolute;
+		right: var(--unit-3);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+		background: transparent;
+		border: none;
+		color: var(--text-muted);
+		cursor: pointer;
+
+		&:hover {
+			color: var(--text-primary);
+		}
+	}
+
+	&__error {
+		font-size: var(--font-size-xs);
+		font-weight: var(--font-weight-medium);
+		color: var(--status-error);
+	}
+
+	&--sm {
+		.app-input__label {
+			font-size: var(--font-size-xs);
+		}
+
+		.app-input__field {
+			height: var(--unit-8);
+			padding: 0 var(--unit-2);
+			font-size: var(--font-size-xs);
+		}
+	}
+
+	&--lg {
+		.app-input__label {
+			font-size: var(--font-size-base);
+		}
+
+		.app-input__field {
+			height: var(--unit-12);
+			padding: 0 var(--unit-4);
+			font-size: var(--font-size-base);
+		}
+	}
+
+	&--error {
+		.app-input__field {
+			border-color: var(--status-error);
+
+			&:focus-visible {
+				outline-color: var(--status-error);
+			}
+		}
+	}
+
+	&--disabled {
+		opacity: var(--opacity-disabled);
+		cursor: not-allowed;
+		pointer-events: none;
+
+		.app-input__label,
+		.app-input__field,
+		.app-input__toggle-password {
+			cursor: not-allowed;
+		}
+
+		.app-input__field {
+			background-color: var(--bg-main);
+		}
+	}
+
+	.icon {
+		display: flex;
+	}
+}

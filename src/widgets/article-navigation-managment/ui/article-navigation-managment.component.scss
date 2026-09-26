@@ -1,0 +1,39 @@
+.navigation-management {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-1);
+	}
+
+	&__title {
+		margin: 0;
+		font-size: var(--font-size-xxl);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+	}
+
+	&__subtitle {
+		margin: 0;
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-base);
+		color: var(--text-secondary);
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+		gap: var(--unit-6);
+	}
+
+	&__card {
+		padding: var(--unit-6);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-lg);
+	}
+}

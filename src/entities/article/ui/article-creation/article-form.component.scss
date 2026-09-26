@@ -1,0 +1,129 @@
+@use 'media' as m;
+
+:host {
+	display: block;
+	padding: var(--unit-6) 0;
+}
+
+.article-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+	max-width: var(--container-xxl);
+	margin: 0 auto;
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: var(--unit-4);
+		border-bottom: 1px solid var(--border-light);
+	}
+
+	&__title {
+		margin: 0;
+		font-size: var(--font-size-xxl);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+	}
+
+	&__actions {
+		display: flex;
+		gap: var(--unit-3);
+	}
+}
+
+/* --- Секции формы (Fieldsets) --- */
+.form-section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+	min-width: 0;
+	margin: 0;
+	padding: var(--unit-6);
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-lg);
+
+	&__title {
+		width: 100%;
+		margin: 0 0 var(--unit-4);
+		padding: 0;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+	}
+}
+
+/* --- Сетка формы --- */
+.form-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--unit-4);
+
+	&--2-cols {
+		@include m.media-above('md') {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	&--3-cols {
+		@include m.media-above('md') {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+}
+
+/* --- Контентные блоки --- */
+.block-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--unit-2);
+}
+
+.blocks-container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+}
+
+.block-card {
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--unit-3) var(--unit-4);
+		background-color: var(--bg-main);
+		border-bottom: 1px solid var(--border-light);
+	}
+
+	&__type {
+		font-size: var(--font-size-sm);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-muted);
+		text-transform: uppercase;
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-3);
+		padding: var(--unit-4);
+	}
+}
+
+.empty-state {
+	padding: var(--unit-6);
+	border: 1px dashed var(--border-light);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-sm);
+	color: var(--text-secondary);
+	text-align: center;
+}

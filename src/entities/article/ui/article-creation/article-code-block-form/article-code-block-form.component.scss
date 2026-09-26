@@ -1,0 +1,13 @@
+@use 'media' as *;
+
+.form-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--unit-4);
+
+	&--2-cols {
+		@include media-above(md) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+}

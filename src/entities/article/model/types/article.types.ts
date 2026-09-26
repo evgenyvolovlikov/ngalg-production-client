@@ -114,3 +114,7 @@ export interface GetArticlesQueryDto {
 	status?: ArticleStatus;
 	categoryId?: string;
 }
+
+export type CreateArticleDto = Omit<Article, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type UpdateArticleDto = Partial<CreateArticleDto>;

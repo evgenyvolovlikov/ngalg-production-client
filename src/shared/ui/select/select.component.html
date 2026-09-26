@@ -1,0 +1,32 @@
+<div class="app-select" [class.app-select--error]="hasError || errorMessage()">
+	@if (label()) {
+		<label [for]="id()" class="app-select__label">
+			{{ label() }}
+			@if (isRequired) {
+				<span class="app-select__required-mark" aria-hidden="true">*</span>
+			}
+		</label>
+	}
+
+	<div class="app-select__wrapper">
+		<select
+			[id]="id()"
+			class="app-select__field"
+			[value]="value()"
+			[disabled]="isDisabled()"
+			[attr.aria-required]="isRequired"
+			[attr.aria-invalid]="hasError || !!errorMessage()"
+			[attr.aria-describedby]="errorText ? id() + '-error' : null"
+			(change)="onSelectChange($event)"
+			(blur)="onBlur()"
+		>
+			<ng-content></ng-content>
+		</select>
+	</div>
+
+	@if (errorText) {
+		<span class="app-select__error" [id]="id() + '-error'">
+			{{ errorText }}
+		</span>
+	}
+</div>

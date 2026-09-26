@@ -1,0 +1,6 @@
+<div class="article-editor-page">
+	@if (!id()) {
+		<app-article-navigation-managment />
+	}
+	<app-manage-article [articleId]="id() ?? null" />
+</div>

@@ -1,0 +1,51 @@
+<div class="app-input" [class.app-input--disabled]="isDisabled()" [class.app-input--error]="hasError || errorMessage()">
+	@if (label()) {
+		<label class="app-input__label" [for]="id()">
+			{{ label() }}
+			@if (isRequired) {
+				<span class="app-input__required-mark" aria-hidden="true">*</span>
+			}
+		</label>
+	}
+
+	<div class="app-input__wrapper">
+		<input
+			[id]="id()"
+			class="app-input__field"
+			[type]="inputType()"
+			[value]="value()"
+			[placeholder]="placeholder()"
+			[disabled]="isDisabled()"
+			[readOnly]="readonly()"
+			[attr.aria-required]="isRequired"
+			[attr.aria-invalid]="hasError || !!errorMessage()"
+			[attr.aria-describedby]="errorText ? id() + '-error' : null"
+			(input)="onInput($event)"
+			(blur)="onBlur()"
+		/>
+
+		@if (type() === "password") {
+			<button
+				type="button"
+				class="app-input__toggle-password"
+				(click)="togglePasswordVisibility($event)"
+				[disabled]="isDisabled()"
+				[attr.aria-label]="isPasswordVisible() ? 'Скрыть пароль' : 'Показать пароль'"
+			>
+				<span class="icon">
+					@if (isPasswordVisible()) {
+						<app-icon [name]="'eye-opened'" [description]="'eye-opened'" size="m"> </app-icon>
+					} @else {
+						<app-icon [name]="'eye-closed'" [description]="'eye-closed'" size="m"> </app-icon>
+					}
+				</span>
+			</button>
+		}
+	</div>
+
+	@if (errorText) {
+		<span class="app-input__error" [id]="id() + '-error'">
+			{{ errorText }}
+		</span>
+	}
+</div>

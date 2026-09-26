@@ -1,0 +1,124 @@
+<form class="article-form" [formGroup]="form()" (ngSubmit)="onSubmit()">
+	<header class="article-form__header">
+		<h1 class="article-form__title">{{ isEditMode() ? "Редактирование статьи" : "Новая статья" }}</h1>
+		<div class="article-form__actions">
+			<button app-button type="button" variant="outline" (click)="onCancel()">Отмена</button>
+			<button app-button type="submit" variant="filled" [loading]="isSubmitting()" [disabled]="isSubmitting()">
+				Сохранить
+			</button>
+		</div>
+	</header>
+
+	<!-- ОСНОВНАЯ ИНФОРМАЦИЯ -->
+	<fieldset class="form-section">
+		<legend class="form-section__title">Основная информация</legend>
+
+		<div class="form-row form-row--2-cols">
+			<app-input formControlName="title" label="Заголовок" />
+			<app-input formControlName="slug" label="Slug (URL)" />
+		</div>
+
+		<div class="form-row form-row--3-cols">
+			<app-select formControlName="categoryId" label="Категория">
+				<option value="">Выберите категорию</option>
+
+				@for (section of navigationTree(); track section.id) {
+					<optgroup [label]="section.title">
+						@for (category of section.items; track category.id) {
+							<option [value]="category.id">{{ category.title }}</option>
+						}
+					</optgroup>
+				}
+			</app-select>
+
+			<app-select formControlName="status" label="Статус">
+				@for (opt of statusOptions; track opt.value) {
+					<option [value]="opt.value">{{ opt.label }}</option>
+				}
+			</app-select>
+
+			<app-select formControlName="level" label="Уровень">
+				@for (opt of levelOptions; track opt.value) {
+					<option [value]="opt.value">{{ opt.label }}</option>
+				}
+			</app-select>
+		</div>
+
+		<div class="form-row form-row--2-cols">
+			<app-input formControlName="problemId" label="ID Задачи (Problem ID)" />
+			<app-input type="number" formControlName="readingTimeMinutes" label="Время чтения (мин)" />
+		</div>
+
+		<div class="form-row">
+			<app-textarea formControlName="leadText" label="Лид-абзац" [rows]="2"></app-textarea>
+		</div>
+
+		<div class="form-row">
+			<app-textarea formControlName="description" label="Полное описание" [rows]="4"></app-textarea>
+		</div>
+	</fieldset>
+
+	<!-- ОБЛОЖКА -->
+	<fieldset formGroupName="coverImage" class="form-section">
+		<legend class="form-section__title">Обложка</legend>
+		<div class="form-row">
+			<app-input formControlName="url" label="URL изображения" />
+		</div>
+		<div class="form-row form-row--2-cols">
+			<app-input formControlName="alt" label="Alt текст" />
+			<app-input formControlName="caption" label="Подпись (необязательно)" />
+		</div>
+	</fieldset>
+
+	<!-- ТЕГИ И СЕО -->
+	<div class="form-row form-row--2-cols">
+		<fieldset class="form-section">
+			<legend class="form-section__title">Теги</legend>
+			<app-tags-input formControlName="tags" placeholder="Введите тег и нажмите Enter"></app-tags-input>
+		</fieldset>
+
+		<fieldset class="form-section" formGroupName="seo">
+			<legend class="form-section__title">SEO Настройки</legend>
+			<app-textarea formControlName="description" label="SEO Описание" [rows]="2"></app-textarea>
+
+			<app-tags-input formControlName="keywords" placeholder="Введите ключевое слово"></app-tags-input>
+		</fieldset>
+	</div>
+
+	<!-- КОНТЕНТНЫЕ БЛОКИ -->
+	<fieldset class="form-section">
+		<legend class="form-section__title">Контентные блоки</legend>
+
+		<div class="block-toolbar">
+			@for (block of availableBlocks; track block.type) {
+				<button app-button type="button" size="m" variant="outline" (click)="addBlock(block.type)">
+					+ {{ block.label }}
+				</button>
+			}
+		</div>
+
+		<div formArrayName="blocks" class="blocks-container">
+			@for (block of blocksFormArray.controls; track block; let blockIndex = $index) {
+				<div class="block-card" [formGroupName]="blockIndex">
+					<div class="block-card__header">
+						<span class="block-card__type">{{ block.controls.type.value | uppercase }}</span>
+						<button app-button type="button" variant="clear" size="m" (click)="removeBlock(blockIndex)">
+							Удалить
+						</button>
+					</div>
+
+					<div formGroupName="data" class="block-card__body">
+						<app-article-block-form-renderer
+							[type]="block.controls.type.value"
+							[dataFormGroup]="block.controls.data"
+						/>
+					</div>
+				</div>
+			}
+
+			@if (blocksFormArray.length === 0) {
+				<div class="empty-state">Блоков пока нет. Добавьте контент, используя панель выше.</div>
+			}
+		</div>
+	</fieldset>
+</form>

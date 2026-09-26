@@ -1,0 +1,7 @@
+@if (article(); as data) {
+	<app-article-content [article]="data" />
+} @else if (isLoading()) {
+	<p class="article-details-page__status">Загрузка статьи…</p>
+} @else if (error(); as message) {
+	<p class="article-details-page__status article-details-page__status--error">{{ message }}</p>
+}

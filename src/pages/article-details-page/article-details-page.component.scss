@@ -1,0 +1,15 @@
+:host {
+	display: block;
+	width: 100%;
+}
+
+.article-details-page__status {
+	padding: var(--unit-6) 0;
+	font-size: var(--font-size-base);
+	color: var(--text-secondary);
+	text-align: center;
+
+	&--error {
+		color: var(--status-error);
+	}
+}

@@ -26,6 +26,27 @@ export const COURSE_ROUTES: Routes = [
 	},
 ];
 
+export const ARTICLE_ROUTES: Routes = [
+	{
+		path: RouteSegments.ARTICLES_CREATE,
+		loadComponent: () =>
+			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
+		title: 'Create Article',
+	},
+	{
+		path: RouteSegments.ARTICLE_EDIT,
+		loadComponent: () =>
+			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
+		title: 'Edit Article',
+	},
+	{
+		path: RouteSegments.ARTICLE_DETAILS,
+		loadComponent: () =>
+			import('@pages/article-details-page').then((c) => c.ArticleDetailsPageComponent),
+		title: 'Article',
+	},
+];
+
 export const ACCOUNT_ROUTES: Routes = [
 	{
 		path: RouteSegments.ROOT,
@@ -60,6 +81,12 @@ export const APP_ROUTES: Routes = [
 		path: RouteSegments.COURSES,
 		component: MainLayoutComponent,
 		children: COURSE_ROUTES,
+	},
+
+	{
+		path: RouteSegments.ARTICLES,
+		component: MainLayoutComponent,
+		children: ARTICLE_ROUTES,
 	},
 
 	{

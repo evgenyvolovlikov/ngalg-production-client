@@ -1,0 +1,27 @@
+@use 'media' as m;
+
+.form-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--unit-4);
+
+	&--2-cols {
+		@include m.media-above('md') {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+}
+
+.admin-form-container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-3);
+
+	&__title {
+		margin: 0;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+	}
+}

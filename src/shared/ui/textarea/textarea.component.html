@@ -1,0 +1,31 @@
+<div class="app-textarea" [class.app-textarea--error]="hasError || errorMessage()">
+	@if (label()) {
+		<label [for]="id()" class="app-textarea__label">
+			{{ label() }}
+			@if (isRequired) {
+				<span class="app-textarea__required-mark" aria-hidden="true">*</span>
+			}
+		</label>
+	}
+
+	<textarea
+		[id]="id()"
+		class="app-textarea__field"
+		[class.app-textarea__field--monospace]="monospace()"
+		[value]="value()"
+		[placeholder]="placeholder()"
+		[rows]="rows()"
+		[disabled]="isDisabled()"
+		[attr.aria-required]="isRequired"
+		[attr.aria-invalid]="hasError || !!errorMessage()"
+		[attr.aria-describedby]="errorText ? id() + '-error' : null"
+		(input)="onInput($event)"
+		(blur)="onBlur()"
+	></textarea>
+
+	@if (errorText) {
+		<span class="app-textarea__error" [id]="id() + '-error'">
+			{{ errorText }}
+		</span>
+	}
+</div>

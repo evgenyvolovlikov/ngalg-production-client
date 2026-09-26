@@ -14,6 +14,11 @@ export const RouteSegments = {
 	COURSE_CREATE: 'create',
 	COURSE_EDIT: ':slug/edit',
 
+	ARTICLES: 'articles',
+	ARTICLES_CREATE: 'create',
+	ARTICLE_DETAILS: ':id',
+	ARTICLE_EDIT: ':id/edit',
+
 	LESSONS: 'lessons',
 	SECTIONS: 'sections',
 
@@ -29,6 +34,11 @@ export const RouteSegments = {
 
 export const RouteBuilder = {
 	HOME: () => '/',
+
+	ARTICLES: () => `/${RouteSegments.ARTICLES}`,
+	ARTICLE_CREATE: () => `/${RouteSegments.ARTICLES}/${RouteSegments.ARTICLES_CREATE}`,
+	ARTICLE_DETAILS: (id: string) => `/${RouteSegments.ARTICLES}/${id}`,
+	ARTICLE_EDIT: (id: string) => `/${RouteSegments.ARTICLES}/${id}/edit`,
 
 	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
 	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,

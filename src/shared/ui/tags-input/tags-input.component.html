@@ -1,0 +1,42 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<div class="app-tags-input">
+	@if (label()) {
+		<label /* [for]="id()"  */ class="app-tags-input__label">{{ label() }}</label>
+	}
+	<div class="app-tags-input__container" [class.app-tags-input__container--disabled]="isDisabled()">
+		@for (tag of tags(); track tag) {
+			<span class="app-tags-input__tag">
+				<span class="app-tags-input__tag-text">{{ tag }}</span>
+				<button
+					type="button"
+					class="app-tags-input__remove"
+					[disabled]="isDisabled()"
+					(click)="removeTag($index)"
+					aria-label="Удалить тег"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</span>
+		}
+		<input
+			/* [id]="id()" */
+			type="text"
+			class="app-tags-input__field"
+			[placeholder]="tags().length === 0 ? placeholder() : ''"
+			[disabled]="isDisabled()"
+			(keydown.enter)="addTag($event)"
+			(blur)="onBlur($event)"
+		/>
+	</div>
+</div>
