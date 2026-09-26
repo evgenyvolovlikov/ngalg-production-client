@@ -26,6 +26,6 @@ export class LessonContentComponent {
 	readonly videoUrl = input<string | null>(null);
 	readonly nextLesson = input<CourseSkeletonLesson | null>(null);
 
-	readonly toggleComplete = output<{ id: string; completed: boolean }>();
+	readonly toggleComplete = output<string>();
 	readonly selectLesson = output<string>();
 }

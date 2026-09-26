@@ -12,12 +12,9 @@ import { CheckboxComponent } from '@shared/ui/checkbox';
 export class MarkLessonWatchedComponent {
 	readonly lessonId = input.required<string>();
 	readonly isCompleted = input<boolean>(false);
-	readonly toggleComplete = output<{ id: string; completed: boolean }>();
+	readonly toggleComplete = output<string>();
 
-	protected onToggle(newStatus: boolean): void {
-		this.toggleComplete.emit({
-			id: this.lessonId(),
-			completed: newStatus,
-		});
+	protected onToggle(): void {
+		this.toggleComplete.emit(this.lessonId());
 	}
 }

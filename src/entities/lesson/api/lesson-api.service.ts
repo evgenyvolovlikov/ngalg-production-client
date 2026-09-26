@@ -18,43 +18,31 @@ export class LessonApiService extends BaseApiService {
 	private readonly lessonsPath = RouteSegments.LESSONS;
 
 	getLessonDetail(id: string): Observable<LessonDetail> {
-		return this.http.get<LessonDetail>(`/${this.coursesPath}/${this.lessonsPath}/${id}`, {
-			withCredentials: true,
-		});
+		return this.get<LessonDetail>(`/${this.coursesPath}/${this.lessonsPath}/${id}`);
 	}
 
 	toggleLessonProgress(id: string): Observable<ToggleLessonProgressResponse> {
-		return this.http.patch<ToggleLessonProgressResponse>(
+		return this.patch<ToggleLessonProgressResponse, Record<string, never>>(
 			`/${this.coursesPath}/${this.lessonsPath}/${id}/progress`,
 			{},
-			{ withCredentials: true },
 		);
 	}
 
 	createLesson(courseId: string, dto: CreateLessonDto): Observable<LessonEntity> {
-		return this.http.post<LessonEntity>(
+		return this.post<LessonEntity, CreateLessonDto>(
 			`/${this.coursesPath}/${courseId}/${this.lessonsPath}`,
 			dto,
-			{
-				withCredentials: true,
-			},
 		);
 	}
 
 	updateLesson(id: string, dto: UpdateLessonDto): Observable<LessonEntity> {
-		return this.http.patch<LessonEntity>(
+		return this.patch<LessonEntity, UpdateLessonDto>(
 			`/${this.coursesPath}/${this.lessonsPath}/${id}`,
 			dto,
-			{
-				withCredentials: true,
-			},
 		);
 	}
 
 	deleteLesson(id: string): Observable<void> {
-		return this.http.delete<void>(`/${this.coursesPath}/${this.lessonsPath}/${id}`, {
-			withCredentials: true,
-			responseType: 'text' as 'json',
-		});
+		return this.delete<void>(`/${this.coursesPath}/${this.lessonsPath}/${id}`);
 	}
 }

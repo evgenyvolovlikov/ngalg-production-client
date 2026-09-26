@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+import { UserProfile } from '../../model/user.types';
+
+const PROVIDER_LABELS: Record<UserProfile['provider'], string> = {
+	GOOGLE: 'Google',
+	GITHUB: 'GitHub',
+	LOCAL: 'Email',
+};
 
 @Component({
 	selector: 'app-user-profile-hero',
@@ -8,31 +16,15 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 	styleUrl: './user-profile-hero.component.scss',
 })
 export class UserProfileHeroComponent {
-	private readonly mockProfile = signal({
-		firstName: 'Евгений',
-		lastName: 'Воловликов',
-		username: 'evgenyvolovlikov',
-		avatarUrl: null as string | null,
-	});
+	readonly profile = input.required<UserProfile>();
 
 	readonly name = computed(() => {
-		const p = this.mockProfile();
-		if (p.firstName || p.lastName) {
-			return `${p.firstName || ''} ${p.lastName || ''}`.trim();
-		}
-		return p.username;
+		const profile = this.profile();
+		const fullName = `${profile.firstName ?? ''} ${profile.lastName ?? ''}`.trim();
+		return fullName || profile.username;
 	});
 
-	readonly initial = computed(() => {
-		const userName = this.name();
-		return userName.charAt(0).toUpperCase();
-	});
-
-	readonly avatarUrl = computed(() => {
-		return this.mockProfile().avatarUrl;
-	});
-
-	readonly accountType = computed(() => {
-		return 'Google';
-	});
+	readonly initial = computed(() => this.name().charAt(0).toUpperCase());
+	readonly avatarUrl = computed(() => this.profile().avatarUrl ?? null);
+	readonly accountType = computed(() => PROVIDER_LABELS[this.profile().provider]);
 }

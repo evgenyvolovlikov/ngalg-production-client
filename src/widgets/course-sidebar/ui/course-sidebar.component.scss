@@ -35,11 +35,27 @@ app-course-progress {
 	background-color: var(--bg-card);
 	border: 1px solid var(--border-light);
 	border-radius: var(--radius-md);
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--text-muted) transparent;
 
 	@include m.media-below('lg') {
 		background-color: unset;
 		border: unset;
 		border-radius: unset;
+	}
+
+	&::-webkit-scrollbar {
+		width: var(--unit-1);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--text-muted);
+		border-radius: var(--radius-full);
+
+		&:hover {
+			background-color: var(--text-secondary);
+		}
 	}
 }
 
@@ -55,25 +71,14 @@ app-course-progress {
 .lessons-list {
 	display: flex;
 	flex-direction: column;
-	flex-grow: 1;
 	gap: var(--unit-1);
 	width: 100%;
-	min-height: 0;
 	padding: 0 var(--unit-4);
-	overflow-y: auto;
-	scrollbar-width: thin;
-	scrollbar-color: var(--text-muted) transparent;
+}
 
-	&::-webkit-scrollbar {
-		width: var(--unit-1);
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: var(--text-muted);
-		border-radius: var(--radius-full);
-
-		&:hover {
-			background-color: var(--text-secondary);
-		}
-	}
+.empty-state {
+	margin: 0;
+	padding: 0 var(--unit-4);
+	font-size: var(--font-size-sm);
+	color: var(--text-muted);
 }

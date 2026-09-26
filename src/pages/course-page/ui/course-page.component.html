@@ -8,13 +8,13 @@
 	<div sidebar class="course-page__sidebar">
 		<app-course-sidebar
 			[progress]="progress()"
-			[lessons]="lessons()"
+			[sections]="sections()"
 			[activeLessonId]="activeLessonId()"
 			(selectLesson)="selectLesson($event)"
 		/>
 	</div>
 
-	@if (activeLessonSkeleton(); as lesson) {
+	@if (activeLesson(); as lesson) {
 		<app-lesson-content
 			[lesson]="lesson"
 			[nextLesson]="nextLesson()"
@@ -22,8 +22,12 @@
 			(toggleComplete)="toggleLessonCompleted($event)"
 			(selectLesson)="selectLesson($event)"
 		/>
-	} @else {
+	} @else if (loading()) {
 		<div class="loading-state">Загрузка курса...</div>
+	} @else if (error()) {
+		<div class="loading-state">{{ error() }}</div>
+	} @else {
+		<div class="loading-state">В курсе пока нет уроков</div>
 	}
 
 	<app-articles-drawer-sidebar />
@@ -32,7 +36,7 @@
 <app-drawer [(isOpen)]="isMobileMenuOpen" [showCloseBtn]="true">
 	<div class="mobile-sidebar-container">
 		<app-course-sidebar
-			[lessons]="lessons()"
+			[sections]="sections()"
 			[progress]="progress()"
 			[activeLessonId]="activeLessonId()"
 			(selectLesson)="selectLesson($event)"

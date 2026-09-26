@@ -3,7 +3,7 @@
 		<h1 class="title">{{ lesson().sequenceOrder }} - {{ lesson().title }}</h1>
 		<div class="duration">
 			<app-icon name="clock" />
-			{{ lesson().durationSeconds / 60 | number: "1.0-0" }} min
+			{{ durationMinutes() }} min
 		</div>
 	</div>
 

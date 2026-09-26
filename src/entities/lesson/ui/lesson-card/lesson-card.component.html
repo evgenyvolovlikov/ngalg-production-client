@@ -1,5 +1,5 @@
-<div class="lesson-box" [ngClass]="{ 'is-active': isActive(), 'is-locked': !lesson().isFree && !lesson().isCompleted }">
-	<button variant="clear" class="lesson-card" [disabled]="!lesson().isFree && !lesson().isCompleted">
+<div class="lesson-box" [class.is-active]="isActive()" [class.is-locked]="isLocked()">
+	<button type="button" class="lesson-card" [disabled]="isLocked()" (click)="onSelect()">
 		<span class="lesson-title">{{ lesson().sequenceOrder }} - {{ lesson().title }}</span>
 	</button>
 

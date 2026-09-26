@@ -15,6 +15,7 @@ export const RouteSegments = {
 	COURSE_EDIT: ':slug/edit',
 
 	LESSONS: 'lessons',
+	SECTIONS: 'sections',
 
 	FRONTEND: 'frontend',
 

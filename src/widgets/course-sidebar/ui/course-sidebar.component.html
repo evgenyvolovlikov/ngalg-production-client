@@ -2,15 +2,19 @@
 	<app-course-progress [progress]="progress()" />
 
 	<div class="lessons-container">
-		<h4 class="section-title">Лекции</h4>
-		<div class="lessons-list">
-			@for (lesson of lessons(); track lesson.id) {
-				<app-lesson-card
-					[lesson]="lesson"
-					[isActive]="lesson.id === activeLessonId()"
-					(click)="selectLesson.emit(lesson.id)"
-				/>
-			}
-		</div>
+		@for (section of sections(); track section.id) {
+			<h4 class="section-title">{{ section.title }}</h4>
+			<div class="lessons-list">
+				@for (lesson of section.lessons; track lesson.id) {
+					<app-lesson-card
+						[lesson]="lesson"
+						[isActive]="lesson.id === activeLessonId()"
+						(selectLesson)="selectLesson.emit($event)"
+					/>
+				}
+			</div>
+		} @empty {
+			<p class="empty-state">Уроки скоро появятся</p>
+		}
 	</div>
 </aside>

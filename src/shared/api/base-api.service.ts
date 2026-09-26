@@ -53,7 +53,7 @@ export abstract class BaseApiService {
 	 */
 	protected delete<T>(endpoint: string): Observable<T> {
 		return this.http
-			.delete<T>(endpoint)
+			.delete<T>(endpoint, { responseType: 'text' as 'json' })
 			.pipe(catchError((err: HttpErrorResponse) => this.handleError(err)));
 	}
 

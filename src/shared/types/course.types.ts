@@ -11,8 +11,45 @@ export interface CourseEntity extends BaseEntity {
 	isPublished: boolean;
 }
 
+export interface CourseSectionEntity extends BaseEntity {
+	courseId: string;
+	title: string;
+	slug: string;
+	orderIndex: number;
+}
+
+export interface CourseSkeletonLesson {
+	id: string;
+	sectionId: string | null;
+	sequenceOrder: number;
+	title: string;
+	description: string | null;
+	durationSeconds: number;
+	isFree: boolean;
+	hasCodeEditor: boolean;
+	isCompleted: boolean;
+}
+
+export interface CourseSkeletonSection {
+	id: string;
+	title: string;
+	slug: string;
+	orderIndex: number;
+	lessons: CourseSkeletonLesson[];
+}
+
+export interface CourseSkeleton {
+	id: string;
+	slug: string;
+	title: string;
+	description: string;
+	isPublished: boolean;
+	sections: CourseSkeletonSection[];
+}
+
 export interface LessonEntity extends BaseEntity {
 	courseId: string;
+	sectionId: string | null;
 	sequenceOrder: number;
 	title: string;
 	description: string | null;
@@ -26,14 +63,14 @@ export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
 	isCompleted: boolean;
 };
 
-export type CourseSkeletonLesson = Omit<LessonDetail, 'courseId' | 'videoUrl'>;
-
-export type CourseSkeleton = Omit<CourseEntity, 'createdAt' | 'updatedAt'> & {
-	lessons: CourseSkeletonLesson[];
-};
-
 export interface ToggleLessonProgressResponse {
 	completed: boolean;
+}
+
+export interface CourseProgress {
+	totalLessons: number;
+	completedLessons: number;
+	percentage: number;
 }
 
 export interface CreateCourseDto {
@@ -45,7 +82,16 @@ export interface CreateCourseDto {
 
 export type UpdateCourseDto = Partial<CreateCourseDto>;
 
+export interface CreateCourseSectionDto {
+	title: string;
+	slug: string;
+	orderIndex?: number;
+}
+
+export type UpdateCourseSectionDto = Partial<CreateCourseSectionDto>;
+
 export interface CreateLessonDto {
+	sectionId: string;
 	sequenceOrder: number;
 	title: string;
 	description?: string;
@@ -56,9 +102,3 @@ export interface CreateLessonDto {
 }
 
 export type UpdateLessonDto = Partial<CreateLessonDto>;
-
-export interface CourseProgress {
-	totalLessons: number;
-	completedLessons: number;
-	percentage: number;
-}
