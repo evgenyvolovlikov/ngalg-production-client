@@ -1,0 +1,49 @@
+<nav class="article-nav" aria-label="Навигация по статьям">
+	@if (navigationTree(); as tree) {
+		@for (section of tree; track section.id) {
+			<section class="article-nav__section">
+				<h2 class="article-nav__section-title">{{ section.title }}</h2>
+
+				<ul class="article-nav__categories">
+					@for (category of section.items; track category.id) {
+						<li class="article-nav__category">
+							<app-accordion [isOpen]="true">
+								<ng-container ngProjectAs="[accordion-title]">
+									{{ category.title }}
+								</ng-container>
+
+								<ul class="article-nav__list">
+									@for (article of category.children; track article.id) {
+										<li
+											class="article-nav__list-item"
+											[class.article-nav__list-item--active]="article.id === selectedId()"
+										>
+											<button
+												app-link
+												type="button"
+												variant="secondary"
+												[isActive]="article.id === selectedId()"
+												class="article-nav__link"
+												(click)="articleSelected.emit(article.id)"
+											>
+												<span class="article-nav__link-text">{{ article.title }}</span>
+
+												@if (article.tag) {
+													<app-badge size="sm" variant="outline">
+														{{ article.tag }}
+													</app-badge>
+												}
+											</button>
+										</li>
+									}
+								</ul>
+							</app-accordion>
+						</li>
+					}
+				</ul>
+			</section>
+		}
+	} @else {
+		<div class="article-nav__loading">Загрузка навигации...</div>
+	}
+</nav>

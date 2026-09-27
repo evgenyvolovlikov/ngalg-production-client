@@ -18,6 +18,33 @@
 	<div drawer-header>Header</div>
 
 	<div class="drawer-inner-content">
-		<app-article-content [article]="mockArticle" />
+		<div
+			class="drawer-inner-content__panel drawer-inner-content__panel--nav"
+			[class.drawer-inner-content__panel--shifted]="!!selectedArticleId()"
+		>
+			<app-article-drawer-navigation
+				[selectedId]="selectedArticleId()"
+				(articleSelected)="onArticleSelected($event)"
+			/>
+		</div>
+
+		<div
+			class="drawer-inner-content__panel drawer-inner-content__panel--article"
+			[class.drawer-inner-content__panel--active]="!!selectedArticleId()"
+		>
+			@if (selectedArticleId(); as id) {
+				<button
+					app-button
+					type="button"
+					variant="clear"
+					size="m"
+					class="drawer-inner-content__back"
+					(click)="backToNavigation()"
+				>
+					<span class="drawer-inner-content__back">← Назад к списку</span>
+				</button>
+				<app-article-view [articleId]="id" />
+			}
+		</div>
 	</div>
 </app-drawer>

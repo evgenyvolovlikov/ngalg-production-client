@@ -36,3 +36,42 @@
 		letter-spacing: 0.5px;
 	}
 }
+
+.drawer-inner-content {
+	position: relative;
+	height: 100%;
+	overflow: hidden;
+
+	&__panel {
+		height: 100%;
+		transition: transform var(--transition-base);
+	}
+
+	&__panel--nav {
+		transform: translateX(0);
+
+		&.drawer-inner-content__panel--shifted {
+			transform: translateX(-100%);
+		}
+	}
+
+	&__panel--article {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-4);
+		background-color: var(--bg-card);
+		inset: 0;
+		overflow-y: auto;
+		transform: translateX(100%);
+
+		&.drawer-inner-content__panel--active {
+			transform: translateX(0);
+		}
+	}
+
+	&__back {
+		align-self: flex-start;
+		margin: var(--unit-2) 0;
+	}
+}

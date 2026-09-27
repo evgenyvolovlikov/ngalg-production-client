@@ -1,0 +1,62 @@
+:host {
+	display: inline-flex;
+	align-items: center;
+	border-radius: var(--radius-sm);
+	font-size: inherit;
+	font-weight: var(--font-weight-medium);
+	color: inherit;
+	transition:
+		color var(--transition-fast),
+		opacity var(--transition-fast);
+	text-decoration: none;
+
+	&.app-link--primary {
+		color: var(--text-primary);
+
+		&:hover {
+			opacity: var(--opacity-hover);
+		}
+	}
+
+	&.app-link--secondary {
+		color: var(--text-muted);
+
+		&:hover {
+			color: var(--text-primary);
+		}
+	}
+
+	&.app-link--underline {
+		color: var(--text-primary);
+		text-decoration: underline;
+		text-decoration-skip-ink: auto;
+		text-underline-offset: 0.2em;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
+	&.app-link--active {
+		font-weight: var(--font-weight-medium);
+		color: var(--brand-primary);
+
+		&:hover {
+			color: var(--brand-primary);
+		}
+	}
+
+	&:focus-visible {
+		outline: var(--focus-ring-width) solid var(--border-focus);
+		outline-offset: var(--focus-ring-offset);
+	}
+}
+
+:host(button) {
+	padding: 0;
+	background: none;
+	border: none;
+	text-align: left;
+	cursor: pointer;
+	font: inherit;
+}
