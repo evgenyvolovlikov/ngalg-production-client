@@ -14,7 +14,6 @@ export const RouteSegments = {
 
 	ARTICLES: 'articles',
 	ARTICLES_CREATE: 'create',
-	ARTICLE_DETAILS: ':id',
 	ARTICLE_EDIT: ':id/edit',
 
 	FRONTEND: 'frontend',
@@ -31,7 +30,6 @@ export const RouteBuilder = {
 
 	ARTICLES: () => `/${RouteSegments.ARTICLES}`,
 	ARTICLE_CREATE: () => `/${RouteSegments.ARTICLES}/${RouteSegments.ARTICLES_CREATE}`,
-	ARTICLE_DETAILS: (id: string) => `/${RouteSegments.ARTICLES}/${id}`,
 	ARTICLE_EDIT: (id: string) => `/${RouteSegments.ARTICLES}/${id}/edit`,
 
 	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,

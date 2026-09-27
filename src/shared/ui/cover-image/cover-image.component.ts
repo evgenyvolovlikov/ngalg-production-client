@@ -1,7 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
 
-const FALLBACK_IMAGE = 'assets/icons/logo.svg';
+const FALLBACK_IMAGE = 'assets/logo.svg';
 
 @Component({
 	selector: 'app-cover-image',

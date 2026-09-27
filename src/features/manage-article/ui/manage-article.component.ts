@@ -108,8 +108,7 @@ export class ManageArticleComponent implements OnInit {
 	}
 
 	protected handleCancel(): void {
-		const id = this.articleId();
-		this.router.navigateByUrl(id ? RouteBuilder.ARTICLE_DETAILS(id) : RouteBuilder.HOME());
+		this.router.navigateByUrl(RouteBuilder.ARTICLES());
 	}
 
 	protected handleSave(): void {
@@ -133,8 +132,7 @@ export class ManageArticleComponent implements OnInit {
 				takeUntilDestroyed(this.destroyRef),
 			)
 			.subscribe({
-				next: (savedArticle) =>
-					this.router.navigateByUrl(RouteBuilder.ARTICLE_DETAILS(savedArticle.id)),
+				next: () => this.router.navigateByUrl(RouteBuilder.ARTICLES()),
 				error: (err) => console.error('Ошибка при сохранении статьи', err),
 			});
 	}

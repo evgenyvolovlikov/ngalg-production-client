@@ -1,4 +1,4 @@
-<div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
+<div class="draw-sidebar">
 	<button
 		app-button
 		type="button"
@@ -6,8 +6,9 @@
 		color="primary"
 		(click)="toggleArticlesOpen()"
 		aria-label="Открыть глоссарий"
+		title="Открыть глоссарий"
 	>
-		<span class="draw-sidebar__content">
+		<span class="draw-sidebar__content" aria-hidden="true">
 			<app-icon name="book-open" size="m" />
 			<span>A-Z</span>
 		</span>
@@ -15,36 +16,44 @@
 </div>
 
 <app-drawer [(isOpen)]="isArticlesOpen">
-	<div drawer-header>Header</div>
+	<div drawer-header>Глоссарий</div>
 
 	<div class="drawer-inner-content">
 		<div
 			class="drawer-inner-content__panel drawer-inner-content__panel--nav"
 			[class.drawer-inner-content__panel--shifted]="!!selectedArticleId()"
 		>
-			<app-article-drawer-navigation
-				[selectedId]="selectedArticleId()"
-				(articleSelected)="onArticleSelected($event)"
-			/>
+			<div class="drawer-inner-content__scroll-wrapper">
+				<app-article-drawer-navigation
+					[selectedId]="selectedArticleId()"
+					(articleSelected)="onArticleSelected($event)"
+				/>
+			</div>
 		</div>
 
 		<div
 			class="drawer-inner-content__panel drawer-inner-content__panel--article"
 			[class.drawer-inner-content__panel--active]="!!selectedArticleId()"
 		>
-			@if (selectedArticleId(); as id) {
-				<button
-					app-button
-					type="button"
-					variant="clear"
-					size="m"
-					class="drawer-inner-content__back"
-					(click)="backToNavigation()"
-				>
-					<span class="drawer-inner-content__back">← Назад к списку</span>
-				</button>
-				<app-article-view [articleId]="id" />
-			}
+			<div class="drawer-inner-content__scroll-wrapper">
+				@if (selectedArticleId(); as id) {
+					<button
+						app-button
+						type="button"
+						variant="clear"
+						size="m"
+						(click)="backToNavigation()"
+						aria-label="Вернуться к списку статей"
+					>
+						<div class="back">
+							<span aria-hidden="true">←</span>
+							Назад к списку
+						</div>
+					</button>
+
+					<app-article-view [articleId]="id" />
+				}
+			</div>
 		</div>
 	</div>
 </app-drawer>

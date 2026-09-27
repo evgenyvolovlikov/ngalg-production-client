@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 
-import { RouteBuilder } from '@shared/config/routes.config';
 import { AccordionComponent } from '@shared/ui/accordion/accordion.component';
 import { AppLinkComponent } from '@shared/ui/app-link';
 import { BadgeComponent } from '@shared/ui/badge';
@@ -20,10 +19,8 @@ export class ArticleDrawerNavigationComponent {
 	private readonly navigationApi = inject(ArticleNavigationApiService);
 
 	readonly navigationTree = toSignal(this.navigationApi.getNavigationTree());
-
-	@Output() articleSelected = new EventEmitter<string | number>();
-
-	readonly getArticleLink = RouteBuilder.ARTICLE_DETAILS;
+	readonly selectedId = input<string | null>(null);
+	readonly articleSelected = output<string | number>();
 
 	public onArticleClick(id: string | number): void {
 		this.articleSelected.emit(id);

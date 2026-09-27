@@ -21,6 +21,7 @@
 												app-link
 												variant="secondary"
 												(click)="onArticleClick(article.id)"
+												[class.is-selected]="article.id === selectedId()"
 												[class.is-clickable]="true"
 												class="article-nav__link"
 											>

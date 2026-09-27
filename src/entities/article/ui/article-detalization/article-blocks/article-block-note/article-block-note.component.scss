@@ -46,7 +46,8 @@
 		font-size: var(--font-size-base);
 		line-height: var(--line-height-relaxed);
 		color: var(--text-primary);
-		word-break: word-break;
+		/* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
+		word-break: break-word;
 		overflow-wrap: anywhere;
 	}
 }

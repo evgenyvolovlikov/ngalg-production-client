@@ -44,10 +44,6 @@
 
 	&__list-item {
 		display: block;
-
-		&--active .article-nav__link {
-			background-color: var(--brand-light);
-		}
 	}
 
 	&__link {
@@ -58,6 +54,12 @@
 		padding: var(--unit-1) var(--unit-2);
 		border-radius: var(--radius-sm);
 		text-decoration: none;
+
+		&.is-selected {
+			background-color: var(--brand-light);
+			font-weight: var(--font-weight-medium);
+			color: var(--brand-primary);
+		}
 	}
 
 	&__link-text {
