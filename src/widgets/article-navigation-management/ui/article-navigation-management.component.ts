@@ -4,11 +4,11 @@ import { CreateCategoryComponent } from '@features/create-category';
 import { CreateSectionComponent } from '@features/create-section';
 
 @Component({
-	selector: 'app-article-navigation-managment',
+	selector: 'app-article-navigation-management',
 	standalone: true,
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: 'article-navigation-managment.component.html',
-	styleUrl: 'article-navigation-managment.component.scss',
+	templateUrl: 'article-navigation-management.component.html',
+	styleUrl: 'article-navigation-management.component.scss',
 	imports: [CreateSectionComponent, CreateCategoryComponent],
 })
-export class ArticleNavigationManagmentComponent {}
+export class ArticleNavigationManagementComponent {}

@@ -1,6 +1,8 @@
+/* eslint-disable @conarti/feature-sliced/layers-slices */
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-import { CourseSkeletonLesson } from '@shared/types/course.types';
+import { CourseSkeletonLesson } from '@entities/course';
+
 import { IconComponent } from '@shared/ui/icon';
 
 @Component({

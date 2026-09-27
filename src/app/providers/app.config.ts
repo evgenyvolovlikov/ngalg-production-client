@@ -1,6 +1,10 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import {
+	ApplicationConfig,
+	provideBrowserGlobalErrorListeners,
+	provideZonelessChangeDetection,
+} from '@angular/core';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 
 import { apiInterceptor } from '@shared/api/api.interceptor';
 import { ENVIRONMENT } from '@shared/config/environment.config';
@@ -10,11 +14,17 @@ import { APP_ROUTES } from '../routes/app.routes';
 
 export const appConfig: ApplicationConfig = {
 	providers: [
-		provideRouter(APP_ROUTES, withComponentInputBinding()),
-		provideHttpClient(withInterceptors([apiInterceptor])),
-		{
-			provide: ENVIRONMENT,
-			useValue: environment,
-		},
+		provideBrowserGlobalErrorListeners(),
+		provideZonelessChangeDetection(),
+		provideRouter(
+			APP_ROUTES,
+			withComponentInputBinding(),
+			withInMemoryScrolling({
+				scrollPositionRestoration: 'enabled',
+				anchorScrolling: 'enabled',
+			}),
+		),
+		provideHttpClient(withFetch(), withInterceptors([apiInterceptor])),
+		{ provide: ENVIRONMENT, useValue: environment },
 	],
 };

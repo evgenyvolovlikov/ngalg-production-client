@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
+import { ApiPaths } from '@shared/api/api-paths';
 import { BaseApiService } from '@shared/api/base-api.service';
-import { RouteBuilder } from '@shared/config/routes.config';
 
 import {
 	Article,
@@ -16,7 +16,7 @@ import {
 	providedIn: 'root',
 })
 export class ArticleApiService extends BaseApiService {
-	private readonly basePath = RouteBuilder.ARTICLES();
+	private readonly basePath = ApiPaths.ARTICLES;
 
 	/**
 	 * Создание новой статьи

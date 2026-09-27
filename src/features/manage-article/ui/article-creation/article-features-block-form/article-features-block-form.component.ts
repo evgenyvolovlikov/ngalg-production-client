@@ -5,8 +5,8 @@ import { ButtonComponent } from '@shared/ui/button';
 import { InputComponent } from '@shared/ui/input';
 import { TextareaComponent } from '@shared/ui/textarea';
 
-import { createFeatureItemForm } from '../../../model/types/article-blocks-form.factory';
-import { FeatureItemForm } from '../../../model/types/article-form.types';
+import { createFeatureItemForm } from '../../../model/article-blocks-form.factory';
+import { FeatureItemForm } from '../../../model/article-form.types';
 
 @Component({
 	selector: 'app-features-block-form',

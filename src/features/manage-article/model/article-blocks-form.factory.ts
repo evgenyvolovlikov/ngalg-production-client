@@ -1,16 +1,6 @@
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 
 import {
-	BlockFormGroup,
-	CodeBlockForm,
-	ComplexityBlockForm,
-	FeatureItemForm,
-	FeaturesBlockForm,
-	ImageBlockForm,
-	NoteBlockForm,
-	TextBlockForm,
-} from './article-form.types';
-import {
 	ArticleBlockType,
 	CodeBlockData,
 	ComplexityBlockData,
@@ -20,7 +10,18 @@ import {
 	NoteType,
 	TextBlockData,
 	TextFormat,
-} from './article.types';
+} from '@entities/article';
+
+import {
+	BlockFormGroup,
+	CodeBlockForm,
+	ComplexityBlockForm,
+	FeatureItemForm,
+	FeaturesBlockForm,
+	ImageBlockForm,
+	NoteBlockForm,
+	TextBlockForm,
+} from './article-form.types';
 
 export function createFeatureItemForm(
 	fb: NonNullableFormBuilder,

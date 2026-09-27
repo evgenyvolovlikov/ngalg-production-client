@@ -3,17 +3,18 @@ import { UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { FormArray, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 
-import { NavigationSection } from '@shared/types/navigation-overview.types';
+import { ArticleBlockType } from '@entities/article';
+import { NavigationSection } from '@entities/article-navigation';
+
 import { ButtonComponent } from '@shared/ui/button';
 import { InputComponent } from '@shared/ui/input';
 import { SelectComponent } from '@shared/ui/select';
 import { TagsInputComponent } from '@shared/ui/tags-input';
 import { TextareaComponent } from '@shared/ui/textarea';
 
-import { createBlockGroup } from '../../model/types/article-blocks-form.factory';
-import { ArticleFormModel, BlockFormGroup } from '../../model/types/article-form.types';
-import { ArticleBlockType } from '../../model/types/article.types';
-import { ArticleBlockFormRendererComponent } from '../article-creation/article-block-form-renderer/article-block-form-renderer.component';
+import { createBlockGroup } from '../../model/article-blocks-form.factory';
+import { ArticleFormModel, BlockFormGroup } from '../../model/article-form.types';
+import { ArticleBlockFormRendererComponent } from './article-block-form-renderer/article-block-form-renderer.component';
 
 @Component({
 	selector: 'app-article-form',

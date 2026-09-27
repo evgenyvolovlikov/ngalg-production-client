@@ -7,7 +7,7 @@ import {
 	NavigationTag,
 	NoteType,
 	TextFormat,
-} from './article.types';
+} from '@entities/article';
 
 // --- Формы контентных блоков ---
 
@@ -51,6 +51,7 @@ export interface FeaturesBlockForm {
 
 export interface BlockFormGroup {
 	type: FormControl<ArticleBlockType>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data: FormGroup<any>;
 }
 

@@ -1,21 +1,23 @@
+/* eslint-disable @conarti/feature-sliced/layers-slices */
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { BaseApiService } from '@shared/api/base-api.service';
-import { RouteSegments } from '@shared/config/routes.config';
 import {
 	CreateLessonDto,
 	LessonDetail,
 	LessonEntity,
 	ToggleLessonProgressResponse,
 	UpdateLessonDto,
-} from '@shared/types/course.types';
+} from '@entities/course';
+
+import { ApiPaths } from '@shared/api/api-paths';
+import { BaseApiService } from '@shared/api/base-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class LessonApiService extends BaseApiService {
-	private readonly coursesPath = RouteSegments.COURSES;
-	private readonly lessonsPath = RouteSegments.LESSONS;
+	private readonly coursesPath = ApiPaths.COURSES;
+	private readonly lessonsPath = ApiPaths.LESSONS;
 
 	getLessonDetail(id: string): Observable<LessonDetail> {
 		return this.get<LessonDetail>(`/${this.coursesPath}/${this.lessonsPath}/${id}`);

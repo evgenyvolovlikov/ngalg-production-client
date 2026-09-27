@@ -25,7 +25,7 @@
 		font-weight: var(--font-weight-bold);
 		color: var(--text-muted);
 		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
+		letter-spacing: 0.05em;
 	}
 
 	&__categories,
@@ -55,10 +55,8 @@
 		gap: var(--unit-2);
 		justify-content: space-between;
 		align-items: center;
-		width: 100%;
 		padding: var(--unit-1) var(--unit-2);
 		border-radius: var(--radius-sm);
-		cursor: pointer;
 		text-decoration: none;
 	}
 

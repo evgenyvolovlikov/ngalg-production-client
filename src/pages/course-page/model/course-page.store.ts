@@ -3,15 +3,14 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 
 import { CourseApiService } from '@entities/course';
-import { LessonApiService } from '@entities/lesson';
-
 import {
 	CourseProgress,
 	CourseSkeleton,
 	CourseSkeletonLesson,
 	CourseSkeletonSection,
 	LessonDetail,
-} from '@shared/types/course.types';
+} from '@entities/course';
+import { LessonApiService } from '@entities/lesson';
 
 @Injectable()
 export class CoursePageStore {

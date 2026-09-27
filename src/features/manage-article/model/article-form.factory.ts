@@ -1,8 +1,9 @@
 import { FormArray, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 
+import { ArticleContentBlock, ArticleLevel, ArticleStatus, NavigationTag } from '@entities/article';
+
 import { createBlockGroup } from './article-blocks-form.factory';
 import { ArticleFormModel, BlockFormGroup } from './article-form.types';
-import { ArticleContentBlock, ArticleLevel, ArticleStatus, NavigationTag } from './article.types';
 
 export function createInitialArticleForm(fb: NonNullableFormBuilder): FormGroup<ArticleFormModel> {
 	return fb.group({

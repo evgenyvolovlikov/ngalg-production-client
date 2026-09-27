@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
+import { ApiPaths } from '@shared/api/api-paths';
 import { BaseApiService } from '@shared/api/base-api.service';
-import { RouteSegments } from '@shared/config/routes.config';
+
 import {
 	CourseEntity,
 	CourseSectionEntity,
@@ -12,12 +13,12 @@ import {
 	CreateCourseSectionDto,
 	UpdateCourseDto,
 	UpdateCourseSectionDto,
-} from '@shared/types/course.types';
+} from '../model/course.types';
 
 @Injectable({ providedIn: 'root' })
 export class CourseApiService extends BaseApiService {
-	private readonly coursesPath = RouteSegments.COURSES;
-	private readonly sectionsPath = RouteSegments.SECTIONS;
+	private readonly coursesPath = ApiPaths.COURSES;
+	private readonly sectionsPath = ApiPaths.SECTIONS;
 
 	getCourseSkeleton(slug: string): Observable<CourseSkeleton> {
 		return this.get<CourseSkeleton>(`/${this.coursesPath}/${slug}`);

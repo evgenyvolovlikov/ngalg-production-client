@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, shareReplay, switchMap, tap } from 'rxjs';
 
+import { ApiPaths } from '@shared/api/api-paths';
 import { BaseApiService } from '@shared/api/base-api.service';
-import { NavigationCategory, NavigationSection } from '@shared/types/navigation-overview.types';
 
 import { CreateCategoryDto, CreateSectionDto } from '../model/article-navigation.types';
+import { NavigationCategory, NavigationSection } from '../model/navigation-overview.types';
 
 @Injectable({ providedIn: 'root' })
 export class ArticleNavigationApiService extends BaseApiService {
-	private readonly articlesPath = 'articles';
-	private readonly navigationPath = 'navigation';
+	private readonly articlesPath = ApiPaths.ARTICLES;
+	private readonly navigationPath = ApiPaths.NAVIGATION;
 
 	private readonly refreshTrigger$ = new BehaviorSubject<void>(undefined);
 

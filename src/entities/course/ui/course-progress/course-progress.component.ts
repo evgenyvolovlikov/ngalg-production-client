@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { CourseProgress } from '@shared/types/course.types';
 import { CircularProgressComponent } from '@shared/ui/circular-progress';
+
+import { CourseProgress } from '../../model/course.types';
 
 @Component({
 	selector: 'app-course-progress',

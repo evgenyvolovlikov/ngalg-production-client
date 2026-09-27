@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <nav class="article-nav" aria-label="Навигация по статьям">
 	@if (navigationTree(); as tree) {
 		@for (section of tree; track section.id) {
@@ -7,24 +9,20 @@
 				<ul class="article-nav__categories">
 					@for (category of section.items; track category.id) {
 						<li class="article-nav__category">
-							<app-accordion [isOpen]="true">
+							<app-accordion [isOpen]="false">
 								<ng-container ngProjectAs="[accordion-title]">
 									{{ category.title }}
 								</ng-container>
 
 								<ul class="article-nav__list">
 									@for (article of category.children; track article.id) {
-										<li
-											class="article-nav__list-item"
-											[class.article-nav__list-item--active]="article.id === selectedId()"
-										>
-											<button
+										<li class="article-nav__list-item">
+											<a
 												app-link
-												type="button"
 												variant="secondary"
-												[isActive]="article.id === selectedId()"
+												(click)="onArticleClick(article.id)"
+												[class.is-clickable]="true"
 												class="article-nav__link"
-												(click)="articleSelected.emit(article.id)"
 											>
 												<span class="article-nav__link-text">{{ article.title }}</span>
 
@@ -33,7 +31,7 @@
 														{{ article.tag }}
 													</app-badge>
 												}
-											</button>
+											</a>
 										</li>
 									}
 								</ul>

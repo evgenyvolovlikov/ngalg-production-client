@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { ArticleNavigationManagmentComponent } from '@widgets/article-navigation-managment';
+import { ArticleNavigationManagementComponent } from '@widgets/article-navigation-management';
 
 import { ManageArticleComponent } from '@features/manage-article';
 
@@ -10,7 +10,7 @@ import { ManageArticleComponent } from '@features/manage-article';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './article-editor-page.component.html',
 	styleUrl: './article-editor-page.component.scss',
-	imports: [ArticleNavigationManagmentComponent, ManageArticleComponent],
+	imports: [ArticleNavigationManagementComponent, ManageArticleComponent],
 })
 export class ArticleEditorPageComponent {
 	readonly id = input<string | undefined>();

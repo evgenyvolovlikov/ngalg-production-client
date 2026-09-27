@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, Validators } from '@angular/forms';
 
+import { uniqueId } from '../../lib/utils/unique-id';
 import { IconComponent } from '../icon';
 
 @Component({
@@ -34,7 +35,7 @@ export class InputComponent implements ControlValueAccessor {
 	readonly placeholder = input<string>('');
 	readonly errorMessage = input<string>('');
 	readonly readonly = input(false, { transform: booleanAttribute });
-	readonly id = input<string>(`input-${Math.random().toString(36).substring(2, 9)}`);
+	readonly id = input<string>(uniqueId('input'));
 
 	readonly value = signal<string>('');
 	readonly isDisabled = signal<boolean>(false);

@@ -11,16 +11,11 @@ export const RouteSegments = {
 
 	COURSES: 'courses',
 	COURSE_DETAILS: ':slug',
-	COURSE_CREATE: 'create',
-	COURSE_EDIT: ':slug/edit',
 
 	ARTICLES: 'articles',
 	ARTICLES_CREATE: 'create',
 	ARTICLE_DETAILS: ':id',
 	ARTICLE_EDIT: ':id/edit',
-
-	LESSONS: 'lessons',
-	SECTIONS: 'sections',
 
 	FRONTEND: 'frontend',
 
@@ -28,7 +23,6 @@ export const RouteSegments = {
 	OVERVIEW: 'overview',
 	TRANSACTIONS: 'transactions',
 
-	PROFILES: 'profiles',
 	WILDCARD: '**',
 } as const;
 

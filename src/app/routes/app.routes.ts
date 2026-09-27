@@ -39,6 +39,12 @@ export const ARTICLE_ROUTES: Routes = [
 			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
 		title: 'Edit Article',
 	},
+	{
+		path: RouteSegments.ARTICLE_DETAILS,
+		loadComponent: () =>
+			import('@pages/article-details-page').then((c) => c.ArticleDetailsPageComponent),
+		title: 'Article',
+	},
 ];
 
 export const ACCOUNT_ROUTES: Routes = [

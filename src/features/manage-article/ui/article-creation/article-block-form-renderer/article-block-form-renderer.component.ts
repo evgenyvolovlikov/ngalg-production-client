@@ -2,7 +2,8 @@ import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-import { ArticleBlockType } from '../../../model/types/article.types';
+import { ArticleBlockType } from '@entities/article';
+
 import { ARTICLE_BLOCK_FORM_REGISTRY } from '../article-form.registry';
 
 @Component({

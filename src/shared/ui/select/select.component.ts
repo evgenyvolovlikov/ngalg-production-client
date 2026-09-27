@@ -2,6 +2,8 @@
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { ControlValueAccessor, NgControl, Validators } from '@angular/forms';
 
+import { uniqueId } from '../../lib/utils/unique-id';
+
 @Component({
 	selector: 'app-select',
 	standalone: true,
@@ -20,7 +22,7 @@ export class SelectComponent implements ControlValueAccessor {
 
 	readonly label = input<string>();
 	readonly errorMessage = input<string>('');
-	readonly id = input<string>(`select-${Math.random().toString(36).substring(2, 9)}`);
+	readonly id = input<string>(uniqueId('select'));
 
 	readonly value = signal<string>('');
 	readonly isDisabled = signal<boolean>(false);

@@ -51,12 +51,3 @@
 		outline-offset: var(--focus-ring-offset);
 	}
 }
-
-:host(button) {
-	padding: 0;
-	background: none;
-	border: none;
-	text-align: left;
-	cursor: pointer;
-	font: inherit;
-}

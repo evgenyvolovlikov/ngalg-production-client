@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-import { CourseSkeletonLesson } from '@shared/types/course.types';
+import { CourseSkeletonLesson } from '@entities/course';
+
 import { ButtonComponent } from '@shared/ui/button';
 import { IconComponent } from '@shared/ui/icon';
 

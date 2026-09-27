@@ -14,18 +14,13 @@ import { Router } from '@angular/router';
 
 import { finalize } from 'rxjs';
 
-import {
-	Article,
-	ArticleApiService,
-	ArticleFormComponent,
-	CreateArticleDto,
-	UpdateArticleDto,
-	createInitialArticleForm,
-	populateArticleBlocks,
-} from '@entities/article';
+import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '@entities/article';
 import { ArticleNavigationApiService } from '@entities/article-navigation';
 
 import { RouteBuilder } from '@shared/config/routes.config';
+
+import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
+import { ArticleFormComponent } from './article-creation/article-form.component';
 
 @Component({
 	selector: 'app-manage-article',
