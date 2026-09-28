@@ -18,7 +18,7 @@ import { ArticleNavigationApiService } from '../../../api/article-navigation-api
 export class ArticleDrawerNavigationComponent {
 	private readonly navigationApi = inject(ArticleNavigationApiService);
 
-	readonly navigationTree = toSignal(this.navigationApi.getNavigationTree());
+	readonly navigationTree = toSignal(this.navigationApi.navigationTree$);
 	readonly selectedId = input<string | null>(null);
 	readonly articleSelected = output<string | number>();
 

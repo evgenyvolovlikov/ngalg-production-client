@@ -59,6 +59,11 @@ export class CoursePageStore {
 	});
 
 	load(slug: string): void {
+		if (this.loadedSlug !== slug) {
+			this.courseState.set(null);
+			this.loadedSlug = null;
+		}
+
 		if (this.loadedSlug === slug && this.courseState()) {
 			return;
 		}
@@ -125,10 +130,13 @@ export class CoursePageStore {
 
 	private selectInitialLesson(course: CourseSkeleton): void {
 		const lessons = course.sections.flatMap((section) => section.lessons);
-		const firstToWatch = lessons.find((lesson) => !lesson.isCompleted) ?? lessons[0];
+		const firstAvailable =
+			lessons.find((lesson) => lesson.isFree && !lesson.isCompleted) ??
+			lessons.find((lesson) => lesson.isFree) ??
+			lessons[0];
 
-		if (firstToWatch) {
-			this.selectLesson(firstToWatch.id);
+		if (firstAvailable) {
+			this.selectLesson(firstAvailable.id);
 		}
 	}
 }

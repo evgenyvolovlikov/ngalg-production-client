@@ -28,10 +28,6 @@ export class ArticleNavigationApiService extends BaseApiService {
 		this.refreshTrigger$.next();
 	}
 
-	public getNavigationTree(): Observable<NavigationSection[]> {
-		return this.http.get<NavigationSection[]>(`/${this.articlesPath}/${this.navigationPath}`);
-	}
-
 	public createSection(dto: CreateSectionDto): Observable<NavigationSection> {
 		return this.post<NavigationSection, CreateSectionDto>(
 			`/${this.navigationPath}/sections`,

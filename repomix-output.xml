@@ -318,6 +318,8 @@ src/
         sidebar-layout.component.scss
         sidebar-layout.component.ts
     lib/
+      services/
+        scroll-lock.service.ts
       utils/
         unique-id.ts
     ui/
@@ -468,6 +470,31 @@ vercel.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/shared/lib/services/scroll-lock.service.ts">
+import { Injectable, signal } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class ScrollLockService {
+	private readonly locks = signal(0);
+
+	lock(): void {
+		this.locks.update((count) => {
+			const next = count + 1;
+			document.body.classList.toggle('lock-scroll', next > 0);
+			return next;
+		});
+	}
+
+	unlock(): void {
+		this.locks.update((count) => {
+			const next = Math.max(0, count - 1);
+			document.body.classList.toggle('lock-scroll', next > 0);
+			return next;
+		});
+	}
+}
+</file>
 
 <file path="leetcode/search/binary-search.ts">
 const binarySearch = (array: number[], target: number): number => {
@@ -1539,61 +1566,6 @@ export class ArticleBlockImageComponent {
 </div>
 </file>
 
-<file path="src/entities/article/ui/article-detalization/article-blocks/article-block-note/article-block-note.component.scss">
-:host {
-	display: block;
-	width: 100%;
-	min-width: 0;
-}
-
-.callout-box {
-	display: flex;
-	gap: var(--unit-3);
-	width: 100%;
-	min-width: 0;
-	padding: var(--unit-4);
-	border-radius: var(--radius-sm) var(--radius-md) var(--radius-md) var(--radius-sm);
-	box-shadow: var(--shadow-sm);
-	border-left: var(--unit-1) solid var(--border-light);
-
-	&[data-variant='INFO'] {
-		background-color: var(--status-success-bg);
-		color: var(--status-success);
-		border-left-color: var(--status-success);
-	}
-
-	&[data-variant='WARNING'] {
-		background-color: var(--status-warning-bg);
-		color: var(--status-warning);
-		border-left-color: var(--status-warning);
-	}
-
-	&[data-variant='ERROR'] {
-		background-color: var(--status-error-bg);
-		color: var(--status-error);
-		border-left-color: var(--status-error);
-	}
-
-	&__icon {
-		display: flex;
-		flex-shrink: 0;
-		align-items: center;
-		width: var(--font-size-xl);
-		height: var(--font-size-xl);
-	}
-
-	&__content {
-		flex-grow: 1;
-		min-width: 0;
-		font-size: var(--font-size-base);
-		line-height: var(--line-height-relaxed);
-		color: var(--text-primary);
-		word-break: word-break;
-		overflow-wrap: anywhere;
-	}
-}
-</file>
-
 <file path="src/entities/article/ui/article-detalization/article-blocks/article-block-note/article-block-note.component.ts">
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
@@ -1957,24 +1929,6 @@ export class ArticleHeaderComponent {
 
 	readonly tags = computed(() => this.article().tags);
 	readonly levelData = computed(() => this.article().level);
-}
-</file>
-
-<file path="src/entities/article/ui/article-view/article-view.component.scss">
-:host {
-	display: block;
-	width: 100%;
-}
-
-.article-view__status {
-	padding: var(--unit-6) 0;
-	font-size: var(--font-size-base);
-	color: var(--text-secondary);
-	text-align: center;
-
-	&--error {
-		color: var(--status-error);
-	}
 }
 </file>
 
@@ -4296,50 +4250,6 @@ export * from './circular-progress.component';
 }
 </file>
 
-<file path="src/shared/ui/cover-image/cover-image.component.ts">
-import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
-
-const FALLBACK_IMAGE = 'assets/icons/logo.svg';
-
-@Component({
-	selector: 'app-cover-image',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './cover-image.component.html',
-	styleUrl: './cover-image.component.scss',
-	imports: [NgOptimizedImage],
-})
-export class CoverImageComponent {
-	readonly src = input<string | null>(null);
-	readonly alt = input.required<string>();
-	readonly priority = input<boolean>(false);
-	readonly sizes = input<string>('(max-width: 768px) 100vw, 50vw');
-
-	protected readonly fallbackImage = FALLBACK_IMAGE;
-
-	readonly isLoading = signal<boolean>(true);
-	readonly hasError = signal<boolean>(false);
-
-	constructor() {
-		effect(() => {
-			this.src();
-			this.isLoading.set(true);
-			this.hasError.set(false);
-		});
-	}
-
-	onLoad(): void {
-		this.isLoading.set(false);
-	}
-
-	onError(): void {
-		this.hasError.set(true);
-		this.isLoading.set(false);
-	}
-}
-</file>
-
 <file path="src/shared/ui/cover-image/index.ts">
 export * from './cover-image.component';
 </file>
@@ -6227,6 +6137,62 @@ export class ArticleApiService extends BaseApiService {
 }
 </file>
 
+<file path="src/entities/article/ui/article-detalization/article-blocks/article-block-note/article-block-note.component.scss">
+:host {
+	display: block;
+	width: 100%;
+	min-width: 0;
+}
+
+.callout-box {
+	display: flex;
+	gap: var(--unit-3);
+	width: 100%;
+	min-width: 0;
+	padding: var(--unit-4);
+	border-radius: var(--radius-sm) var(--radius-md) var(--radius-md) var(--radius-sm);
+	box-shadow: var(--shadow-sm);
+	border-left: var(--unit-1) solid var(--border-light);
+
+	&[data-variant='INFO'] {
+		background-color: var(--status-success-bg);
+		color: var(--status-success);
+		border-left-color: var(--status-success);
+	}
+
+	&[data-variant='WARNING'] {
+		background-color: var(--status-warning-bg);
+		color: var(--status-warning);
+		border-left-color: var(--status-warning);
+	}
+
+	&[data-variant='ERROR'] {
+		background-color: var(--status-error-bg);
+		color: var(--status-error);
+		border-left-color: var(--status-error);
+	}
+
+	&__icon {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		width: var(--font-size-xl);
+		height: var(--font-size-xl);
+	}
+
+	&__content {
+		flex-grow: 1;
+		min-width: 0;
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-primary);
+		/* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
+		word-break: break-word;
+		overflow-wrap: anywhere;
+	}
+}
+</file>
+
 <file path="src/entities/article/ui/article-detalization/article-blocks/article-block-registry.ts">
 import { Type } from '@angular/core';
 
@@ -6248,76 +6214,20 @@ export const ARTICLE_BLOCK_REGISTRY: Record<ArticleBlockType, Type<unknown>> = {
 };
 </file>
 
-<file path="src/entities/article/ui/article-view/article-view.component.ts">
-import {
-	ChangeDetectionStrategy,
-	Component,
-	DestroyRef,
-	effect,
-	inject,
-	input,
-	signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+<file path="src/entities/article/ui/article-view/article-view.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
 
-import { finalize } from 'rxjs';
+.article-view__status {
+	padding: var(--unit-6) 0;
+	font-size: var(--font-size-base);
+	color: var(--text-secondary);
+	text-align: center;
 
-import { ArticleApiService } from '../../api/article-api.service';
-import { Article } from '../../model/types/article.types';
-import { ArticleComponent } from '../article-detalization/article-content/article.component';
-
-@Component({
-	selector: 'app-article-view',
-	standalone: true,
-	imports: [ArticleComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	template: `
-		@if (article(); as data) {
-			<app-article-content [article]="data" />
-		} @else if (isLoading()) {
-			<p class="article-view__status">Загрузка статьи…</p>
-		} @else if (error(); as message) {
-			<p class="article-view__status article-view__status--error">{{ message }}</p>
-		}
-	`,
-	styleUrl: './article-view.component.scss',
-})
-export class ArticleViewComponent {
-	readonly articleId = input.required<string>();
-
-	private readonly articleApi = inject(ArticleApiService);
-	private readonly destroyRef = inject(DestroyRef);
-
-	protected readonly article = signal<Article | null>(null);
-	protected readonly isLoading = signal<boolean>(false);
-	protected readonly error = signal<string | null>(null);
-
-	constructor() {
-		effect(() => {
-			const id = this.articleId();
-			if (!id) return;
-			this.load(id);
-		});
-	}
-
-	private load(id: string): void {
-		this.isLoading.set(true);
-		this.error.set(null);
-		this.article.set(null);
-
-		this.articleApi
-			.getArticleById(id)
-			.pipe(
-				finalize(() => this.isLoading.set(false)),
-				takeUntilDestroyed(this.destroyRef),
-			)
-			.subscribe({
-				next: (data) => this.article.set(data),
-				error: (err) => {
-					console.error('Не удалось загрузить статью', err);
-					this.error.set('Не удалось загрузить статью');
-				},
-			});
+	&--error {
+		color: var(--status-error);
 	}
 }
 </file>
@@ -6353,10 +6263,6 @@ export class ArticleNavigationApiService extends BaseApiService {
 		this.refreshTrigger$.next();
 	}
 
-	public getNavigationTree(): Observable<NavigationSection[]> {
-		return this.http.get<NavigationSection[]>(`/${this.articlesPath}/${this.navigationPath}`);
-	}
-
 	public createSection(dto: CreateSectionDto): Observable<NavigationSection> {
 		return this.post<NavigationSection, CreateSectionDto>(
 			`/${this.navigationPath}/sections`,
@@ -6369,158 +6275,6 @@ export class ArticleNavigationApiService extends BaseApiService {
 			`/${this.navigationPath}/categories`,
 			dto,
 		).pipe(tap(() => this.refresh()));
-	}
-}
-</file>
-
-<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.html">
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<nav class="article-nav" aria-label="Навигация по статьям">
-	@if (navigationTree(); as tree) {
-		@for (section of tree; track section.id) {
-			<section class="article-nav__section">
-				<h2 class="article-nav__section-title">{{ section.title }}</h2>
-
-				<ul class="article-nav__categories">
-					@for (category of section.items; track category.id) {
-						<li class="article-nav__category">
-							<app-accordion [isOpen]="false">
-								<ng-container ngProjectAs="[accordion-title]">
-									{{ category.title }}
-								</ng-container>
-
-								<ul class="article-nav__list">
-									@for (article of category.children; track article.id) {
-										<li class="article-nav__list-item">
-											<a
-												app-link
-												variant="secondary"
-												(click)="onArticleClick(article.id)"
-												[class.is-selected]="article.id === selectedId()"
-												[class.is-clickable]="true"
-												class="article-nav__link"
-											>
-												<span class="article-nav__link-text">{{ article.title }}</span>
-
-												@if (article.tag) {
-													<app-badge size="sm" variant="outline">
-														{{ article.tag }}
-													</app-badge>
-												}
-											</a>
-										</li>
-									}
-								</ul>
-							</app-accordion>
-						</li>
-					}
-				</ul>
-			</section>
-		}
-	} @else {
-		<div class="article-nav__loading">Загрузка навигации...</div>
-	}
-</nav>
-</file>
-
-<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.scss">
-:host {
-	display: block;
-	width: 100%;
-}
-
-.article-nav {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-6);
-
-	&__loading {
-		font-size: var(--font-size-sm);
-		color: var(--text-muted);
-	}
-
-	&__section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--unit-2);
-	}
-
-	&__section-title {
-		margin: 0 0 var(--unit-2) 0;
-		font-size: var(--font-size-sm);
-		font-weight: var(--font-weight-bold);
-		color: var(--text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	&__categories,
-	&__list {
-		display: flex;
-		flex-direction: column;
-		gap: var(--unit-2);
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	&__list {
-		gap: var(--unit-1);
-	}
-
-	&__list-item {
-		display: block;
-
-		&--active .article-nav__link {
-			background-color: var(--brand-light);
-		}
-	}
-
-	&__link {
-		display: flex;
-		gap: var(--unit-2);
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--unit-1) var(--unit-2);
-		border-radius: var(--radius-sm);
-		text-decoration: none;
-	}
-
-	&__link-text {
-		font-size: var(--font-size-sm);
-		line-height: var(--line-height-tight);
-	}
-}
-</file>
-
-<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.ts">
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-
-import { AccordionComponent } from '@shared/ui/accordion/accordion.component';
-import { AppLinkComponent } from '@shared/ui/app-link';
-import { BadgeComponent } from '@shared/ui/badge';
-
-import { ArticleNavigationApiService } from '../../../api/article-navigation-api.service';
-
-@Component({
-	selector: 'app-article-drawer-navigation',
-	standalone: true,
-	imports: [AppLinkComponent, BadgeComponent, AccordionComponent],
-	templateUrl: './article-drawer-navigation.component.html',
-	styleUrl: './article-drawer-navigation.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class ArticleDrawerNavigationComponent {
-	private readonly navigationApi = inject(ArticleNavigationApiService);
-
-	readonly navigationTree = toSignal(this.navigationApi.getNavigationTree());
-	readonly selectedId = input<string | null>(null);
-	readonly articleSelected = output<string | number>();
-
-	public onArticleClick(id: string | number): void {
-		this.articleSelected.emit(id);
 	}
 }
 </file>
@@ -6877,148 +6631,6 @@ export class AuthByOauthComponent {
 }
 </file>
 
-<file path="src/features/manage-article/ui/manage-article.component.ts">
-import {
-	ChangeDetectionStrategy,
-	Component,
-	DestroyRef,
-	OnInit,
-	computed,
-	inject,
-	input,
-	signal,
-} from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-import { finalize } from 'rxjs';
-
-import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '@entities/article';
-import { ArticleNavigationApiService } from '@entities/article-navigation';
-
-import { RouteBuilder } from '@shared/config/routes.config';
-
-import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
-import { ArticleFormComponent } from './article-creation/article-form.component';
-
-@Component({
-	selector: 'app-manage-article',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [ReactiveFormsModule, ArticleFormComponent],
-	template: `
-		<app-article-form
-			[form]="articleForm"
-			[isEditMode]="isEditMode()"
-			[isSubmitting]="isSubmitting()"
-			[navigationTree]="navigationTree()"
-			(save)="handleSave()"
-			(cancel)="handleCancel()"
-		/>
-	`,
-})
-export class ManageArticleComponent implements OnInit {
-	readonly articleId = input<string | null>(null);
-
-	protected readonly isSubmitting = signal<boolean>(false);
-
-	private readonly fb = inject(NonNullableFormBuilder);
-	private readonly router = inject(Router);
-	private readonly articleApi = inject(ArticleApiService);
-	private readonly navigationApi = inject(ArticleNavigationApiService);
-	private readonly destroyRef = inject(DestroyRef);
-
-	protected readonly articleForm = createInitialArticleForm(this.fb);
-
-	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
-		initialValue: [],
-	});
-
-	readonly isEditMode = computed(() => !!this.articleId());
-
-	ngOnInit(): void {
-		const id = this.articleId();
-		if (!id) return;
-
-		this.articleApi
-			.getArticleById(id)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: (article) => this.patchForm(article),
-				error: (err) =>
-					console.error('Не удалось загрузить статью для редактирования', err),
-			});
-	}
-
-	private patchForm(article: Article): void {
-		this.articleForm.patchValue({
-			title: article.title,
-			slug: article.slug,
-			categoryId: article.categoryId,
-			status: article.status,
-			level: article.level,
-			leadText: article.leadText,
-			description: article.description,
-			problemId: article.problemId ?? null,
-			readingTimeMinutes: article.readingTimeMinutes,
-			coverImage: {
-				url: article.coverImage?.url ?? '',
-				alt: article.coverImage?.alt ?? '',
-				caption: article.coverImage?.caption ?? null,
-			},
-			tags: article.tags,
-			seo: {
-				description: article.seo?.description ?? null,
-				keywords: article.seo?.keywords ?? [],
-			},
-		});
-
-		populateArticleBlocks(this.fb, this.articleForm.controls.blocks, article.blocks);
-	}
-
-	private buildPayload(): CreateArticleDto {
-		const raw = this.articleForm.getRawValue();
-
-		return {
-			...raw,
-			readingTimeMinutes: Number(raw.readingTimeMinutes) || 0,
-			problemId: raw.problemId || undefined,
-		} as CreateArticleDto;
-	}
-
-	protected handleCancel(): void {
-		this.router.navigateByUrl(RouteBuilder.ARTICLES());
-	}
-
-	protected handleSave(): void {
-		if (this.articleForm.invalid) {
-			this.articleForm.markAllAsTouched();
-			return;
-		}
-
-		const id = this.articleId();
-		const payload = this.buildPayload();
-
-		this.isSubmitting.set(true);
-
-		const request$ = this.isEditMode()
-			? this.articleApi.updateArticle(id!, payload as UpdateArticleDto)
-			: this.articleApi.createArticle(payload);
-
-		request$
-			.pipe(
-				finalize(() => this.isSubmitting.set(false)),
-				takeUntilDestroyed(this.destroyRef),
-			)
-			.subscribe({
-				next: () => this.router.navigateByUrl(RouteBuilder.ARTICLES()),
-				error: (err) => console.error('Ошибка при сохранении статьи', err),
-			});
-	}
-}
-</file>
-
 <file path="src/features/mark-lesson-watched/ui/mark-lesson-watched.component.html">
 <app-checkbox [checked]="isCompleted()" (checkedChange)="onToggle()"> Просмотрено </app-checkbox>
 </file>
@@ -7152,6 +6764,11 @@ export class CoursePageStore {
 	});
 
 	load(slug: string): void {
+		if (this.loadedSlug !== slug) {
+			this.courseState.set(null);
+			this.loadedSlug = null;
+		}
+
 		if (this.loadedSlug === slug && this.courseState()) {
 			return;
 		}
@@ -7218,10 +6835,13 @@ export class CoursePageStore {
 
 	private selectInitialLesson(course: CourseSkeleton): void {
 		const lessons = course.sections.flatMap((section) => section.lessons);
-		const firstToWatch = lessons.find((lesson) => !lesson.isCompleted) ?? lessons[0];
+		const firstAvailable =
+			lessons.find((lesson) => lesson.isFree && !lesson.isCompleted) ??
+			lessons.find((lesson) => lesson.isFree) ??
+			lessons[0];
 
-		if (firstToWatch) {
-			this.selectLesson(firstToWatch.id);
+		if (firstAvailable) {
+			this.selectLesson(firstAvailable.id);
 		}
 	}
 }
@@ -7653,12 +7273,64 @@ export class ButtonComponent {
 }
 </file>
 
+<file path="src/shared/ui/cover-image/cover-image.component.ts">
+import { NgOptimizedImage } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
+
+const FALLBACK_IMAGE = 'assets/logo.svg';
+
+@Component({
+	selector: 'app-cover-image',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './cover-image.component.html',
+	styleUrl: './cover-image.component.scss',
+	imports: [NgOptimizedImage],
+})
+export class CoverImageComponent {
+	readonly src = input<string | null>(null);
+	readonly alt = input.required<string>();
+	readonly priority = input<boolean>(false);
+	readonly sizes = input<string>('(max-width: 768px) 100vw, 50vw');
+
+	protected readonly fallbackImage = FALLBACK_IMAGE;
+
+	readonly isLoading = signal<boolean>(true);
+	readonly hasError = signal<boolean>(false);
+
+	constructor() {
+		effect(() => {
+			this.src();
+			this.isLoading.set(true);
+			this.hasError.set(false);
+		});
+	}
+
+	onLoad(): void {
+		this.isLoading.set(false);
+	}
+
+	onError(): void {
+		this.hasError.set(true);
+		this.isLoading.set(false);
+	}
+}
+</file>
+
 <file path="src/shared/ui/drawer/drawer.component.html">
 @if (isOpen()) {
 	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
 }
 
-<aside class="drawer-panel" [class.drawer-panel--open]="isOpen()" [attr.aria-hidden]="!isOpen()" role="dialog">
+<aside
+	role="dialog"
+	class="drawer-panel"
+	[class.drawer-panel--open]="isOpen()"
+	[attr.aria-hidden]="!isOpen()"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="aside"
+>
 	@if (showCloseBtn()) {
 		<button
 			app-button
@@ -7680,9 +7352,9 @@ export class ButtonComponent {
 		<ng-content select="[drawer-header]"></ng-content>
 	</header>
 
-	<main class="drawer-panel__content">
-		<ng-content></ng-content>
-	</main>
+	<div class="drawer-panel__content">
+		<ng-content />
+	</div>
 </aside>
 </file>
 
@@ -8660,6 +8332,234 @@ export type CreateArticleDto = Omit<Article, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateArticleDto = Partial<CreateArticleDto>;
 </file>
 
+<file path="src/entities/article/ui/article-view/article-view.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	effect,
+	inject,
+	input,
+	signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { finalize } from 'rxjs';
+
+import { ArticleApiService } from '../../api/article-api.service';
+import { Article } from '../../model/types/article.types';
+import { ArticleComponent } from '../article-detalization/article-content/article.component';
+
+@Component({
+	selector: 'app-article-view',
+	standalone: true,
+	imports: [ArticleComponent],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `
+		@if (article(); as data) {
+			<app-article-content [article]="data" />
+		} @else if (isLoading()) {
+			<p class="article-view__status">Загрузка статьи…</p>
+		} @else if (error(); as message) {
+			<p class="article-view__status article-view__status--error">{{ message }}</p>
+		}
+	`,
+	styleUrl: './article-view.component.scss',
+})
+export class ArticleViewComponent {
+	readonly articleId = input.required<string>();
+
+	private readonly articleApi = inject(ArticleApiService);
+	private readonly destroyRef = inject(DestroyRef);
+
+	protected readonly article = signal<Article | null>(null);
+	protected readonly isLoading = signal<boolean>(false);
+	protected readonly error = signal<string | null>(null);
+
+	constructor() {
+		effect(() => {
+			const id = this.articleId();
+			if (!id) return;
+			this.load(id);
+		});
+	}
+
+	private load(id: string): void {
+		this.isLoading.set(true);
+		this.error.set(null);
+		this.article.set(null);
+
+		this.articleApi
+			.getArticleById(id)
+			.pipe(
+				finalize(() => this.isLoading.set(false)),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: (data) => this.article.set(data),
+				error: (err) => {
+					console.error('Не удалось загрузить статью', err);
+					this.error.set('Не удалось загрузить статью');
+				},
+			});
+	}
+}
+</file>
+
+<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.html">
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<nav class="article-nav" aria-label="Навигация по статьям">
+	@if (navigationTree(); as tree) {
+		@for (section of tree; track section.id) {
+			<section class="article-nav__section">
+				<h2 class="article-nav__section-title">{{ section.title }}</h2>
+
+				<ul class="article-nav__categories">
+					@for (category of section.items; track category.id) {
+						<li class="article-nav__category">
+							<app-accordion [isOpen]="false">
+								<ng-container ngProjectAs="[accordion-title]">
+									{{ category.title }}
+								</ng-container>
+
+								<ul class="article-nav__list">
+									@for (article of category.children; track article.id) {
+										<li class="article-nav__list-item">
+											<a
+												app-link
+												variant="secondary"
+												(click)="onArticleClick(article.id)"
+												[class.is-selected]="article.id === selectedId()"
+												[class.is-clickable]="true"
+												class="article-nav__link"
+											>
+												<span class="article-nav__link-text">{{ article.title }}</span>
+
+												@if (article.tag) {
+													<app-badge size="sm" variant="outline">
+														{{ article.tag }}
+													</app-badge>
+												}
+											</a>
+										</li>
+									}
+								</ul>
+							</app-accordion>
+						</li>
+					}
+				</ul>
+			</section>
+		}
+	} @else {
+		<div class="article-nav__loading">Загрузка навигации...</div>
+	}
+</nav>
+</file>
+
+<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.scss">
+:host {
+	display: block;
+	width: 100%;
+}
+
+.article-nav {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-6);
+
+	&__loading {
+		font-size: var(--font-size-sm);
+		color: var(--text-muted);
+	}
+
+	&__section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-2);
+	}
+
+	&__section-title {
+		margin: 0 0 var(--unit-2) 0;
+		font-size: var(--font-size-sm);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	&__categories,
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-2);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	&__list {
+		gap: var(--unit-1);
+	}
+
+	&__list-item {
+		display: block;
+	}
+
+	&__link {
+		display: flex;
+		gap: var(--unit-2);
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--unit-1) var(--unit-2);
+		border-radius: var(--radius-sm);
+		text-decoration: none;
+
+		&.is-selected {
+			background-color: var(--brand-light);
+			font-weight: var(--font-weight-medium);
+			color: var(--brand-primary);
+		}
+	}
+
+	&__link-text {
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-tight);
+	}
+}
+</file>
+
+<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.ts">
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+
+import { AccordionComponent } from '@shared/ui/accordion/accordion.component';
+import { AppLinkComponent } from '@shared/ui/app-link';
+import { BadgeComponent } from '@shared/ui/badge';
+
+import { ArticleNavigationApiService } from '../../../api/article-navigation-api.service';
+
+@Component({
+	selector: 'app-article-drawer-navigation',
+	standalone: true,
+	imports: [AppLinkComponent, BadgeComponent, AccordionComponent],
+	templateUrl: './article-drawer-navigation.component.html',
+	styleUrl: './article-drawer-navigation.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ArticleDrawerNavigationComponent {
+	private readonly navigationApi = inject(ArticleNavigationApiService);
+
+	readonly navigationTree = toSignal(this.navigationApi.navigationTree$);
+	readonly selectedId = input<string | null>(null);
+	readonly articleSelected = output<string | number>();
+
+	public onArticleClick(id: string | number): void {
+		this.articleSelected.emit(id);
+	}
+}
+</file>
+
 <file path="src/entities/article-navigation/index.ts">
 export * from './api/article-navigation-api.service';
 export * from './model/article-navigation.types';
@@ -8897,6 +8797,148 @@ import { IconComponent } from '@shared/ui/icon';
 export class LessonNavigationControlsComponent {
 	readonly nextLesson = input<CourseSkeletonLesson | null>(null);
 	readonly nextLessonSelect = output<string>();
+}
+</file>
+
+<file path="src/features/manage-article/ui/manage-article.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	OnInit,
+	computed,
+	inject,
+	input,
+	signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { finalize } from 'rxjs';
+
+import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '@entities/article';
+import { ArticleNavigationApiService } from '@entities/article-navigation';
+
+import { RouteBuilder } from '@shared/config/routes.config';
+
+import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
+import { ArticleFormComponent } from './article-creation/article-form.component';
+
+@Component({
+	selector: 'app-manage-article',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [ReactiveFormsModule, ArticleFormComponent],
+	template: `
+		<app-article-form
+			[form]="articleForm"
+			[isEditMode]="isEditMode()"
+			[isSubmitting]="isSubmitting()"
+			[navigationTree]="navigationTree()"
+			(save)="handleSave()"
+			(cancel)="handleCancel()"
+		/>
+	`,
+})
+export class ManageArticleComponent implements OnInit {
+	readonly articleId = input<string | null>(null);
+
+	protected readonly isSubmitting = signal<boolean>(false);
+
+	private readonly fb = inject(NonNullableFormBuilder);
+	private readonly router = inject(Router);
+	private readonly articleApi = inject(ArticleApiService);
+	private readonly navigationApi = inject(ArticleNavigationApiService);
+	private readonly destroyRef = inject(DestroyRef);
+
+	protected readonly articleForm = createInitialArticleForm(this.fb);
+
+	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
+		initialValue: [],
+	});
+
+	readonly isEditMode = computed(() => !!this.articleId());
+
+	ngOnInit(): void {
+		const id = this.articleId();
+		if (!id) return;
+
+		this.articleApi
+			.getArticleById(id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (article) => this.patchForm(article),
+				error: (err) =>
+					console.error('Не удалось загрузить статью для редактирования', err),
+			});
+	}
+
+	private patchForm(article: Article): void {
+		this.articleForm.patchValue({
+			title: article.title,
+			slug: article.slug,
+			categoryId: article.categoryId,
+			status: article.status,
+			level: article.level,
+			leadText: article.leadText,
+			description: article.description,
+			problemId: article.problemId ?? null,
+			readingTimeMinutes: article.readingTimeMinutes,
+			coverImage: {
+				url: article.coverImage?.url ?? '',
+				alt: article.coverImage?.alt ?? '',
+				caption: article.coverImage?.caption ?? null,
+			},
+			tags: article.tags,
+			seo: {
+				description: article.seo?.description ?? null,
+				keywords: article.seo?.keywords ?? [],
+			},
+		});
+
+		populateArticleBlocks(this.fb, this.articleForm.controls.blocks, article.blocks);
+	}
+
+	private buildPayload(): CreateArticleDto {
+		const raw = this.articleForm.getRawValue();
+
+		return {
+			...raw,
+			readingTimeMinutes: Number(raw.readingTimeMinutes) || 0,
+			problemId: raw.problemId || undefined,
+		} as CreateArticleDto;
+	}
+
+	protected handleCancel(): void {
+		this.router.navigateByUrl(RouteBuilder.ARTICLES());
+	}
+
+	protected handleSave(): void {
+		if (this.articleForm.invalid) {
+			this.articleForm.markAllAsTouched();
+			return;
+		}
+
+		const id = this.articleId();
+		const payload = this.buildPayload();
+
+		this.isSubmitting.set(true);
+
+		const request$ = this.isEditMode()
+			? this.articleApi.updateArticle(id!, payload as UpdateArticleDto)
+			: this.articleApi.createArticle(payload);
+
+		request$
+			.pipe(
+				finalize(() => this.isSubmitting.set(false)),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: () => this.router.navigateByUrl(RouteBuilder.ARTICLES()),
+				error: (err) => console.error('Ошибка при сохранении статьи', err),
+			});
+	}
 }
 </file>
 
@@ -9165,140 +9207,6 @@ export class HomePageComponent {
 
 	to {
 		transform: translate(-50%, -50%) rotate(360deg);
-	}
-}
-</file>
-
-<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.html">
-<div class="draw-sidebar" [class.draw-sidebar--hidden]="isArticlesOpen()">
-	<button
-		app-button
-		type="button"
-		variant="fab"
-		color="primary"
-		(click)="toggleArticlesOpen()"
-		aria-label="Открыть глоссарий"
-	>
-		<span class="draw-sidebar__content">
-			<app-icon name="book-open" size="m" />
-			<span>A-Z</span>
-		</span>
-	</button>
-</div>
-
-<app-drawer [(isOpen)]="isArticlesOpen">
-	<div drawer-header>Header</div>
-
-	<div class="drawer-inner-content">
-		<div
-			class="drawer-inner-content__panel drawer-inner-content__panel--nav"
-			[class.drawer-inner-content__panel--shifted]="!!selectedArticleId()"
-		>
-			<app-article-drawer-navigation
-				[selectedId]="selectedArticleId()"
-				(articleSelected)="onArticleSelected($event)"
-			/>
-		</div>
-
-		<div
-			class="drawer-inner-content__panel drawer-inner-content__panel--article"
-			[class.drawer-inner-content__panel--active]="!!selectedArticleId()"
-		>
-			@if (selectedArticleId(); as id) {
-				<button
-					app-button
-					type="button"
-					variant="clear"
-					size="m"
-					class="drawer-inner-content__back"
-					(click)="backToNavigation()"
-				>
-					<span class="drawer-inner-content__back">← Назад к списку</span>
-				</button>
-				<app-article-view [articleId]="id" />
-			}
-		</div>
-	</div>
-</app-drawer>
-</file>
-
-<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.scss">
-:host {
-	display: block;
-}
-
-.draw-sidebar {
-	position: fixed;
-	right: var(--unit-4);
-	bottom: var(--unit-4);
-	z-index: var(--z-fixed);
-	display: block;
-	border-radius: var(--radius-full);
-	box-shadow: var(--shadow-md);
-	transition:
-		transform var(--transition-base),
-		opacity var(--transition-fast);
-
-	&:active {
-		transform: scale(0.95);
-	}
-
-	&--hidden {
-		opacity: 0;
-		pointer-events: none;
-		transform: scale(0.8) translateY(24px);
-	}
-
-	&__content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--unit-1);
-		justify-content: center;
-		align-items: center;
-		font-size: 0.65rem;
-		font-weight: var(--font-weight-bold);
-		line-height: var(--line-height-none);
-		letter-spacing: 0.5px;
-	}
-}
-
-.drawer-inner-content {
-	position: relative;
-	display: flex;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-
-	&__panel {
-		flex: 0 0 100%;
-		width: 100%;
-		height: 100%;
-		transition: transform var(--transition-base);
-		overflow-y: auto;
-
-		&--nav.drawer-inner-content__panel--shifted {
-			transform: translateX(-100%);
-		}
-
-		&--article {
-			transform: translateX(100%);
-
-			&.drawer-inner-content__panel--active {
-				transform: translateX(0);
-			}
-		}
-	}
-
-	&__back {
-		display: inline-flex;
-		align-items: center;
-		margin-bottom: var(--unit-4);
-		font-size: var(--font-size-sm);
-		color: var(--text-secondary);
-
-		&:hover {
-			color: var(--text-primary);
-		}
 	}
 }
 </file>
@@ -9649,17 +9557,6 @@ export const appConfig: ApplicationConfig = {
 };
 </file>
 
-<file path="src/entities/article/index.ts">
-export * from './api/article-api.service';
-
-export * from './model/types/article.types';
-
-export * from './ui/article-detalization/article-content/article.component';
-export * from './ui/article-detalization/article-header/article-header.component';
-export * from './ui/article-detalization/article-blocks/article-block-renderer.component';
-export * from './ui/article-view/article-view.component';
-</file>
-
 <file path="src/entities/course/api/course-api.service.ts">
 import { Injectable } from '@angular/core';
 
@@ -9763,51 +9660,156 @@ export * from './lib/guards/course.guard';
 export * from './model/course-page.store';
 </file>
 
-<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.ts">
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.html">
+<div class="draw-sidebar">
+	<button
+		app-button
+		type="button"
+		variant="fab"
+		color="primary"
+		(click)="toggleArticlesOpen()"
+		aria-label="Открыть глоссарий"
+		title="Открыть глоссарий"
+	>
+		<span class="draw-sidebar__content" aria-hidden="true">
+			<app-icon name="book-open" size="m" />
+			<span>A-Z</span>
+		</span>
+	</button>
+</div>
 
-import { ArticleViewComponent } from '@entities/article';
-import { ArticleDrawerNavigationComponent } from '@entities/article-navigation';
+<app-drawer [(isOpen)]="isArticlesOpen">
+	<div drawer-header>Глоссарий</div>
 
-import { ButtonComponent } from '@shared/ui/button';
-import { DrawerComponent } from '@shared/ui/drawer';
-import { IconComponent } from '@shared/ui/icon';
+	<div class="drawer-inner-content">
+		<div
+			class="drawer-inner-content__panel drawer-inner-content__panel--nav"
+			[class.drawer-inner-content__panel--shifted]="!!selectedArticleId()"
+		>
+			<div class="drawer-inner-content__scroll-wrapper">
+				<app-article-drawer-navigation
+					[selectedId]="selectedArticleId()"
+					(articleSelected)="onArticleSelected($event)"
+				/>
+			</div>
+		</div>
 
-@Component({
-	selector: 'app-articles-drawer-sidebar',
-	standalone: true,
-	templateUrl: './articles-drawer-sidebar.component.html',
-	styleUrl: './articles-drawer-sidebar.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [
-		IconComponent,
-		DrawerComponent,
-		ButtonComponent,
-		ArticleDrawerNavigationComponent,
-		ArticleViewComponent,
-	],
-})
-export class ArticlesDrawerSidebarComponent {
-	readonly isArticlesOpen = signal<boolean>(false);
-	protected readonly selectedArticleId = signal<string | null>(null);
+		<div
+			class="drawer-inner-content__panel drawer-inner-content__panel--article"
+			[class.drawer-inner-content__panel--active]="!!selectedArticleId()"
+		>
+			<div class="drawer-inner-content__scroll-wrapper">
+				@if (selectedArticleId(); as id) {
+					<button
+						app-button
+						type="button"
+						variant="clear"
+						size="m"
+						(click)="backToNavigation()"
+						aria-label="Вернуться к списку статей"
+					>
+						<div class="back">
+							<span aria-hidden="true">←</span>
+							Назад к списку
+						</div>
+					</button>
 
-	constructor() {
-		effect(() => {
-			document.body.classList.toggle('lock-scroll', this.isArticlesOpen());
-		});
+					<app-article-view [articleId]="id" />
+				}
+			</div>
+		</div>
+	</div>
+</app-drawer>
+</file>
+
+<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.scss">
+:host {
+	display: block;
+}
+
+.draw-sidebar {
+	position: fixed;
+	right: var(--unit-4);
+	bottom: var(--unit-4);
+	z-index: var(--z-fixed);
+	display: block;
+	border-radius: var(--radius-full);
+	box-shadow: var(--shadow-md);
+	transition:
+		transform var(--transition-base),
+		opacity var(--transition-fast);
+
+	&:active {
+		transform: scale(0.95);
 	}
 
-	protected toggleArticlesOpen(): void {
-		this.isArticlesOpen.update((state) => !state);
+	&--hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: scale(0.8) translateY(24px);
 	}
 
-	protected onArticleSelected(id: string | number): void {
-		this.selectedArticleId.set(String(id));
+	&__content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-1);
+		justify-content: center;
+		align-items: center;
+		font-size: 0.65rem;
+		font-weight: var(--font-weight-bold);
+		line-height: var(--line-height-none);
+		letter-spacing: 0.5px;
+	}
+}
+
+.drawer-inner-content {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-height: 100%;
+	overflow: hidden;
+
+	&__panel {
+		position: absolute;
+		background-color: var(--bg-card);
+		transition: transform var(--transition-base);
+		inset: 0;
+		overflow: hidden;
+		overscroll-behavior: contain;
 	}
 
-	protected backToNavigation(): void {
-		this.selectedArticleId.set(null);
+	&__scroll-wrapper {
+		width: 100%;
+		height: 100%;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
+
+	&__panel--nav {
+		transform: translateX(0);
+
+		&.drawer-inner-content__panel--shifted {
+			transform: translateX(-100%);
+		}
+	}
+
+	&__panel--article {
+		transform: translateX(100%);
+
+		&.drawer-inner-content__panel--active {
+			transform: translateX(0);
+		}
+	}
+}
+
+.back {
+	margin-bottom: var(--unit-8);
 }
 </file>
 
@@ -9896,6 +9898,17 @@ export class LessonContentComponent {
 	readonly toggleComplete = output<string>();
 	readonly selectLesson = output<string>();
 }
+</file>
+
+<file path="src/entities/article/index.ts">
+export * from './api/article-api.service';
+
+export * from './model/types/article.types';
+
+export * from './ui/article-detalization/article-content/article.component';
+export * from './ui/article-detalization/article-header/article-header.component';
+export * from './ui/article-detalization/article-blocks/article-block-renderer.component';
+export * from './ui/article-view/article-view.component';
 </file>
 
 <file path="src/entities/course/index.ts">
@@ -10079,152 +10092,84 @@ export * from './ui/course-progress/course-progress.component';
 }
 </file>
 
-<file path="src/styles/_reset.scss">
-*,
-*::before,
-*::after {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
+<file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	effect,
+	inject,
+	signal,
+} from '@angular/core';
 
-html {
-	height: 100%;
-	scroll-behavior: smooth;
-	scrollbar-gutter: stable;
-	text-size-adjust: 100%;
-	tab-size: 4;
-}
+import { ArticleViewComponent } from '@entities/article';
+import { ArticleDrawerNavigationComponent } from '@entities/article-navigation';
 
-body {
-	min-height: 100%;
-	background-color: var(--bg-main);
-	font-family: var(--font-family-sans);
-	font-size: var(--font-size-base);
-	font-weight: var(--font-weight-regular);
-	line-height: var(--line-height-base);
-	color: var(--text-primary);
-	transition:
-		background-color var(--transition-base),
-		color var(--transition-base);
-	font-synthesis: none;
-	text-rendering: optimizelegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	overflow-x: clip;
-}
+import { ScrollLockService } from '@shared/lib/services/scroll-lock.service';
+import { ButtonComponent } from '@shared/ui/button';
+import { DrawerComponent } from '@shared/ui/drawer';
+import { IconComponent } from '@shared/ui/icon';
 
-body.lock-scroll {
-	overflow: hidden;
-}
+@Component({
+	selector: 'app-articles-drawer-sidebar',
+	standalone: true,
+	templateUrl: './articles-drawer-sidebar.component.html',
+	styleUrl: './articles-drawer-sidebar.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		IconComponent,
+		DrawerComponent,
+		ButtonComponent,
+		ArticleDrawerNavigationComponent,
+		ArticleViewComponent,
+	],
+})
+export class ArticlesDrawerSidebarComponent {
+	private readonly destroyRef = inject(DestroyRef);
 
-ul[class],
-ol[class] {
-	list-style: none;
-}
+	protected readonly isArticlesOpen = signal<boolean>(false);
+	protected readonly selectedArticleId = signal<string | null>(null);
 
-a {
-	color: inherit;
-	transition:
-		color var(--transition-fast),
-		opacity var(--transition-fast);
-	cursor: pointer;
-	text-decoration: none;
-}
+	private readonly scrollLock = inject(ScrollLockService);
+	private lockActive = false;
 
-a:not([class]) {
-	text-decoration: underline;
-	text-decoration-skip-ink: auto;
-	text-underline-offset: 3px;
-}
+	constructor() {
+		effect(() => {
+			const shouldLock = this.isArticlesOpen();
+			if (shouldLock === this.lockActive) {
+				return;
+			}
+			this.lockActive = shouldLock;
 
-a:not([class]):hover {
-	text-decoration: none;
-}
+			if (shouldLock) {
+				this.scrollLock.lock();
+			} else {
+				this.scrollLock.unlock();
+			}
+		});
 
-img,
-picture,
-video,
-canvas {
-	display: block;
-	max-width: 100%;
-	height: auto;
-}
-
-svg {
-	display: inline-block;
-	max-width: 100%;
-	height: auto;
-	vertical-align: middle;
-	fill: currentcolor;
-}
-
-input,
-button,
-textarea,
-select {
-	background: transparent;
-	border: none;
-	color: inherit;
-	font: inherit;
-	appearance: none;
-}
-
-textarea {
-	resize: vertical;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-	margin: 0;
-	appearance: none;
-}
-
-input[type='number'] {
-	appearance: textfield;
-}
-
-button,
-[role='button'] {
-	cursor: pointer;
-	user-select: none;
-	touch-action: manipulation;
-}
-
-button:disabled,
-input:disabled,
-select:disabled,
-textarea:disabled {
-	opacity: var(--opacity-disabled);
-	cursor: not-allowed;
-}
-
-:focus {
-	outline: none;
-}
-
-:focus-visible {
-	border-radius: inherit;
-	box-shadow: var(--focus-ring, 0 0 0 4px rgb(99 102 241 / 15%));
-	outline: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	html:focus-within {
-		scroll-behavior: auto;
+		this.destroyRef.onDestroy(() => {
+			if (this.lockActive) {
+				this.scrollLock.unlock();
+			}
+		});
 	}
 
-	*,
-	*::before,
-	*::after {
-		/* stylelint-disable-next-line declaration-no-important */
-		animation-duration: 0.01ms !important;
-		/* stylelint-disable-next-line declaration-no-important */
-		animation-iteration-count: 1 !important;
-		/* stylelint-disable-next-line declaration-no-important */
-		transition-duration: 0.01ms !important;
-		/* stylelint-disable-next-line declaration-no-important */
-		scroll-behavior: auto !important;
+	protected toggleArticlesOpen(): void {
+		this.isArticlesOpen.update((open) => {
+			if (!open) {
+				this.selectedArticleId.set(null);
+			}
+			return !open;
+		});
+	}
+
+	protected onArticleSelected(id: string | number): void {
+		this.selectedArticleId.set(String(id));
+	}
+
+	protected backToNavigation(): void {
+		this.selectedArticleId.set(null);
 	}
 }
 </file>
@@ -10491,6 +10436,157 @@ app-course-progress {
 }
 </file>
 
+<file path="src/styles/_reset.scss">
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	height: 100%;
+	scroll-behavior: smooth;
+	scrollbar-gutter: stable;
+	text-size-adjust: 100%;
+	tab-size: 4;
+}
+
+body {
+	min-height: 100%;
+	background-color: var(--bg-main);
+	font-family: var(--font-family-sans);
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-base);
+	color: var(--text-primary);
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base);
+	font-synthesis: none;
+	text-rendering: optimizelegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-x: clip;
+}
+
+body.lock-scroll {
+	padding-right: calc(100vw - 100%);
+	overflow: hidden;
+}
+
+ul[class],
+ol[class] {
+	list-style: none;
+}
+
+a {
+	color: inherit;
+	transition:
+		color var(--transition-fast),
+		opacity var(--transition-fast);
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a:not([class]) {
+	text-decoration: underline;
+	text-decoration-skip-ink: auto;
+	text-underline-offset: 3px;
+}
+
+a:not([class]):hover {
+	text-decoration: none;
+}
+
+img,
+picture,
+video,
+canvas {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+svg {
+	display: inline-block;
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
+	fill: currentcolor;
+}
+
+input,
+button,
+textarea,
+select {
+	background: transparent;
+	border: none;
+	color: inherit;
+	font: inherit;
+	appearance: none;
+}
+
+textarea {
+	resize: vertical;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	margin: 0;
+	appearance: none;
+}
+
+input[type='number'] {
+	appearance: textfield;
+}
+
+button,
+[role='button'] {
+	cursor: pointer;
+	user-select: none;
+	touch-action: manipulation;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+	opacity: var(--opacity-disabled);
+	cursor: not-allowed;
+}
+
+:focus {
+	outline: none;
+}
+
+:focus-visible {
+	border-radius: inherit;
+	box-shadow: var(--focus-ring, 0 0 0 4px rgb(99 102 241 / 15%));
+	outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html:focus-within {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		animation-iteration-count: 1 !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		transition-duration: 0.01ms !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		scroll-behavior: auto !important;
+	}
+}
+</file>
+
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.ts">
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
@@ -10609,54 +10705,6 @@ export class HeaderComponent {
 		"typescript-eslint": "^8.70.0"
 	}
 }
-</file>
-
-<file path="src/shared/config/routes.config.ts">
-import { IconName } from '../ui/icon';
-
-export interface NavItem {
-	path: string;
-	label: string;
-	icon?: IconName;
-}
-
-export const RouteSegments = {
-	ROOT: '',
-
-	COURSES: 'courses',
-	COURSE_DETAILS: ':slug',
-
-	ARTICLES: 'articles',
-	ARTICLES_CREATE: 'create',
-	ARTICLE_EDIT: ':id/edit',
-
-	FRONTEND: 'frontend',
-
-	ACCOUNT: 'account',
-	OVERVIEW: 'overview',
-	TRANSACTIONS: 'transactions',
-
-	WILDCARD: '**',
-} as const;
-
-export const RouteBuilder = {
-	HOME: () => '/',
-
-	ARTICLES: () => `/${RouteSegments.ARTICLES}`,
-	ARTICLE_CREATE: () => `/${RouteSegments.ARTICLES}/${RouteSegments.ARTICLES_CREATE}`,
-	ARTICLE_DETAILS: (id: string) => `/${RouteSegments.ARTICLES}/${id}`,
-	ARTICLE_EDIT: (id: string) => `/${RouteSegments.ARTICLES}/${id}/edit`,
-
-	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
-	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,
-
-	COURSE_DETAILS: (slug: string) => `/${RouteSegments.COURSES}/${slug}`,
-} as const;
-
-export const ACCOUNT_SIDEBAR_ITEMS: NavItem[] = [
-	{ path: RouteBuilder.ACCOUNT_OVERVIEW(), label: 'Профиль', icon: 'person' },
-	{ path: RouteBuilder.ACCOUNT_TRANSACTIONS(), label: 'Подписки', icon: 'credit-card' },
-];
 </file>
 
 <file path="src/shared/ui/icon/icon.types.ts">
@@ -10857,6 +10905,141 @@ export type IconName =
 </app-drawer>
 </file>
 
+<file path="src/shared/config/routes.config.ts">
+import { IconName } from '../ui/icon';
+
+export interface NavItem {
+	path: string;
+	label: string;
+	icon?: IconName;
+}
+
+export const RouteSegments = {
+	ROOT: '',
+
+	COURSES: 'courses',
+	COURSE_DETAILS: ':slug',
+
+	ARTICLES: 'articles',
+	ARTICLES_CREATE: 'create',
+	ARTICLE_EDIT: ':id/edit',
+
+	FRONTEND: 'frontend',
+
+	ACCOUNT: 'account',
+	OVERVIEW: 'overview',
+	TRANSACTIONS: 'transactions',
+
+	WILDCARD: '**',
+} as const;
+
+export const RouteBuilder = {
+	HOME: () => '/',
+
+	ARTICLES: () => `/${RouteSegments.ARTICLES}`,
+	ARTICLE_CREATE: () => `/${RouteSegments.ARTICLES}/${RouteSegments.ARTICLES_CREATE}`,
+	ARTICLE_EDIT: (id: string) => `/${RouteSegments.ARTICLES}/${id}/edit`,
+
+	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
+	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,
+
+	COURSE_DETAILS: (slug: string) => `/${RouteSegments.COURSES}/${slug}`,
+} as const;
+
+export const ACCOUNT_SIDEBAR_ITEMS: NavItem[] = [
+	{ path: RouteBuilder.ACCOUNT_OVERVIEW(), label: 'Профиль', icon: 'person' },
+	{ path: RouteBuilder.ACCOUNT_TRANSACTIONS(), label: 'Подписки', icon: 'credit-card' },
+];
+</file>
+
+<file path="src/pages/course-page/ui/course-page.component.ts">
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+
+import { ArticlesDrawerSidebarComponent } from '@widgets/articles-drawer-sidebar';
+import { CourseSidebarComponent } from '@widgets/course-sidebar';
+import { LessonContentComponent } from '@widgets/lesson-content';
+
+import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
+import { ScrollLockService } from '@shared/lib/services/scroll-lock.service';
+import { ButtonComponent } from '@shared/ui/button';
+import { DrawerComponent } from '@shared/ui/drawer';
+import { IconComponent } from '@shared/ui/icon';
+
+import { CoursePageStore } from '../model/course-page.store';
+
+@Component({
+	selector: 'app-course-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './course-page.component.html',
+	styleUrl: './course-page.component.scss',
+	imports: [
+		SidebarLayoutComponent,
+		CourseSidebarComponent,
+		LessonContentComponent,
+		ArticlesDrawerSidebarComponent,
+		DrawerComponent,
+		IconComponent,
+		ButtonComponent,
+	],
+	providers: [CoursePageStore],
+})
+export class CoursePageComponent {
+	readonly slug = input.required<string>();
+
+	private readonly store = inject(CoursePageStore);
+
+	readonly sections = this.store.sections;
+	readonly progress = this.store.progress;
+	readonly activeLesson = this.store.activeLesson;
+	readonly activeLessonId = this.store.activeLessonId;
+	readonly activeLessonDetail = this.store.activeLessonDetail;
+	readonly nextLesson = this.store.nextLesson;
+	readonly loading = this.store.loading;
+	readonly error = this.store.error;
+
+	readonly isMobileMenuOpen = signal(false);
+
+	private readonly scrollLock = inject(ScrollLockService);
+	private lockActive = false;
+
+	constructor() {
+		effect(() => {
+			const shouldLock = this.isMobileMenuOpen();
+			if (shouldLock === this.lockActive) {
+				return;
+			}
+			this.lockActive = shouldLock;
+
+			if (shouldLock) {
+				this.scrollLock.lock();
+			} else {
+				this.scrollLock.unlock();
+			}
+		});
+
+		effect(() => {
+			const slug = this.slug();
+			if (slug) {
+				this.store.load(slug);
+			}
+		});
+	}
+
+	selectLesson(id: string): void {
+		this.store.selectLesson(id);
+	}
+
+	toggleLessonCompleted(id: string): void {
+		this.store.toggleLessonCompleted(id);
+	}
+
+	protected toggleMobileMenu(): void {
+		this.isMobileMenuOpen.update((state) => !state);
+	}
+}
+</file>
+
 <file path="src/app/routes/app.routes.ts">
 import { Routes } from '@angular/router';
 
@@ -10953,86 +11136,6 @@ export const APP_ROUTES: Routes = [
 		redirectTo: RouteSegments.ROOT,
 	},
 ];
-</file>
-
-<file path="src/pages/course-page/ui/course-page.component.ts">
-import {
-	ChangeDetectionStrategy,
-	Component,
-	effect,
-	inject,
-	input,
-	signal,
-	untracked,
-} from '@angular/core';
-
-import { ArticlesDrawerSidebarComponent } from '@widgets/articles-drawer-sidebar';
-import { CourseSidebarComponent } from '@widgets/course-sidebar';
-import { LessonContentComponent } from '@widgets/lesson-content';
-
-import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
-import { ButtonComponent } from '@shared/ui/button';
-import { DrawerComponent } from '@shared/ui/drawer';
-import { IconComponent } from '@shared/ui/icon';
-
-import { CoursePageStore } from '../model/course-page.store';
-
-@Component({
-	selector: 'app-course-page',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './course-page.component.html',
-	styleUrl: './course-page.component.scss',
-	imports: [
-		SidebarLayoutComponent,
-		CourseSidebarComponent,
-		LessonContentComponent,
-		ArticlesDrawerSidebarComponent,
-		DrawerComponent,
-		IconComponent,
-		ButtonComponent,
-	],
-	providers: [CoursePageStore],
-})
-export class CoursePageComponent {
-	readonly slug = input.required<string>();
-
-	private readonly store = inject(CoursePageStore);
-
-	readonly sections = this.store.sections;
-	readonly progress = this.store.progress;
-	readonly activeLesson = this.store.activeLesson;
-	readonly activeLessonId = this.store.activeLessonId;
-	readonly activeLessonDetail = this.store.activeLessonDetail;
-	readonly nextLesson = this.store.nextLesson;
-	readonly loading = this.store.loading;
-	readonly error = this.store.error;
-
-	readonly isMobileMenuOpen = signal(false);
-
-	constructor() {
-		effect(() => {
-			const slug = this.slug();
-			untracked(() => this.store.load(slug));
-		});
-
-		effect(() => {
-			document.body.classList.toggle('lock-scroll', this.isMobileMenuOpen());
-		});
-	}
-
-	selectLesson(id: string): void {
-		this.store.selectLesson(id);
-	}
-
-	toggleLessonCompleted(id: string): void {
-		this.store.toggleLessonCompleted(id);
-	}
-
-	protected toggleMobileMenu(): void {
-		this.isMobileMenuOpen.update((state) => !state);
-	}
-}
 </file>
 
 </files>

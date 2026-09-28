@@ -16,7 +16,7 @@ import { TextareaComponent } from '@shared/ui/textarea';
 				<option value="HTML">HTML</option>
 			</app-select>
 
-			<app-textarea formControlName="content" label="Контент" [rows]="6"></app-textarea>
+			<app-textarea formControlName="content" label="Контент" [rows]="24"></app-textarea>
 		</div>
 	`,
 })

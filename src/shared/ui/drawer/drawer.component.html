@@ -2,7 +2,15 @@
 	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
 }
 
-<aside class="drawer-panel" [class.drawer-panel--open]="isOpen()" [attr.aria-hidden]="!isOpen()" role="dialog">
+<aside
+	role="dialog"
+	class="drawer-panel"
+	[class.drawer-panel--open]="isOpen()"
+	[attr.aria-hidden]="!isOpen()"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="aside"
+>
 	@if (showCloseBtn()) {
 		<button
 			app-button
@@ -24,7 +32,7 @@
 		<ng-content select="[drawer-header]"></ng-content>
 	</header>
 
-	<main class="drawer-panel__content">
-		<ng-content></ng-content>
-	</main>
+	<div class="drawer-panel__content">
+		<ng-content />
+	</div>
 </aside>

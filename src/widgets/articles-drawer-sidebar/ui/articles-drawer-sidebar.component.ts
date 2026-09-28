@@ -10,6 +10,7 @@ import {
 import { ArticleViewComponent } from '@entities/article';
 import { ArticleDrawerNavigationComponent } from '@entities/article-navigation';
 
+import { ScrollLockService } from '@shared/lib/services/scroll-lock.service';
 import { ButtonComponent } from '@shared/ui/button';
 import { DrawerComponent } from '@shared/ui/drawer';
 import { IconComponent } from '@shared/ui/icon';
@@ -34,18 +35,38 @@ export class ArticlesDrawerSidebarComponent {
 	protected readonly isArticlesOpen = signal<boolean>(false);
 	protected readonly selectedArticleId = signal<string | null>(null);
 
+	private readonly scrollLock = inject(ScrollLockService);
+	private lockActive = false;
+
 	constructor() {
 		effect(() => {
-			document.body.classList.toggle('lock-scroll', this.isArticlesOpen());
+			const shouldLock = this.isArticlesOpen();
+			if (shouldLock === this.lockActive) {
+				return;
+			}
+			this.lockActive = shouldLock;
+
+			if (shouldLock) {
+				this.scrollLock.lock();
+			} else {
+				this.scrollLock.unlock();
+			}
 		});
 
 		this.destroyRef.onDestroy(() => {
-			document.body.classList.remove('lock-scroll');
+			if (this.lockActive) {
+				this.scrollLock.unlock();
+			}
 		});
 	}
 
 	protected toggleArticlesOpen(): void {
-		this.isArticlesOpen.update((open) => !open);
+		this.isArticlesOpen.update((open) => {
+			if (!open) {
+				this.selectedArticleId.set(null);
+			}
+			return !open;
+		});
 	}
 
 	protected onArticleSelected(id: string | number): void {

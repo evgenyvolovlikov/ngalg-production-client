@@ -132,7 +132,7 @@ export class ManageArticleComponent implements OnInit {
 				takeUntilDestroyed(this.destroyRef),
 			)
 			.subscribe({
-				next: () => this.router.navigateByUrl(RouteBuilder.ARTICLES()),
+				next: () => this.router.navigateByUrl(RouteBuilder.COURSE_DETAILS('frontend')),
 				error: (err) => console.error('Ошибка при сохранении статьи', err),
 			});
 	}

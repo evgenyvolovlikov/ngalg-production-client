@@ -1,18 +1,11 @@
-import {
-	ChangeDetectionStrategy,
-	Component,
-	effect,
-	inject,
-	input,
-	signal,
-	untracked,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 
 import { ArticlesDrawerSidebarComponent } from '@widgets/articles-drawer-sidebar';
 import { CourseSidebarComponent } from '@widgets/course-sidebar';
 import { LessonContentComponent } from '@widgets/lesson-content';
 
 import { SidebarLayoutComponent } from '@shared/layouts/sidebar-layout';
+import { ScrollLockService } from '@shared/lib/services/scroll-lock.service';
 import { ButtonComponent } from '@shared/ui/button';
 import { DrawerComponent } from '@shared/ui/drawer';
 import { IconComponent } from '@shared/ui/icon';
@@ -52,14 +45,29 @@ export class CoursePageComponent {
 
 	readonly isMobileMenuOpen = signal(false);
 
+	private readonly scrollLock = inject(ScrollLockService);
+	private lockActive = false;
+
 	constructor() {
 		effect(() => {
-			const slug = this.slug();
-			untracked(() => this.store.load(slug));
+			const shouldLock = this.isMobileMenuOpen();
+			if (shouldLock === this.lockActive) {
+				return;
+			}
+			this.lockActive = shouldLock;
+
+			if (shouldLock) {
+				this.scrollLock.lock();
+			} else {
+				this.scrollLock.unlock();
+			}
 		});
 
 		effect(() => {
-			document.body.classList.toggle('lock-scroll', this.isMobileMenuOpen());
+			const slug = this.slug();
+			if (slug) {
+				this.store.load(slug);
+			}
 		});
 	}
 
