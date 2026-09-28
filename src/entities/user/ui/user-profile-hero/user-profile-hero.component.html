@@ -9,6 +9,13 @@
 <div class="info">
 	<h1 class="name">{{ name() }}</h1>
 	<p class="account-type">
-		Account type: <span class="account-type__value">{{ accountType() }}</span>
+		Account type:
+		<span class="account-type__value">
+			@for (account of accountType(); track account.provider) {
+				@if (providerLabels[account.provider]) {
+					<span class="account-type__provider">{{ providerLabels[account.provider] }}</span>
+				}
+			}
+		</span>
 	</p>
 </div>

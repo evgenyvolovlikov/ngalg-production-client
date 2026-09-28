@@ -1,9 +1,12 @@
-import { ChangeDetectionStrategy, Component, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, model } from '@angular/core';
 
+import { ENVIRONMENT } from '@shared/config/environment.config';
 import { ModalComponent } from '@shared/ui/modal';
 
 import { GithubOauthButtonComponent } from './github-button/github-button.component';
 import { GoogleOauthButtonComponent } from './google-button/google-button.component';
+
+type OAuthProvider = 'github' | 'google';
 
 @Component({
 	selector: 'app-auth-by-oauth',
@@ -16,13 +19,18 @@ import { GoogleOauthButtonComponent } from './google-button/google-button.compon
 export class AuthByOauthComponent {
 	readonly isOpen = model<boolean>(false);
 
+	private readonly environment = inject(ENVIRONMENT);
+
 	protected loginWithGitHub(): void {
-		// Бизнес-логика OAuth для GitHub
-		return;
+		this.redirectToProvider('github');
 	}
 
 	protected loginWithGoogle(): void {
-		// Бизнес-логика OAuth для Google
-		return;
+		this.redirectToProvider('google');
+	}
+
+	private redirectToProvider(provider: OAuthProvider): void {
+		sessionStorage.setItem('authReturnUrl', window.location.pathname + window.location.search);
+		window.location.href = `${this.environment.apiUrl}/auth/${provider}`;
 	}
 }

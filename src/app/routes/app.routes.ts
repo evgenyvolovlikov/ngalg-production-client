@@ -2,10 +2,13 @@ import { Routes } from '@angular/router';
 
 import { courseSlugGuard } from '@pages/course-page';
 
+import { authGuard } from '@features/auth-by-oauth';
+
 import { RouteSegments } from '@shared/config/routes.config';
 
 import { AccountLayoutComponent } from '../layouts/account-layout/account-layout.component';
 import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
+import { redirectIfAuthenticatedGuard } from '../lib/guards/redirect-if-authenticated.guard';
 
 export const COURSE_ROUTES: Routes = [
 	{
@@ -69,6 +72,7 @@ export const APP_ROUTES: Routes = [
 	{
 		path: RouteSegments.ROOT,
 		pathMatch: 'full',
+		canActivate: [redirectIfAuthenticatedGuard],
 		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
 	},
 	{
@@ -86,10 +90,12 @@ export const APP_ROUTES: Routes = [
 	{
 		path: RouteSegments.ACCOUNT,
 		component: AccountLayoutComponent,
+		canActivate: [authGuard],
 		children: ACCOUNT_ROUTES,
 	},
 	{
 		path: RouteSegments.WILDCARD,
+		canActivate: [redirectIfAuthenticatedGuard],
 		redirectTo: RouteSegments.ROOT,
 	},
 ];

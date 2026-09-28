@@ -5,7 +5,6 @@ import { UserProfile } from '../../model/user.types';
 const PROVIDER_LABELS: Record<UserProfile['provider'], string> = {
 	GOOGLE: 'Google',
 	GITHUB: 'GitHub',
-	LOCAL: 'Email',
 };
 
 @Component({
@@ -26,5 +25,7 @@ export class UserProfileHeroComponent {
 
 	readonly initial = computed(() => this.name().charAt(0).toUpperCase());
 	readonly avatarUrl = computed(() => this.profile().avatarUrl ?? null);
-	readonly accountType = computed(() => PROVIDER_LABELS[this.profile().provider]);
+	readonly accountType = computed(() => this.profile().accounts);
+
+	readonly providerLabels = PROVIDER_LABELS;
 }

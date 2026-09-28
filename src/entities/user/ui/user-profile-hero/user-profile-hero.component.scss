@@ -65,6 +65,9 @@
 }
 
 .account-type {
+	display: flex;
+	gap: var(--unit-1);
+	align-items: center;
 	margin: 0;
 	font-size: var(--font-size-sm);
 	font-weight: var(--font-weight-regular);

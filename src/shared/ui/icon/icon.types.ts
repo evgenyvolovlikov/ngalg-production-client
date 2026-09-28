@@ -21,4 +21,5 @@ export type IconName =
 	| 'triangle-exclamation'
 	| 'triangle-exclamation-fill'
 	| 'circle-xmark-fill'
-	| 'circle-info-fill';
+	| 'circle-info-fill'
+	| 'person-fill';

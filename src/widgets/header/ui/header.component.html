@@ -2,14 +2,17 @@
 	<div class="header__container">
 		<app-logo />
 
-		<div style="display: flex; gap: var(--unit-2)">
-			<button app-button type="button" variant="filled" color="default" size="m" (click)="openProfile()">
-				Профиль
-			</button>
-
-			<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">
-				Войти
-			</button>
+		<div class="header__actions">
+			@if (userStore.isAuthenticated()) {
+				<button app-button type="button" variant="filled" color="default" size="m" (click)="openProfile()">
+					<app-icon [name]="'person-fill'" size="s" />
+					<span>Профиль</span>
+				</button>
+			} @else {
+				<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">
+					Войти
+				</button>
+			}
 		</div>
 	</div>
 </header>

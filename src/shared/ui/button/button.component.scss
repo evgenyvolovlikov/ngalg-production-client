@@ -158,6 +158,12 @@
 	}
 }
 
+.app-button__content {
+	display: flex;
+	gap: var(--unit-1);
+	align-items: center;
+}
+
 .app-button__loader {
 	position: absolute;
 	top: 50%;

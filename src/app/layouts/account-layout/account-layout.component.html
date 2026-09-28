@@ -1,7 +1,7 @@
 <div class="account-layout">
 	<div class="account-layout__header">
 		<div class="account-layout__hero-container">
-			@if (profile(); as user) {
+			@if (userStore.profile(); as user) {
 				<app-user-profile-hero [profile]="user" />
 			}
 		</div>

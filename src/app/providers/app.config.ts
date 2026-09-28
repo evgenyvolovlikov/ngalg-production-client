@@ -1,10 +1,14 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import {
 	ApplicationConfig,
+	inject,
+	provideAppInitializer,
 	provideBrowserGlobalErrorListeners,
 	provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+
+import { UserStore } from '@entities/user';
 
 import { apiInterceptor } from '@shared/api/api.interceptor';
 import { ENVIRONMENT } from '@shared/config/environment.config';
@@ -26,5 +30,7 @@ export const appConfig: ApplicationConfig = {
 		),
 		provideHttpClient(withFetch(), withInterceptors([apiInterceptor])),
 		{ provide: ENVIRONMENT, useValue: environment },
+
+		provideAppInitializer(() => inject(UserStore).load()),
 	],
 };
