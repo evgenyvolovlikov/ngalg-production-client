@@ -8,7 +8,6 @@ export interface OAuthAccount {
 
 export interface UserProfile {
 	id: string;
-	email: string;
 	username: string;
 	firstName?: string | null;
 	lastName?: string | null;

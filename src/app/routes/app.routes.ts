@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { courseSlugGuard } from '@pages/course-page';
 
-import { authGuard } from '@features/auth-by-oauth';
+import { adminGuard, authGuard } from '@features/auth-by-oauth';
 
 import { RouteSegments } from '@shared/config/routes.config';
 
@@ -32,12 +32,14 @@ export const COURSE_ROUTES: Routes = [
 export const ARTICLE_ROUTES: Routes = [
 	{
 		path: RouteSegments.ARTICLES_CREATE,
+		canActivate: [authGuard, adminGuard],
 		loadComponent: () =>
 			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
 		title: 'Create Article',
 	},
 	{
 		path: RouteSegments.ARTICLE_EDIT,
+		canActivate: [authGuard, adminGuard],
 		loadComponent: () =>
 			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
 		title: 'Edit Article',

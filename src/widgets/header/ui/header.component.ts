@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthByOauthComponent } from '@features/auth-by-oauth';
 
 import { UserStore } from '@entities/user';
 
+import { RouteBuilder } from '@shared/config/routes.config';
 import { AppLogoComponent } from '@shared/ui/app-logo';
 import { ButtonComponent } from '@shared/ui/button';
 import { IconComponent } from '@shared/ui/icon';
@@ -22,11 +23,21 @@ export class HeaderComponent {
 	protected readonly userStore = inject(UserStore);
 	protected readonly isAuthOpen = signal<boolean>(false);
 
+	constructor() {
+		effect(() => {
+			console.log(this.userStore.isAdmin());
+		});
+	}
+
 	protected openAuth(): void {
 		this.isAuthOpen.set(true);
 	}
 
 	protected openProfile(): void {
 		this.router.navigate(['/', 'account', 'overview']);
+	}
+
+	protected createArticle(): void {
+		this.router.navigate([RouteBuilder.ARTICLE_CREATE()]);
 	}
 }

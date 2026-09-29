@@ -2,6 +2,8 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { Observable, catchError, finalize, of, tap } from 'rxjs';
 
+import { userRoles } from '@shared/consts/role.constants';
+
 import { UserApiService } from '../api/user-api.service';
 import { UserProfile } from './user.types';
 
@@ -20,6 +22,7 @@ export class UserStore {
 	readonly isLoaded = this.loadedState.asReadonly();
 
 	readonly isAuthenticated = computed(() => this.profileState() !== null);
+	readonly isAdmin = computed(() => this.profileState()?.role === userRoles.admin);
 
 	load(): Observable<UserProfile | null> {
 		this.loadingState.set(true);

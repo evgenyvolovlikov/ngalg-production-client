@@ -3,6 +3,13 @@
 		<app-logo />
 
 		<div class="header__actions">
+			@if (userStore.isAdmin()) {
+				<button app-button type="button" variant="outline" color="primary" size="m" (click)="createArticle()">
+					<app-icon name="pencil-to-square" size="s" />
+					<span>Создать статью</span>
+				</button>
+			}
+
 			@if (userStore.isAuthenticated()) {
 				<button app-button type="button" variant="filled" color="default" size="m" (click)="openProfile()">
 					<app-icon [name]="'person-fill'" size="s" />
