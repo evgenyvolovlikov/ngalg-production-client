@@ -15,27 +15,29 @@ import { ButtonComponent } from '@shared/ui/button';
 import { CardComponent } from '@shared/ui/card';
 import { IconComponent } from '@shared/ui/icon';
 import { InputComponent } from '@shared/ui/input';
+import { ToastStore } from '@shared/ui/toast';
 
 @Component({
 	selector: 'app-update-username-card',
 	standalone: true,
+	imports: [ReactiveFormsModule, ButtonComponent, CardComponent, IconComponent, InputComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [ReactiveFormsModule, CardComponent, InputComponent, ButtonComponent, IconComponent],
 	templateUrl: './update-username-card.component.html',
 	styleUrl: './update-username-card.component.scss',
 })
 export class UpdateUsernameCardComponent implements OnInit {
 	private readonly fb = inject(NonNullableFormBuilder);
-	protected readonly userStore = inject(UserStore);
-	private readonly userApi = inject(UserApiService);
+	private readonly userApiService = inject(UserApiService);
+	private readonly userStore = inject(UserStore);
 	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
 
-	protected readonly isSaving = signal(false);
 	protected readonly isEditing = signal(false);
+	protected readonly isSaving = signal(false);
 	protected readonly errorMessage = signal<string | null>(null);
 
 	protected readonly form = this.fb.group({
-		username: ['', [Validators.required, Validators.minLength(3)]],
+		username: ['', [Validators.required, Validators.minLength(2)]],
 	});
 
 	ngOnInit(): void {
@@ -43,51 +45,43 @@ export class UpdateUsernameCardComponent implements OnInit {
 	}
 
 	protected onEdit(): void {
-		this.errorMessage.set(null);
-		this.resetForm();
 		this.isEditing.set(true);
+		this.resetForm();
 	}
 
 	protected onCancel(): void {
-		this.errorMessage.set(null);
-		this.resetForm();
 		this.isEditing.set(false);
+		this.errorMessage.set(null);
 	}
 
 	protected onSave(): void {
-		if (this.form.invalid || this.isSaving()) return;
-
-		const { username } = this.form.getRawValue();
-		const currentUsername = this.userStore.profile()?.username;
-
-		if (username === currentUsername) {
-			this.isEditing.set(false);
-			return;
-		}
+		if (this.form.invalid) return;
 
 		this.isSaving.set(true);
 		this.errorMessage.set(null);
 
-		this.userApi
-			.updateUsername(username)
+		const newUsername = this.form.controls.username.value;
+
+		this.userApiService
+			.updateUsername(newUsername)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: (updatedProfile) => {
-					this.userStore.setProfile(updatedProfile);
-					this.form.markAsPristine();
+				next: () => {
+					this.toastStore.success('Псевдоним успешно обновлён');
 					this.isSaving.set(false);
 					this.isEditing.set(false);
 				},
 				error: (err) => {
-					console.error('Ошибка обновления username', err);
-					this.errorMessage.set('Не удалось обновить имя пользователя');
+					this.toastStore.error(err?.message ?? 'Ошибка при обновлении username');
+					this.errorMessage.set(err?.message ?? 'Не удалось обновить username');
 					this.isSaving.set(false);
 				},
 			});
 	}
 
 	private resetForm(): void {
-		const currentUsername = this.userStore.profile()?.username ?? '';
-		this.form.reset({ username: currentUsername });
+		this.form.setValue({
+			username: this.userStore.profile()?.username ?? '',
+		});
 	}
 }

@@ -7,6 +7,7 @@ import { ArticleNavigationApiService } from '@entities/article-navigation';
 import { ButtonComponent } from '@shared/ui/button';
 import { InputComponent } from '@shared/ui/input';
 import { SelectComponent } from '@shared/ui/select';
+import { ToastStore } from '@shared/ui/toast';
 
 @Component({
 	selector: 'app-create-category',
@@ -42,6 +43,7 @@ export class CreateCategoryComponent {
 	private readonly fb = inject(NonNullableFormBuilder);
 	private readonly navigationApi = inject(ArticleNavigationApiService);
 	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
 
 	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
 		initialValue: [],
@@ -56,12 +58,22 @@ export class CreateCategoryComponent {
 	submit(): void {
 		if (this.form.invalid) return;
 
+		const dto = {
+			title: this.form.controls.title.value,
+			sectionId: this.form.controls.sectionId.value,
+		};
+
 		this.navigationApi
-			.createCategory(this.form.getRawValue())
+			.createCategory(dto)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: () => this.form.reset(),
-				error: (err) => console.error('Ошибка создания категории', err),
+				next: () => {
+					this.toastStore.success('Категория успешно создана');
+					this.form.reset();
+				},
+				error: (err) => {
+					this.toastStore.error(err?.message ?? 'Ошибка при создании категории');
+				},
 			});
 	}
 }

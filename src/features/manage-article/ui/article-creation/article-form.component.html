@@ -3,7 +3,13 @@
 		<h1 class="article-form__title">{{ isEditMode() ? "Редактирование статьи" : "Новая статья" }}</h1>
 		<div class="article-form__actions">
 			<button app-button type="button" variant="outline" (click)="onCancel()">Отмена</button>
-			<button app-button type="submit" variant="filled" [loading]="isSubmitting()" [disabled]="isSubmitting()">
+			<button
+				app-button
+				type="submit"
+				variant="filled"
+				[loading]="isSubmitting()"
+				[disabled]="isSubmitting() || form().invalid"
+			>
 				Сохранить
 			</button>
 		</div>

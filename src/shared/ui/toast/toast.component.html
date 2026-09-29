@@ -1,0 +1,15 @@
+@if (store.toasts().length > 0) {
+	<div class="toast-container" role="region" aria-live="polite" aria-label="Уведомления">
+		@for (toast of store.toasts(); track toast.id) {
+			<div class="toast" [attr.data-type]="toast.type" role="alert">
+				<span class="toast__icon" aria-hidden="true">
+					<app-icon [name]="iconFor(toast.type)" size="m" />
+				</span>
+				<span class="toast__message">{{ toast.message }}</span>
+				<button type="button" class="toast__close" (click)="store.dismiss(toast.id)" aria-label="Закрыть">
+					<app-icon name="xmark" size="s" />
+				</button>
+			</div>
+		}
+	</div>
+}

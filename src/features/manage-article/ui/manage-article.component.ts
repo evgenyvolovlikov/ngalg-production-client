@@ -18,6 +18,7 @@ import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '
 import { ArticleNavigationApiService } from '@entities/article-navigation';
 
 import { RouteBuilder } from '@shared/config/routes.config';
+import { ToastStore } from '@shared/ui/toast';
 
 import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
 import { ArticleFormComponent } from './article-creation/article-form.component';
@@ -48,6 +49,7 @@ export class ManageArticleComponent implements OnInit {
 	private readonly articleApi = inject(ArticleApiService);
 	private readonly navigationApi = inject(ArticleNavigationApiService);
 	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
 
 	protected readonly articleForm = createInitialArticleForm(this.fb);
 
@@ -108,7 +110,7 @@ export class ManageArticleComponent implements OnInit {
 	}
 
 	protected handleCancel(): void {
-		this.router.navigateByUrl(RouteBuilder.ARTICLES());
+		this.router.navigateByUrl(RouteBuilder.COURSE_DETAILS('frontend'));
 	}
 
 	protected handleSave(): void {
@@ -132,8 +134,13 @@ export class ManageArticleComponent implements OnInit {
 				takeUntilDestroyed(this.destroyRef),
 			)
 			.subscribe({
-				next: () => this.router.navigateByUrl(RouteBuilder.COURSE_DETAILS('frontend')),
-				error: (err) => console.error('Ошибка при сохранении статьи', err),
+				next: () => {
+					this.toastStore.success(
+						this.isEditMode() ? 'Статья обновлена' : 'Статья создана',
+					);
+				},
+				error: (err) =>
+					this.toastStore.error(err?.message ?? 'Ошибка при сохранении статьи'),
 			});
 	}
 }

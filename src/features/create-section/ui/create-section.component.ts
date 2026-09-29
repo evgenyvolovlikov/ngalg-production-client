@@ -6,6 +6,7 @@ import { ArticleNavigationApiService, CreateSectionDto } from '@entities/article
 
 import { ButtonComponent } from '@shared/ui/button';
 import { InputComponent } from '@shared/ui/input';
+import { ToastStore } from '@shared/ui/toast';
 
 @Component({
 	selector: 'app-create-section',
@@ -33,6 +34,7 @@ export class CreateSectionComponent {
 	private readonly fb = inject(NonNullableFormBuilder);
 	private readonly api = inject(ArticleNavigationApiService);
 	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
 
 	protected form = this.fb.group({
 		title: ['', [Validators.required, Validators.minLength(2)]],
@@ -42,14 +44,21 @@ export class CreateSectionComponent {
 	protected submit(): void {
 		if (this.form.invalid) return;
 
-		const dto: CreateSectionDto = this.form.getRawValue();
+		const dto: CreateSectionDto = {
+			title: this.form.controls.title.value,
+		};
 
 		this.api
 			.createSection(dto)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: () => this.form.reset(),
-				error: (err) => console.error('Ошибка создания секции', err),
+				next: () => {
+					this.toastStore.success('Секция успешно создана');
+					this.form.reset();
+				},
+				error: (err) => {
+					this.toastStore.error(err?.message ?? 'Ошибка при создании секции');
+				},
 			});
 	}
 }

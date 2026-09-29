@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthByOauthComponent } from '@features/auth-by-oauth';
@@ -22,12 +22,6 @@ export class HeaderComponent {
 	private readonly router = inject(Router);
 	protected readonly userStore = inject(UserStore);
 	protected readonly isAuthOpen = signal<boolean>(false);
-
-	constructor() {
-		effect(() => {
-			console.log(this.userStore.isAdmin());
-		});
-	}
 
 	protected openAuth(): void {
 		this.isAuthOpen.set(true);
