@@ -1,11 +1,8 @@
 {
 	"name": "ngalg",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"description": "ngalg — educational platform frontend",
+	"license": "MIT",
 	"packageManager": "pnpm@11.7.0",
 	"scripts": {
 		"ng": "ng",

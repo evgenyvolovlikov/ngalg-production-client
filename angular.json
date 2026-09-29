@@ -14,7 +14,7 @@
 					"style": "scss",
 					"changeDetection": "OnPush",
 					"displayBlock": true,
-					"skipTests": false
+					"skipTests": true
 				}
 			},
 			"root": "",

@@ -4,7 +4,7 @@
 		"outDir": "./out-tsc/app",
 		"types": []
 	},
-	"files": ["src/index.ts"],
-	"include": ["src/**/*.d.ts", "src/**/*.ts", "eslint.config.ts"],
+	"files": ["src/index.ts", "eslint.config.ts"],
+	"include": ["src/**/*.d.ts", "src/**/*.ts"],
 	"exclude": ["node_modules", "dist"]
 }
