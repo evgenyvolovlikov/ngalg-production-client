@@ -80,7 +80,7 @@ export class ManageArticleComponent implements OnInit {
 			level: article.level,
 			leadText: article.leadText,
 			description: article.description,
-			problemId: article.problemId ?? null,
+			// problemId: article.problemId ?? null,
 			readingTimeMinutes: article.readingTimeMinutes,
 			coverImage: {
 				url: article.coverImage?.url ?? '',

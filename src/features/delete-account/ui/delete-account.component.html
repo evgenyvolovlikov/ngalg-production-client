@@ -1,0 +1,53 @@
+<app-card class="account-deletion-block">
+	<div class="block-header">
+		<app-icon name="trash-bin" size="l" />
+		<h3 class="block-title">Удаление аккаунта</h3>
+	</div>
+
+	<div class="block-description">
+		<p class="text-body">Здесь можно удалить аккаунт. Это крайняя мера — используйте её только если уверены.</p>
+		<p class="text-body">Будут безвозвратно удалены: доступ к курсу, история транзакций.</p>
+	</div>
+
+	<div class="block-actions">
+		<button app-button type="button" variant="filled" color="error" (click)="onDeleteAccount()">
+			<span>Удалить аккаунт</span>
+		</button>
+	</div>
+</app-card>
+
+<app-modal [isOpen]="isDeleting()" (isOpenChange)="handleModalOpen()" size="l">
+	<div class="modal-content">
+		<div class="modal-header">
+			<app-icon name="trash-bin" color="var(--status-error)" size="l" />
+			<h3 class="modal-title">Подтвердите удаление</h3>
+		</div>
+
+		<p class="modal-body">Вы будете автоматически разлогинены. Аккаунт будет стёрт.</p>
+
+		<p class="modal-emphasis">
+			<strong>Это действие нельзя отменить.</strong>
+		</p>
+
+		<p class="modal-confirm-question">Вы уверены, что хотите продолжить?</p>
+
+		<div class="modal-actions">
+			<button app-button type="button" variant="outline" (click)="handleModalOpen()">Отмена</button>
+
+			<button
+				app-button
+				type="button"
+				variant="filled"
+				color="error"
+				[disabled]="isProcessing()"
+				(click)="confirmDeletion()"
+			>
+				@if (!isProcessing()) {
+					<span>Да, удалить</span>
+				} @else {
+					<span>Удаление…</span>
+				}
+			</button>
+		</div>
+	</div>
+</app-modal>

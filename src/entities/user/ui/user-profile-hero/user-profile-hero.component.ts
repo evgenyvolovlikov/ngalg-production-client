@@ -2,10 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 
 import { UserProfile } from '../../model/user.types';
 
-const PROVIDER_LABELS: Record<UserProfile['provider'], string> = {
-	GOOGLE: 'Google',
-	GITHUB: 'GitHub',
-};
+type AuthProvider = 'GOOGLE' | 'GITHUB'; // ← ДОБАВИТЬ
 
 @Component({
 	selector: 'app-user-profile-hero',
@@ -27,5 +24,11 @@ export class UserProfileHeroComponent {
 	readonly avatarUrl = computed(() => this.profile().avatarUrl ?? null);
 	readonly accountType = computed(() => this.profile().accounts);
 
-	readonly providerLabels = PROVIDER_LABELS;
+	readonly providerLabels = computed(
+		() =>
+			({
+				GOOGLE: 'Google',
+				GITHUB: 'GitHub',
+			}) as Record<AuthProvider, string>,
+	);
 }

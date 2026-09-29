@@ -7,6 +7,7 @@ import { BaseApiService } from '@shared/api/base-api.service';
 
 import {
 	CourseEntity,
+	CourseProgressStats,
 	CourseSectionEntity,
 	CourseSkeleton,
 	CreateCourseDto,
@@ -21,36 +22,40 @@ export class CourseApiService extends BaseApiService {
 	private readonly sectionsPath = ApiPaths.SECTIONS;
 
 	getCourseSkeleton(slug: string): Observable<CourseSkeleton> {
-		return this.get<CourseSkeleton>(`/${this.coursesPath}/${slug}`);
+		return this.get<CourseSkeleton>(`${this.coursesPath}/${slug}`);
+	}
+
+	getCourseProgress(slug: string): Observable<CourseProgressStats> {
+		return this.get<CourseProgressStats>(`${this.coursesPath}/${slug}/progress`);
 	}
 
 	createCourse(dto: CreateCourseDto): Observable<CourseEntity> {
-		return this.post<CourseEntity, CreateCourseDto>(`/${this.coursesPath}`, dto);
+		return this.post<CourseEntity, CreateCourseDto>(this.coursesPath, dto);
 	}
 
 	updateCourse(id: string, dto: UpdateCourseDto): Observable<CourseEntity> {
-		return this.patch<CourseEntity, UpdateCourseDto>(`/${this.coursesPath}/${id}`, dto);
+		return this.patch<CourseEntity, UpdateCourseDto>(`${this.coursesPath}/${id}`, dto);
 	}
 
 	deleteCourse(id: string): Observable<void> {
-		return this.delete<void>(`/${this.coursesPath}/${id}`);
+		return this.delete<void>(`${this.coursesPath}/${id}`);
 	}
 
 	createSection(courseId: string, dto: CreateCourseSectionDto): Observable<CourseSectionEntity> {
 		return this.post<CourseSectionEntity, CreateCourseSectionDto>(
-			`/${this.coursesPath}/${courseId}/${this.sectionsPath}`,
+			`${this.coursesPath}/${courseId}/${this.sectionsPath}`,
 			dto,
 		);
 	}
 
 	updateSection(id: string, dto: UpdateCourseSectionDto): Observable<CourseSectionEntity> {
 		return this.patch<CourseSectionEntity, UpdateCourseSectionDto>(
-			`/${this.coursesPath}/${this.sectionsPath}/${id}`,
+			`${this.coursesPath}/${this.sectionsPath}/${id}`,
 			dto,
 		);
 	}
 
 	deleteSection(id: string): Observable<void> {
-		return this.delete<void>(`/${this.coursesPath}/${this.sectionsPath}/${id}`);
+		return this.delete<void>(`${this.coursesPath}/${this.sectionsPath}/${id}`);
 	}
 }

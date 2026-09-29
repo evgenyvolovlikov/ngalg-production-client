@@ -1,14 +1,14 @@
 <div class="circular-progress" [style.width.px]="size()" [style.height.px]="size()">
-	<svg [attr.viewBox]="viewBox()" class="progress-svg">
+	<svg [attr.viewBox]="viewBox()" class="circular-progress__svg">
 		<circle
-			class="progress-track"
+			class="circular-progress__track"
 			[attr.cx]="center()"
 			[attr.cy]="center()"
 			[attr.r]="radius()"
 			[attr.stroke-width]="strokeWidth()"
 		/>
 		<circle
-			class="progress-indicator"
+			class="circular-progress__indicator"
 			[attr.cx]="center()"
 			[attr.cy]="center()"
 			[attr.r]="radius()"
@@ -19,8 +19,8 @@
 	</svg>
 
 	@if (showLabel()) {
-		<div class="progress-label">
-			<span class="value">{{ normalizedValue() }}%</span>
+		<div class="circular-progress__label">
+			<span class="circular-progress__value">{{ normalizedValue() }}%</span>
 			<ng-content />
 		</div>
 	}

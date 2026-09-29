@@ -1,10 +1,10 @@
-This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
 
 <file_summary>
 This section contains a summary of this file.
 
 <purpose>
-This file contains a packed representation of the entire repository's contents.
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 </purpose>
@@ -32,6 +32,7 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: src/**
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -40,61 +41,6 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
-.github/
-  workflows/
-    ci.yml
-.husky/
-  commit-msg
-  pre-commit
-preparation/
-  angular-theory-questions/
-    index.md
-  leetcode/
-    search/
-      binary-search.ts
-      linary-search.ts
-    structures/
-      linked-list.ts
-    1. Two Sum.ts
-    11. Container With Most Water.ts
-    125. Valid Palindrome.ts
-    217. Contains Duplicate.ts
-    3. Longest Substring Without Repeating Characters.ts
-    42. Trapping Rainwater.ts
-    680. Valid Palindrome II.ts
-    844. Backspace Compare.ts
-    big-o.ts
-public/
-  assets/
-    arrow-right.svg
-    bars.svg
-    book-open.svg
-    check.svg
-    circle-info-fill.svg
-    circle-xmark-fill.svg
-    clock.svg
-    credit-card.svg
-    envelope.svg
-    eye-closed.svg
-    eye-opened.svg
-    floppy-disk.svg
-    lock.svg
-    logo-github.svg
-    logo-google.svg
-    logo.svg
-    moon.svg
-    pencil-to-square.svg
-    person.svg
-    sun.svg
-    triangle-exclamation-fill.svg
-    triangle-exclamation.svg
-    xmark.svg
-  fonts/
-    geist-mono/
-      .gitkeep
-    geist-sans/
-      .gitkeep
-    README.md
 src/
   app/
     layouts/
@@ -106,6 +52,9 @@ src/
         main-layout.component.html
         main-layout.component.scss
         main-layout.component.ts
+    lib/
+      guards/
+        redirect-if-authenticated.guard.ts
     providers/
       app.config.ts
     routes/
@@ -184,10 +133,16 @@ src/
           course-progress.component.html
           course-progress.component.scss
           course-progress.component.ts
+        course-progress-card/
+          course-progress-card.component.html
+          course-progress-card.component.scss
+          course-progress-card.component.ts
       index.ts
     lesson/
       api/
         lesson-api.service.ts
+      model/
+        lesson.types.ts
       ui/
         lesson-card/
           lesson-card.component.html
@@ -241,6 +196,12 @@ src/
         create-section.component.scss
         create-section.component.ts
       index.ts
+    delete-account/
+      ui/
+        delete-account.component.html
+        delete-account.component.scss
+        delete-account.component.ts
+      index.ts
     lesson-navigation/
       ui/
         lesson-navigation-controls.component.html
@@ -283,9 +244,20 @@ src/
         mark-lesson-watched.component.html
         mark-lesson-watched.component.ts
       index.ts
+    update-username/
+      ui/
+        update-username-card.component.html
+        update-username-card.component.scss
+        update-username-card.component.ts
+      index.ts
   pages/
     account-overview-page/
+      model/
+        account-overview.store.ts
+      account-overview-page.component.scss
       account-overview-page.component.ts
+    account-settings/
+      account-settings-page.component.ts
     account-transactions-page/
       account-transactions-page.component.ts
     articles-editor-page/
@@ -331,6 +303,7 @@ src/
         unique-id.ts
     ui/
       accordion/
+        accordion.component.html
         accordion.component.scss
         accordion.component.ts
         index.ts
@@ -352,6 +325,10 @@ src/
         button.component.html
         button.component.scss
         button.component.ts
+        index.ts
+      card/
+        card.component.scss
+        card.component.ts
         index.ts
       checkbox/
         checkbox.component.html
@@ -394,6 +371,11 @@ src/
         modal.component.html
         modal.component.scss
         modal.component.ts
+      progress-bar/
+        index.ts
+        progress-bar.component.html
+        progress-bar.component.scss
+        progress-bar.component.ts
       select/
         index.ts
         select.component.html
@@ -458,1230 +440,779 @@ src/
   index.html
   index.scss
   index.ts
-.commitlintrc.json
-.editorconfig
-.gitignore
-.lintstagedrc.json
-.prettierrc
-.stylelintrc.json
-angular.json
-CHANGES.md
-eslint.config.ts
-package.json
-pnpm-workspace.yaml
-README-REFACTOR.md
-tsconfig.app.json
-tsconfig.json
-vercel.json
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
 
-<file path="src/entities/user/model/user.store.ts">
-import { Injectable, computed, inject, signal } from '@angular/core';
+<file path="src/entities/course/ui/course-progress-card/course-progress-card.component.html">
+<app-card>
+	<div class="card-header">
+		<app-icon name="book-open" />
+		<h3>Прогресс курса</h3>
+	</div>
 
-import { Observable, catchError, finalize, of, tap } from 'rxjs';
+	<div class="card-content">
+		<app-progress-bar [value]="progress().percentage"></app-progress-bar>
+	</div>
 
-import { UserApiService } from '../api/user-api.service';
-import { UserProfile } from './user.types';
+	<div class="card-footer">
+		<a app-link routerLink="{{ navigateTo() }}">
+			<span>Продолжить</span>
+			<app-icon [name]="'arrow-right'"></app-icon>
+		</a>
+	</div>
+</app-card>
+</file>
 
-@Injectable({
-	providedIn: 'root',
+<file path="src/entities/course/ui/course-progress-card/course-progress-card.component.scss">
+.card-header {
+	display: flex;
+	gap: var(--unit-2);
+	align-items: center;
+
+	h3 {
+		margin: 0;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-medium);
+		color: var(--text-primary);
+	}
+}
+
+.card-content {
+	margin-top: var(--unit-4);
+}
+
+.card-footer {
+	margin-top: var(--unit-6);
+	text-align: right;
+}
+</file>
+
+<file path="src/entities/course/ui/course-progress-card/course-progress-card.component.ts">
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { AppLinkComponent } from '@shared/ui/app-link';
+import { CardComponent } from '@shared/ui/card';
+import { IconComponent } from '@shared/ui/icon';
+import { ProgressBarComponent } from '@shared/ui/progress-bar';
+
+import { CourseProgressStats } from '../../model/course.types';
+
+@Component({
+	selector: 'app-course-progress-card',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [
+		CommonModule,
+		CardComponent,
+		ProgressBarComponent,
+		IconComponent,
+		RouterLink,
+		AppLinkComponent,
+	],
+	templateUrl: './course-progress-card.component.html',
+	styleUrl: './course-progress-card.component.scss',
 })
-export class UserStore {
+export class CourseProgressCardComponent {
+	public navigateTo = input.required<string | string[]>();
+	readonly progress = input.required<CourseProgressStats>();
+}
+</file>
+
+<file path="src/entities/lesson/model/lesson.types.ts">
+export interface BaseEntity {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface LessonEntity extends BaseEntity {
+	courseId: string;
+	sectionId: string | null;
+	sequenceOrder: number;
+	title: string;
+	description: string | null;
+	videoUrl: string | null;
+	durationSeconds: number;
+	isFree: boolean;
+	hasCodeEditor: boolean;
+}
+
+export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
+	isCompleted?: boolean;
+};
+
+export interface CourseSkeletonLesson {
+	id: string;
+	sectionId: string | null;
+	sequenceOrder: number;
+	title: string;
+	description: string | null;
+	durationSeconds: number;
+	isFree: boolean;
+	hasCodeEditor: boolean;
+	isCompleted: boolean;
+}
+
+export interface ToggleLessonProgressResponse {
+	completed: boolean;
+}
+
+export interface CreateLessonDto {
+	sectionId?: string;
+	sequenceOrder: number;
+	title: string;
+	description?: string;
+	videoUrl?: string;
+	durationSeconds?: number;
+	isFree?: boolean;
+	hasCodeEditor?: boolean;
+}
+
+export type UpdateLessonDto = Partial<CreateLessonDto>;
+</file>
+
+<file path="src/features/delete-account/ui/delete-account.component.html">
+<app-card class="account-deletion-block">
+	<div class="block-header">
+		<app-icon name="trash-bin" size="l" />
+		<h3 class="block-title">Удаление аккаунта</h3>
+	</div>
+
+	<div class="block-description">
+		<p class="text-body">Здесь можно удалить аккаунт. Это крайняя мера — используйте её только если уверены.</p>
+		<p class="text-body">Будут безвозвратно удалены: доступ к курсу, история транзакций.</p>
+	</div>
+
+	<div class="block-actions">
+		<button app-button type="button" variant="filled" color="error" (click)="onDeleteAccount()">
+			<span>Удалить аккаунт</span>
+		</button>
+	</div>
+</app-card>
+
+<app-modal [isOpen]="isDeleting()" (isOpenChange)="handleModalOpen()" size="l">
+	<div class="modal-content">
+		<div class="modal-header">
+			<app-icon name="trash-bin" color="var(--status-error)" size="l" />
+			<h3 class="modal-title">Подтвердите удаление</h3>
+		</div>
+
+		<p class="modal-body">Вы будете автоматически разлогинены. Аккаунт будет стёрт.</p>
+
+		<p class="modal-emphasis">
+			<strong>Это действие нельзя отменить.</strong>
+		</p>
+
+		<p class="modal-confirm-question">Вы уверены, что хотите продолжить?</p>
+
+		<div class="modal-actions">
+			<button app-button type="button" variant="outline" (click)="handleModalOpen()">Отмена</button>
+
+			<button
+				app-button
+				type="button"
+				variant="filled"
+				color="error"
+				[disabled]="isProcessing()"
+				(click)="confirmDeletion()"
+			>
+				@if (!isProcessing()) {
+					<span>Да, удалить</span>
+				} @else {
+					<span>Удаление…</span>
+				}
+			</button>
+		</div>
+	</div>
+</app-modal>
+</file>
+
+<file path="src/features/delete-account/ui/delete-account.component.scss">
+.account-deletion-block {
+	.block-header {
+		display: flex;
+		gap: var(--unit-3);
+		align-items: center;
+		margin-bottom: var(--unit-4);
+
+		.block-title {
+			margin: 0;
+			font-size: var(--font-size-xl);
+			font-weight: var(--font-weight-bold);
+			color: var(--text-primary);
+		}
+	}
+
+	.block-description {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: var(--unit-6);
+
+		.text-body {
+			margin: 0;
+			font-size: var(--font-size-sm);
+			line-height: var(--line-height-base);
+			color: var(--text-secondary);
+		}
+	}
+
+	.block-actions {
+		width: 100%;
+
+		button {
+			width: 100%;
+			padding: var(--unit-4) var(--unit-6);
+			border-radius: var(--radius-md);
+			font-size: var(--font-size-base);
+			font-weight: var(--font-weight-bold);
+		}
+	}
+}
+
+.modal-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-2);
+	width: 100%;
+	max-width: 500px;
+	padding: var(--unit-6);
+}
+
+.modal-header {
+	display: flex;
+	gap: var(--unit-3);
+	align-items: center;
+
+	.modal-title {
+		margin: 0;
+		font-size: var(--font-size-xl);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+}
+
+.modal-body {
+	font-size: var(--font-size-sm);
+	line-height: var(--line-height-base);
+	color: var(--text-secondary);
+}
+
+.modal-emphasis {
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-bold);
+	color: var(--status-error);
+}
+
+.modal-confirm-question {
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-medium);
+	color: var(--text-primary);
+}
+
+.modal-actions {
+	display: flex;
+	gap: var(--unit-3);
+	justify-content: flex-end;
+	margin-top: var(--unit-4);
+
+	button {
+		padding: var(--unit-2) var(--unit-4);
+		font-size: var(--font-size-sm);
+		font-weight: var(--font-weight-medium);
+	}
+}
+</file>
+
+<file path="src/features/delete-account/ui/delete-account.component.ts">
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+
+import { ButtonComponent } from '@shared/ui/button';
+import { CardComponent } from '@shared/ui/card';
+import { IconComponent } from '@shared/ui/icon';
+import { ModalComponent } from '@shared/ui/modal';
+
+@Component({
+	selector: 'app-delete-account',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [CardComponent, ButtonComponent, IconComponent, ModalComponent],
+	templateUrl: './delete-account.component.html',
+	styleUrl: './delete-account.component.scss',
+})
+export class DeleteAccountComponent {
+	protected isDeleting = signal<boolean>(false);
+	protected isProcessing = signal<boolean>(false);
+
+	onDeleteAccount(): void {
+		this.isDeleting.set(true);
+	}
+
+	handleModalOpen(): void {
+		this.isDeleting.update((value) => !value);
+		if (this.isProcessing()) {
+			this.isProcessing.set(false);
+		}
+	}
+
+	confirmDeletion(): void {
+		if (this.isProcessing()) return;
+		this.isProcessing.set(true);
+	}
+}
+</file>
+
+<file path="src/features/delete-account/index.ts">
+export * from './ui/delete-account.component';
+</file>
+
+<file path="src/features/update-username/ui/update-username-card.component.html">
+<app-card>
+	<div class="card-header">
+		<app-icon name="person" />
+		<h3>Username</h3>
+	</div>
+
+	<div class="card-description">
+		<p>Ваш псевдоним будет виден другим пользователям.</p>
+	</div>
+
+	<div class="card-content">
+		@if (!isEditing()) {
+			<div class="view-mode">
+				<p class="username-value">{{ userStore.profile()?.username }}</p>
+				<button app-button type="button" variant="outline" (click)="onEdit()">
+					<app-icon name="pencil-to-square" />
+					<span>Редактировать</span>
+				</button>
+			</div>
+		} @else {
+			<form [formGroup]="form" (ngSubmit)="onSave()" class="edit-mode">
+				<div class="input-wrapper">
+					<app-input formControlName="username"></app-input>
+				</div>
+
+				@if (errorMessage()) {
+					<p class="form-error">{{ errorMessage() }}</p>
+				}
+
+				<div class="form-actions">
+					<button app-button type="submit" [disabled]="form.invalid || isSaving()">
+						<app-icon name="floppy-disk" />
+						<span>{{ isSaving() ? "Сохранение..." : "Сохранить" }}</span>
+					</button>
+					<button app-button type="button" variant="outline" [disabled]="isSaving()" (click)="onCancel()">
+						Отмена
+					</button>
+				</div>
+			</form>
+		}
+	</div>
+</app-card>
+</file>
+
+<file path="src/features/update-username/ui/update-username-card.component.scss">
+@use 'media' as media;
+
+.card-header {
+	display: flex;
+	gap: var(--unit-2);
+	align-items: center;
+
+	.header-icon {
+		width: var(--unit-6);
+		height: var(--unit-6);
+		color: var(--text-primary);
+	}
+
+	h3 {
+		margin: 0;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-medium);
+		line-height: var(--line-height-tight);
+		color: var(--text-primary);
+	}
+}
+
+.card-description {
+	margin-top: var(--unit-2);
+
+	p {
+		margin: 0;
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-base);
+		color: var(--text-muted);
+	}
+}
+
+.card-content {
+	margin-top: var(--unit-4);
+}
+
+.view-mode {
+	display: flex;
+	gap: var(--unit-4);
+	justify-content: space-between;
+	align-items: center;
+
+	.username-value {
+		margin: 0;
+		border-radius: var(--radius-sm);
+		font-size: var(--font-size-base);
+		color: var(--text-primary);
+	}
+
+	@include media.media-below('md') {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.edit-mode {
+	display: flex;
+	flex-direction: row;
+	gap: var(--unit-3);
+	justify-content: space-between;
+	align-items: flex-start;
+
+	.input-wrapper {
+		flex: 1;
+		width: 100%;
+	}
+
+	.form-error {
+		margin: 0;
+		font-size: var(--font-size-sm);
+		color: var(--status-error);
+	}
+
+	.form-actions {
+		display: flex;
+		flex-shrink: 0;
+		gap: var(--unit-2);
+	}
+
+	@include media.media-below('md') {
+		flex-direction: column;
+		align-items: stretch;
+
+		.input-wrapper {
+			max-width: none;
+		}
+
+		.form-actions {
+			flex-direction: column;
+
+			::ng-deep button {
+				width: 100%;
+			}
+		}
+	}
+}
+</file>
+
+<file path="src/features/update-username/ui/update-username-card.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	OnInit,
+	inject,
+	signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { UserApiService, UserStore } from '@entities/user';
+
+import { ButtonComponent } from '@shared/ui/button';
+import { CardComponent } from '@shared/ui/card';
+import { IconComponent } from '@shared/ui/icon';
+import { InputComponent } from '@shared/ui/input';
+
+@Component({
+	selector: 'app-update-username-card',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [ReactiveFormsModule, CardComponent, InputComponent, ButtonComponent, IconComponent],
+	templateUrl: './update-username-card.component.html',
+	styleUrl: './update-username-card.component.scss',
+})
+export class UpdateUsernameCardComponent implements OnInit {
+	private readonly fb = inject(NonNullableFormBuilder);
+	protected readonly userStore = inject(UserStore);
 	private readonly userApi = inject(UserApiService);
+	private readonly destroyRef = inject(DestroyRef);
 
-	private readonly profileState = signal<UserProfile | null>(null);
-	private readonly loadingState = signal<boolean>(false);
-	private readonly loadedState = signal<boolean>(false);
+	protected readonly isSaving = signal(false);
+	protected readonly isEditing = signal(false);
+	protected readonly errorMessage = signal<string | null>(null);
 
-	readonly profile = this.profileState.asReadonly();
-	readonly isLoading = this.loadingState.asReadonly();
-	readonly isLoaded = this.loadedState.asReadonly();
+	protected readonly form = this.fb.group({
+		username: ['', [Validators.required, Validators.minLength(3)]],
+	});
 
-	readonly isAuthenticated = computed(() => this.profileState() !== null);
-
-	load(): Observable<UserProfile | null> {
-		this.loadingState.set(true);
-
-		return this.userApi.getMyProfile().pipe(
-			tap((profile) => this.profileState.set(profile)),
-			catchError(() => {
-				this.profileState.set(null);
-				return of(null);
-			}),
-			finalize(() => {
-				this.loadingState.set(false);
-				this.loadedState.set(true);
-			}),
-		);
+	ngOnInit(): void {
+		this.resetForm();
 	}
 
-	clear(): void {
-		this.profileState.set(null);
-	}
-}
-</file>
-
-<file path="src/features/auth-by-oauth/lib/guards/auth.guard.ts">
-import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
-
-import { UserStore } from '@entities/user';
-
-export const authGuard: CanActivateFn = () => {
-	const store = inject(UserStore);
-	return store.isAuthenticated() ? true : inject(Router).createUrlTree(['/']);
-};
-</file>
-
-<file path="preparation/angular-theory-questions/index.md">
-# 300 Вопросов для Собеседования по Angular (Полная База)
-
----
-
-## 🟢 ЧАСТЬ 1: ОСНОВЫ И БАЗОВЫЙ УРОВЕНЬ (JUNIOR / JUNIOR+)
-
-### Архитектура и CLI
-
-1. Что такое **Angular** и в чем его главные отличия от React или Vue?
-2. Зачем нужен файл `angular.json`?
-3. Что такое **TypeScript** и почему Angular использует его по умолчанию?
-4. Расскажите про архитектуру Angular-приложения. Что такое модули, компоненты и сервисы?
-5. Что такое **CLI (Command Line Interface)** и какие основные команды вы знаете?
-6. Как создать новый компонент/сервис/директиву через CLI?
-7. Что такое **Strict Mode** в Angular и зачем он нужен?
-8. Что такое **Polyfills** и какую роль они играют?
-9. Чем отличается команда `ng build` от `ng serve` с точки зрения итогового артефакта?
-10. Как с помощью CLI сгенерировать Angular-приложение сразу с поддержкой SSR?
-11. Для чего нужен флаг `--dry-run` при генерации файлов через CLI?
-12. Что такое `strictPropertyInitialization` в `tsconfig.json` и как это влияет на написание кода в
-    компонентах?
-13. Что такое `index.html` в Angular проекте и как в него динамически подставляются скрипты?
-
-### Компоненты, Шаблоны и Связывание данных
-
-14. Из каких файлов обычно состоит компонент?
-15. Что такое **Data Binding (связывание данных)**? Назовите 4 его типа.
-16. Как работает **двустороннее связывание (Two-Way Data Binding)**? Какой синтаксис для этого
-    используется?
-17. В чем разница между `Property Binding` и `Attribute Binding`?
-18. Что такое декоратор `@Component` и какие основные свойства метаданных вы используете?
-19. Для чего нужен декоратор `@Input()`?
-20. Для чего нужен декоратор `@Output()` и класс `EventEmitter`?
-21. Что такое **Interpolation** (интерполяция) и какой синтаксис у нее в Angular?
-22. Как в шаблоне Angular закомментировать строку, чтобы этого комментария не было в финальном HTML?
-23. Что такое **Safe Navigation Operator** (`?.`) и в каких случаях он предотвращает падение
-    приложения?
-24. Что такое **Non-null Assertion Operator** (`!.`) и когда его уместно использовать в
-    TypeScript-коде компонентов?
-25. Какое значение по умолчанию принимает `@Input()`, если родительский компонент ничего не передал?
-26. Как работает селектор атрибута (например, `selector: '[app-custom]'`) в декораторе `@Component`?
-27. Можно ли в одном компоненте использовать и `template`, и `templateUrl` одновременно?
-28. В чем разница между свойствами `textContent` и `innerHTML` при байндинге через Angular? Почему
-    Angular по умолчанию экранирует `innerHTML`?
-29. Как работает байндинг стилей с единицами измерения (например, `[style.width.px]="width"`) и чем
-    он лучше обычной конкатенации строк?
-
-### Жизненный цикл (Lifecycle Hooks)
-
-30. Что такое **Жизненный цикл компонента (Component Lifecycle)**? Назовите основные хуки.
-31. В чем разница между `ngOnInit` и `constructor` компонента? Когда что использовать?
-32. Что делает хук `ngOnDestroy` и почему он важен для предотвращения утечек памяти?
-33. Каков порядок вызова хуков жизненного цикла?
-34. Что произойдет, если в хуке `ngOnInit` вызвать метод, который меняет переменную, привязанную к
-    шаблону?
-35. Почему в методе `ngOnChanges` аргументом приходит объект `SimpleChanges`? Что он содержит?
-
-### Директивы и Пайпы (Pipes)
-
-36. Что такое **директива** в Angular?
-37. Назовите 3 типа директив в Angular.
-38. В чем разница между структурными (`*ngIf`, `*ngFor`) и атрибутивными (`ngClass`, `ngStyle`)
-    директивами?
-39. Зачем нужен синтаксис `trackBy` в директиве `*ngFor`?
-40. Что такое встроенный **Control Flow** (начиная с Angular 17) и чем `@if` / `@for` лучше старых
-    директив?
-41. Как создать кастомную атрибутивную директиву?
-42. Что такое **Pipe (пайп/канал)**? Приведите примеры встроенных пайпов.
-43. В чем разница между **Pure** и **Impure** пайпами?
-44. Как написать кастомный пайп?
-45. Как внутри кастомной директивы получить доступ к нативному DOM-элементу, на который она
-    навешена?
-46. Что такое `HostListener` и `HostBinding`? Для чего они используются в директивах?
-47. Можно ли применить несколько структурных директив (например, старые `*ngIf` и `*ngFor`) на один
-    и тот же HTML-элемент? Как решить эту проблему?
-48. Что будет, если передать в пайп значение `null` или `undefined`?
-49. Что произойдет, если передать асинхронный пайп (`| async`) внутрь директивы `*ngFor`? Сколько
-    подписок будет создано?
-50. Как работает приоритет директив, если на одном элементе висят две разные кастомные директивы?
-    Как Angular решает, какая выполнится первой?
-51. Что такое `exportAs` в декораторе `@Directive` и как это позволяет получить доступ к методам
-    директивы прямо в шаблоне?
-
-### Сервисы и Базовый DI (Dependency Injection)
-
-52. Что такое **Service (сервис)** в Angular и для каких задач он применяется?
-53. Что такое **Dependency Injection (DI)**?
-54. Как зарегистрировать сервис в Angular (свойства `providedIn: 'root'` vs секция `providers`)?
-55. Что такое токен инъекции (`InjectionToken`)?
-56. Какую проблему решает декоратор `@Injectable()`?
-57. Как переиспользовать логику одного сервиса в другом сервисе?
-58. Что произойдет, если объявить сервис в массиве `providers` компонента, а не в `root`?
-59. Как работает иерархический DI, если у родительского и дочернего компонента объявлен один и тот
-    же сервис в секции `providers`?
-
----
-
-## 🟡 ЧАСТЬ 2: УГЛУБЛЕННЫЙ УРОВЕНЬ (MIDDLE / MIDDLE+)
-
-### Продвинутая работа с компонентами и DOM
-
-60. В чем разница между декораторами `@ViewChild` и `@ContentChild`?
-61. Что такое `@ViewChildren` и `@ContentChildren`?
-62. Для чего используется элемент `<ng-content>` (проекция контента)?
-63. Что такое `<ng-template>` и `<ng-container>`, и в чем их различие?
-64. Что такое `TemplateRef` и `ViewContainerRef`?
-65. Как динамически создавать компоненты в Angular?
-66. Что делает сервис `Renderer2` и почему изменять DOM через него безопаснее, чем напрямую через
-    `element.nativeElement.style...`?
-67. Что такое **Shadow DOM**? Какие режимы инкапсуляции стилей (`ViewEncapsulation`) есть в Angular?
-68. В чем разница между `ViewEncapsulation.Emulated`, `None` и `ShadowDom`?
-69. Как стилизовать дочерний компонент из родительского, если включена эмулированная инкапсуляция?
-    (Псевдоклассы `:host`, `::ng-deep`).
-70. Что делает декоратор `@Attribute` (не путать с `@Input`) и когда его выгодно использовать для
-    производительности?
-
-### RxJS и Асинхронное программирование
-
-71. Что такое **RxJS** и почему он так важен для Angular?
-72. В чем разница между `Observable` и `Promise`?
-73. Что такое **Subject** в RxJS? Назовите виды Subject (`BehaviorSubject`, `ReplaySubject`,
-    `AsyncSubject`) и их различия.
-74. Назовите топ-5 операторов RxJS, которые вы используете чаще всего, и объясните их суть.
-75. В чем разница между операторами `switchMap`, `mergeMap`, `concatMap` и `exhaustMap`?
-76. Зачем нужен пайп `async` (`| async`) в шаблонах? Какие у него преимущества?
-77. Какими способами можно отписаться от `Observable` в компоненте?
-78. Как работает оператор `takeUntil` для автоматической отписки?
-79. В чем разница между `Observable` горячего типа (Hot) и холодного типа (Cold)?
-80. Как превратить холодный `Observable` в горячий?
-81. Что делает оператор `shareReplay` и в каких сценариях он незаменим?
-82. В чем разница между операторами `debounceTime` и `throttleTime`? Приведите примеры использования
-    для UI.
-83. Как работает оператор `distinctUntilChanged`?
-84. Для чего нужен оператор `catchError` и почему после него часто используют `of()` или
-    `throwError()`?
-85. Разница между `forkJoin`, `combineLatest`, `zip` и `withLatestFrom`. В каких кейсах выбирать
-    каждый из них?
-86. Что делает функция `defer` в RxJS?
-87. Как работает паттерн **Declarative Data Fetching** (декларативное получение данных) в Angular с
-    помощью RxJS?
-88. Как обработать множественные клики по кнопке "Отправить форму", чтобы на сервер ушел только
-    последний запрос?
-89. Что такое утечка памяти (Memory Leak) через RxJS-подписки и как ее обнаружить в браузере?
-90. Как работает оператор `finalize` в Angular-сервисах при обработке HTTP-запросов? Гарантирует ли
-    он выполнение кода при ошибке или отмене запроса?
-91. В чем разница между `Subject` и `Void Subject` в TypeScript-контексте Angular-компонентов?
-92. Как паттерн **Data-by-Route** (получение данных на основе параметров маршрута) реализуется
-    связкой `ActivatedRoute.params` и `switchMap`?
-93. Как работает оператор `retry` с конфигурацией для реализации стратегии экспоненциального бэкаффа
-    (Exponential Backoff)?
-94. Что такое `windowWhen` и `bufferWhen`? В каких специфических сценариях Angular их применяют?
-95. Как избежать «гонки условий» (Race Conditions) при поиске по сайту с автокомплитом? Опишите
-    цепочку операторов RxJS.
-
-### Маршрутизация (Routing)
-
-96. Как настроить базовую маршрутизацию в Angular приложении?
-97. Что такое `<router-outlet>`?
-98. В чем разница между `routerLink` и программным переходом через `Router.navigate()`?
-99. Как передавать и получать параметры маршрута (`ActivatedRoute`)?
-100.    Что такое **Route Guards (гарды)**? Назовите основные типы (`CanActivate`, `CanDeactivate`,
-        `CanMatch` и др.).
-101.    Что такое **Lazy Loading (ленивая загрузка)** модулей или компонентов и как её настроить?
-102.    Как передавать статические данные в маршрут с помощью свойства `data`?
-103.    Что такое **Resolvers (резолверы)** и для чего они нужны?
-104.    Что такое `UrlTree` в Angular Router и как с ним работать программно?
-105.    Как настроить стратегию предварительной загрузки модулей (**Preloading Strategy**)? Как
-        написать кастомную стратегию?
-106.    В чем разница между функциональными гардами (Functional Guards) и старыми гардами на классах
-        (Class-based Guards)?
-107.    Как отменить переход пользователя на другую страницу, если у него есть несохраненные данные
-        в форме?
-108.    Как работает свойство `queryParamsHandling` при навигации?
-109.    Что такое `RouterScroller` и как настроить сохранение позиции скролла при переходах
-        назад/вперед?
-110.    Что такое `ComponentInputBinding` (введено в Angular 16+) и как оно меняет работу с
-        `ActivatedRoute`?
-111.    Как работает стратегия повторного использования маршрутов (`RouteReuseStrategy`)?
-112.    Что такое `Matcher` в конфигурации маршрута и как написать кастомную логику сопоставления
-        URL?
-113.    Как работает свойство `runGuardsAndResolvers` и в каких случаях его нужно менять со значения
-        по умолчанию?
-
-### Формы и Валидация (Forms)
-
-114. Какие два подхода к работе с формами есть в Angular? В чем их ключевые отличия?
-115. Что такое `FormGroup`, `FormControl` и `FormArray` в Reactive Forms?
-116. Как динамически добавлять или удалять поля формы с помощью `FormArray`?
-117. Как работают встроенные валидаторы (`Validators.required`, `Validators.email` и т.д.)?
-118. Как создать кастомный валидатор для Reactive Forms?
-119. Как создать **асинхронный валидатор** (например, для проверки уникальности email на сервере)?
-120. Как отслеживать изменения значения всей формы или конкретного поля (`valueChanges`)?
-121. Как связать кастомный UI-компонент с Angular Forms? Что такое `ControlValueAccessor`?
-122. Назовите 4 метода, которые необходимо реализовать при создании `ControlValueAccessor`.
-123. Что такое статус-классы формы (`ng-valid`, `ng-invalid`, `ng-dirty`, `ng-touched` и др.)?
-124. Как программно пометить `FormControl` как `touched` или `dirty`?
-125. Как сбросить значение формы (`reset()`) так, чтобы поля стали пустыми, а валидация не
-     подсвечивалась красным?
-126. Как в Reactive Forms сделать валидацию поля зависимой от значения другого поля (например,
-     совпадение паролей)?
-127. Как программно отключить (`disable()`) поле в `FormGroup` и как извлечь значение включая
-     заблокированные поля?
-128. Что такое свойство `updateOn` в настройках `FormControl`? Роль значений `'blur'` и `'submit'`.
-129. Как реализовать динамическую смену валидаторов на лету?
-130. Как работает метод `setParent()` у `FormControl`?
-131. Каким образом можно объединить результаты работы нескольких асинхронных валидаторов для одного
-     поля?
-
-### Работа с сетью (HttpClient)
-
-132. Как сделать GET и POST запросы с помощью модуля `HttpClient`?
-133. Что такое **HttpInterceptors (интерцепторы)** и для каких задач они применяются?
-134. Как обработать ошибки при HTTP-запросах в Angular?
-135. Как настроить передачу заголовков (Headers) и параметров запроса (Params) в `HttpClient`?
-
-### Angular Animations (Анимации)
-
-136. Как подключить модуль анимаций в современное Standalone-приложение (`provideAnimations` vs
-     `provideNoopAnimations`)?
-137. Из каких базовых функций состоит декларация анимации в Angular (`trigger`, `state`, `style`,
-     `transition`, `animate`)?
-138. Что означают зарезервированные состояния `*` (wildcard) и `void` в переходах анимаций?
-139. Что такое псевдо-состояния `:enter` и `:leave`? К какому синтаксису они приравниваются?
-140. Как работают функции `query()` и `stagger()` для анимации списков?
-141. Как передавать динамические параметры внутрь Angular-анимации из TS-кода компонента?
-142. Как отловить колбэки старта (`(@animation.start)`) и завершения (`(@animation.done)`) анимации
-     в шаблоне?
-
----
-
-## 🔴 ЧАСТЬ 3: ПРОДВИНУТЫЙ И ЭКСПЕРТНЫЙ УРОВЕНЬ (SENIOR / ARCHITECT)
-
-### Механизм Change Detection (Обнаружение изменений)
-
-143. Как устроен механизм **Change Detection** в Angular? Какую роль играет библиотека `zone.js`?
-144. Какие стратегии обнаружения изменений существуют (`Default` vs `OnPush`)?
-145. Как работает стратегия `ChangeDetectionStrategy.OnPush`? При каких условиях компонент
-     обновляется?
-146. Зачем нужен класс `ChangeDetectorRef`? Объясните разницу между `detectChanges()` и
-     `markForCheck()`.
-147. Что такое `NgZone` и как запустить код вне зоны Angular с помощью `runOutsideAngular()`?
-148. Как именно `zone.js` перехватывает асинхронные операции в браузере (патчинг макро- и
-     микрозадач)?
-149. Как перевеcти существующее приложение на **Zoneless** режим в Angular 18/19?
-150. Как работает механизм декорреляции зон (`Zone.js`) при использовании асинхронных генераторов?
-151. Как устроен механизм `NgZone` под капотом? Каким образом переопределяется глобальный объект
-     `window.setTimeout`?
-
-### Angular Signals (Сигналы и новая реактивность)
-
-152. Что такое **Signals (сигналы)** в Angular (введенные в версиях 16/17+)? Какие проблемы они
-     решают?
-153. В чем разница между `signal`, `computed` и `effect`?
-154. Как Сигналы влияют на Change Detection и почему в будущем Angular сможет работать без `zone.js`
-     (Zoneless)?
-155. Как преобразовать RxJS `Observable` в `Signal` и наоборот (`toSignal`, `toObservable`)?
-156. Что такое `input()` сигналы и `model()` сигналы?
-157. Как внутри `effect()` прочитать значение другого сигнала, не создавая на него зависимость
-     (функция `untracked`)?
-158. Что такое функция `cleanUp` внутри `effect()` и для чего она нужна?
-159. Какие подводные камни есть при использовании `toSignal`?
-160. В чем разница между обновлением объекта внутри Сигнала через `.set()` и `.update()`?
-161. Как работает функция `computed()` «под капотом»? Способ отслеживания зависимостей.
-162. Что такое **Glitch-free** эффект в контексте Сигналов Angular?
-163. Почему внутри `computed` сигнала запрещено изменять другие сигналы?
-164. Как с помощью `injector.get()` создать динамический `effect()` вне конструктора компонента?
-165. Как работают новые декораторы ввода/вывода на базе сигналов: `@Input({ transform: ... })`?
-     Функции `booleanAttribute`, `numberAttribute`.
-166. Что такое `linkedSignal` (введенный в Angular 19) и какую фундаментальную проблему он решает?
-167. Как устроен `resource()` (Angular 19) для асинхронной загрузки данных и чем он отличается от
-     связки `Observable` + `HttpClient`?
-168. Как устроена работа с памятью при передаче больших объемов данных через сигналы (`Signal`) по
-     сравнению со стейт-менеджерами типа NgRx?
-
-### Продвинутый Dependency Injection (Внедрение зависимостей)
-
-169. Что такое функция `inject()` (введена в Angular 14+) и как она меняет подход к написанию
-     компонентов и гардов?
-170. Можно ли вызывать `inject()` внутри обычного метода компонента, который срабатывает по клику
-     мыши? Почему?
-171. Как с помощью `inject()` реализовать паттерн "функциональный миксин" или переиспользовать
-     логику без наследования классов?
-172. Как организовать иерархию инжекторов (DI Scope) в крупном приложении? Как работают
-     `@Optional()`, `@Self()`, `@SkipSelf()`, `@Host()`?
-173. В чем разница между `EnvironmentInjector`, `ModuleInjector` и `ElementInjector`? Путь поиска
-     зависимости «снизу вверх».
-174. Как работает фабрика провайдеров (`useFactory`)? Передача зависимостей через массив `deps`.
-175. Зачем нужен `useExisting` и в каких сценариях алиасинг провайдеров спасает архитектуру
-     приложения?
-176. Что делает декоратор `@Host()` и чем физически ограничен поиск зависимости при его
-     использовании?
-177. Как работает токен `PLATFORM_ID` и как с его помощью писать изоморфный код (для браузера и
-     сервера)?
-178. Как устроен механизм **Multi-providers** (`multi: true`) в DI Angular? Приведите пример, где
-     это необходимо.
-179. Как переопределить провайдер на лету в лениво загружаемом модуле так, чтобы это не затронуло
-     глобальное состояние?
-180. В чем разница между `StaticProvider` и `ValueProvider` на уровне декларации типов компилятора?
-
-### Оптимизация производительности (Performance) и Сборка
-
-181. Какие практики вы используете для оптимизации скорости загрузки Angular-приложения (LCP, FCP)?
-182. Что такое **Tree Shaking** и как Angular избавляется от неиспользуемого кода?
-183. Что такое **AOT (Ahead-of-Time)** компиляция и чем она отличается от **JIT (Just-in-Time)**?
-184. Как проанализировать размер бандла приложения (например, с помощью `webpack-bundle-analyzer`)?
-185. Что такое **Deferrable Views** (`@defer`) в Angular 17+ и как они помогают оптимизировать
-     загрузку?
-186. Как оптимизировать рендеринг изображений с помощью директивы `NgOptimizedImage`?
-187. Как устроен новый билдер в Angular на базе **Esbuild** и **Vite** (Application Builder)?
-     Отличия от Webpack.
-188. Что такое **Budget (бюджеты)** в `angular.json` и как они помогают контролировать размер бандла
-     в CI/CD?
-189. Что такое триггеры в `@defer`? Разница между `on idle`, `on viewport`, `on interaction`,
-     `on hover`, `on timer`.
-190. Как работает блок `prefetch` совместно с `@defer`?
-191. Как оптимизировать работу со шрифтами в Angular, используя встроенные механизмы билдера?
-192. Как реализовать эффективное кэширование HTTP-запросов на уровне приложения?
-193. Что такое `Preconnect` и `Preload` в оптимизации ресурсов?
-194. С какими проблемами производительности можно столкнуться при использовании бесконечного скролла
-     на 10 000 элементов и как их решает **CDK Virtual Scroll**?
-195. Как работает оптимизация **Inlining Component Styles** в процессе сборки Angular-приложения?
-196. Как обрабатывать ошибки `ChunkLoadError` при обновлении приложения на сервере во время активной
-     сессии пользователя?
-
-### Внутреннее устройство Angular и компилятор Ivy
-
-197. Что такое **Incremental DOM** и почему разработчики Angular выбрали его вместо Virtual DOM?
-198. Что такое глобальный объект `ng` в консоли браузера в dev-режиме? Утилиты `ng.getComponent`,
-     `ng.applyChanges`.
-199. Как устроены два основных прохода Ivy-компилятора: роль `RenderFlags.Create` и
-     `RenderFlags.Update`.
-200. Как Angular связывает TS-классы с DOM-элементами через внутренние структуры `LView` и `TView`?
-201. Что такое ложное сохранение памяти через `ComponentRef`? Как правильно уничтожить динамический
-     компонент?
-202. В чем разница между `ViewRef`, `EmbeddedViewRef`, `HostView` и `ElementRef`?
-203. Как работает компилятор Angular (**Ivy**) «под капотом»? Инструкции `template` в
-     скомпилированном коде.
-204. Как ведут себя метаданные декораторов Angular при использовании JIT-компиляции в браузере? Роль
-     `reflect-metadata`.
-205. В чем разница между методами компиляции Ivy: `compileComponent` и `compileDirective` на уровне
-     внутреннего API?
-206. Каким образом Angular изолирует стили компонентов, генерируя атрибуты вида `_ngcontent-cX`?
-     Алгоритм генерации хэша.
-
-### SSR, SSG и Гидратация (Server-Side Rendering)
-
-207. Что такое **Angular Universal / Angular SSR**? Зачем он нужен (SEO, Performance)?
-208. Что такое **Hydration** (гидратация) в контексте современного Angular SSR и как работает
-     **Non-destructive Hydration**?
-209. С какими проблемами можно столкнуться при использовании объектов `window` или `document` в SSR,
-     и как их решать (`isPlatformBrowser`)?
-210. В чем разница между SSR (Server-Side Rendering) и SSG (Prerendering / Static Site Generation) в
-     Angular?
-211. Что такое **Event Replay** в контексте гидратации Angular (начиная с Angular 18)?
-212. Как исключить определенный компонент (например, тяжелый Canvas график) из серверного
-     рендеринга?
-213. Как передать состояние (стейт) с сервера на клиент, чтобы избежать повторных HTTP-запросов при
-     гидратации (`TransferState`)?
-214. Что такое `State Restoration` в Angular Router при работе с SSR?
-215. Что такое **Mismatched Hydration Error** (ошибка расхождения гидратации)? Из-за чего возникает
-     и как дебажить?
-216. Как директива `ngSkipHydration` позволяет временно скрыть ошибки гидратации и каковы
-     последствия её применения?
-217. Как работает концепция **Partial Hydration** (частичной гидратации) и как она пересекается с
-     Deferrable Views (`@defer`)?
-218. Зачем нужен сервис `BeforeAppSerialized` при рендеринге на стороне сервера?
-219. Почему длительные асинхронные таски (например, `setInterval`) могут подвесить серверный
-     рендеринг страницы навсегда?
-220. Как гарантировать, что один и тот же синглтон-сервис инициализируется уникально для каждого
-     HTTP-запроса на сервере (SSR), но остается единственным на клиенте (SPA)?
-221. Что такое `ApplicationRef.isStable`? Каким образом этот сигнал завязан на SSR и сервис-воркеры?
-
-### Архитектура крупных приложений, Монорепозитории и State Management
-
-222. Что такое **Standalone Components**? Чем разработка без `NgModule` отличается от классического
-     подхода?
-223. Какие подходы к управлению состоянием (State Management) вы знаете? В каких случаях нужен
-     **NgRx / Akita / Ngxs**, а в каких достаточно сервисов на RxJS/Signals?
-224. Архитектура монорепозиториев: что такое **Nx** и каковы плюсы его использования с Angular?
-225. Что такое **Microfrontends** (микрофронтенды) и как их можно реализовать на Angular (Module
-     Federation)?
-226. Что такое **Smart** (умные/контейнерные) и **Dumb** (глупые/презентационные) компоненты? Зачем
-     разделять архитектуру?
-227. Как паттерн **CQRS** (Command Query Responsibility Segregation) отражается в таких библиотеках,
-     как NgRx?
-228. Что такое `NgRx Effects` и как они помогают изолировать побочные эффекты от UI-компонентов?
-229. Как организовать масштабируемую структуру папок в монорепозитории Nx по методологии **DDD
-     (Domain-Driven Design)**?
-230. Как управлять зависимостями между библиотеками в Nx с помощью `eslint` правил (`tags` и
-     `enforce-module-boundaries`)?
-231. Как спроектировать кастомный декоратор метода (Method Decorator) в Angular (например,
-     `@LogClick()` или `@Debounce(300)`)?
-232. Как шарятся зависимости (например, `@angular/core`) между shell-приложением и
-     remote-микрофронтендами в Module Federation?
-233. Как реализовать паттерн **State Synchronization** между вкладками браузера (через
-     `BroadcastChannel` или `LocalStorage`) с помощью NgRx Meta-Reducer?
-234. Как устроен процесс дегидратации стейта в NgRx (сохранение только нужных слайсов состояния при
-     отправке HTML с сервера)?
-235. Как спроектировать монорепозиторий на 50+ независимых команд разработчиков? Роль инструментов
-     `Nx Affected` и `Remote Caching`.
-
-### Тестирование (Unit, Integration, E2E)
-
-236. Какие инструменты используются для Unit-тестирования в Angular по умолчанию (Jasmine, Karma /
-     Web Test Runner / Jest)?
-237. Что такое `TestBed` и как с его помощью протестировать компонент?
-238. Как протестировать асинхронный код в Angular (использование `fakeAsync`, `tick`,
-     `waitForAsync`)?
-239. Как мокать (заменять заглушками) сервисы при тестировании компонентов?
-240. Чем вы тестируете E2E (End-to-End) в современных Angular проектах (Cypress, Playwright)?
-241. Что такое `ComponentFixture` и зачем нужен метод `fixture.detectChanges()` в тестах?
-242. Что такое **Harnesses (Component Test Harnesses)** в Angular Testing и как они помогают
-     тестировать UI (например, Angular Material)?
-243. Как протестировать интерцептор (`HttpInterceptor`), который добавляет Auth-токен ко всем
-     запросам?
-244. Что такое `flush()` в среде тестирования `fakeAsync`?
-245. Как замерить покрытие тестами (**Code Coverage**) в Angular проекте?
-246. Как написать Unit-тест для кастомной структурной директивы? Создание Host-компонента в
-     `TestBed`.
-247. Как работает механизм инверсии управления (IoC) при тестировании компонентов с глубокой
-     вложенностью с помощью утилиты `ng-mocks`?
-248. Как написать сквозной интеграционный тест, проверяющий корректность работы `HttpInterceptor`,
-     `Route Guard` и финального рендеринга страницы с помощью `HttpClientTestingModule`?
-
-### Безопасность (Security)
-
-249. Как Angular защищает приложение от **XSS (Cross-Site Scripting)** по умолчанию?
-250. В каких случаях необходимо использовать `BypassSecurityTrustHtml`, `BypassSecurityTrustScript`
-     и какова цена ошибки?
-251. Как настроить **Content Security Policy (CSP)** для Angular-приложения?
-252. Как работает механизм локализации **Angular i18n**?
-253. Как настроить различные конфигурации окружения (`environment.ts`) для dev, staging и production
-     в современных версиях Angular?
-254. Как безопасно выводить HTML-контент в шаблоне, избегая XSS-атак (`DomSanitizer`)?
-255. Что такое **XSRF (CSRF)** и как встроенный в Angular `HttpClientXsrfModule` автоматически
-     защищает запросы?
-256. Как устроен механизм **Content Security Policy (CSP) Nonce** в Angular и как передать
-     криптографическую соль через билдер в шаблоны компонентов?
-
-### Инфраструктурные и Граничные Сценарии (Инженерия и Кастомизация)
-
-257. Как реализовать кастомную стратегию детекции изменений (**Custom Change Detection**), полностью
-     отказавшись от стандартного цикла?
-258. Как написать кастомный плагин для CLI или расширить конфигурацию сборщика без выполнения
-     «эжекта» приложения?
-259. Как подружить Angular приложение с **Web Workers** для вынесения тяжелых математических
-     расчетов из основного потока?
-260. Как организовать работу с **Server-Sent Events (SSE)** или **WebSockets** через RxJS потоки в
-     сервисах?
-261. Как динамически загружать внешние Angular-компоненты (микрофронтенды) во время выполнения
-     (Runtime) без перезагрузки страницы, используя инструменты Ivy?
-262. Как устроен процесс обновления Angular-приложения на несколько мажорных версий вперед
-     (`ng update`) и как написать свой скрипт миграции (**Schematics**)?
-263. Как реализовать сквозное логирование всех ошибок в приложении, переопределив класс
-     `ErrorHandler`?
-264. В какой момент отрабатывает `APP_INITIALIZER` и как с его помощью заблокировать старт
-     приложения до загрузки критических настроек с бэкенда?
-265. Как оптимизировать Angular приложение для работы на мобильных устройствах с плохим интернетом
-     (PWA / Сервис-воркеры)?
-266. Как работает сборщик мусора (Garbage Collector) в контексте замыканий внутри RxJS операторов?
-     Как избежать утечек в долгоживущих SPA?
-267. Каковы особенности работы Angular с декораторами в условиях перехода TypeScript на стандартные
-     **ECMAScript Decorators** (Stage 3)?
-268. Как спроектировать UI-кит (библиотеку компонентов) для крупной компании так, чтобы компоненты
-     поддерживали темизацию (CSS Variables, Tailwind) и доступность (Aria, WCAG)?
-269. Как настроить глобальный перехват необработанных Promise-реджекшенов (`unhandledrejection`),
-     если они происходят вне зоны видимости стандартного `ErrorHandler` Angular?
-270. Как настроить HTTP-интерцептор для автоматического обновления протухшего Access-токена (Refresh
-     Token Pattern) с учетом предотвращения дублирования запросов?
-271. Как с помощью Angular CDK (`@angular/cdk/overlay`) создать масштабируемую систему всплывающих
-     окон, меню и тултипов, не зависящую от `overflow: hidden` родителя?
-272. Как работает утилита `A11yModule` из Angular CDK? Что такое `FocusTrap` и как обеспечить
-     доступность для модальных окон при навигации с клавиатуры?
-273. Как реализовать кастомный `RouteSerializer`, если нужно кодировать стейт роута в Base64 внутри
-     URL-строки?
-274. Если в приложении используется тяжелая 3D-графика на Three.js, как изолировать её от основного
-     потока детекции изменений с помощью `NgZone.runOutsideAngular`?
-275. Что такое `NgZone.onStable` и `NgZone.onUnstable`? Для каких целей (например, замер перформанса
-     или автоматическое E2E тестирование) используются эти RxJS-потоки?
-276. Как написать собственный плагин миграции Schematics, использующий абстрактное синтаксическое
-     дерево (AST) для поиска и замены функций по проекту?
-277. Как работает ленивая загрузка _стилей_ в Angular? Можно ли динамически подгрузить CSS-файл темы
-     оформления только при переключении тумблера?
-278. Как работает встроенный профилировщик Angular в DevTools? Как интерпретировать графики "Flame
-     Chart" для поиска лишних Change Detection?
-279. Как подружиться с концепцией **Isomorphic Applications**? Обеспечение изоляции стейта на
-     сервере.
-280. Как устроен плагин `@angular-devkit/build-angular`? В каких файлах определяются правила
-     трансформации кода для продакшн-сборки?
-281. Каким образом Angular оптимизирует работу с памятью при уничтожении больших директив,
-     использующих `HostListener` на глобальные объекты (`window`, `document`)?
-282. Какие особенности возникают при интеграции Angular-компонентов в сторонние приложения через
-     **Angular Elements** (Web Components)? Проброс `@Input` и `@Output`.
-283. Как написать кастомную стратегию для валидации форм на уровне всей компании, переопределив
-     стандартный `ErrorStateMatcher`?
-284. Как устроена работа с многопоточностью при использовании Angular в связке с Electron для
-     десктопной разработки?
-285. Как организовать архитектуру **Offline-First** приложения с помощью `Service Workers`,
-     `IndexedDB` и интерцепторов?
-286. Как реализовать кастомный `HttpBackend`, полностью минуя стандартную цепочку интерцепторов
-     `HttpClient` для специфического запроса?
-287. Как в Angular Material устроена темизация через Sass-миксины (`@include mat.core()`) и как
-     перевести её на CSS Custom Properties?
-288. Что такое `ComponentFactoryResolver`? Почему он помечен как **Deprecated** начиная с Angular
-     13+, и что пришло ему на замену?
-289. Как ведет себя Angular-приложение внутри тега `<iframe>`? Нюансы передачи событий и
-     DI-контекста.
-290. Как спроектировать плагинную архитектуру для Angular, когда базовое приложение может загружать
-     скомпилированные `.js` файлы модулей из внешнего CDN во время рантайма?
-291. Как изменилась концепция DI в Angular 19 с появлением новых токенов и улучшений компилятора Ivy
-     для ленивых модулей?
-292. Как написать кастомный линтер (ESLint Rule) специально для шаблонов Angular (HTML), который
-     запрещает использовать вызовы методов компонентов внутри интерполяции (`{{ getValues() }}`)?
-293. Каким образом можно переопределить стратегию компиляции шаблонов во время выполнения (Runtime)
-     для создания конструктора сайтов (CMS) на Angular?
-294. Как устроен жизненный цикл хуков `afterRender` и `afterNextRender` (введены в Angular 16/17+)?
-     Почему они полностью заменяют `ngAfterViewInit` при работе с чистым DOM в условиях
-     SSR/Hydration?
-295. Как устроен механизм обнаружения циклических зависимостей (Circular Dependencies) в DI Angular?
-     Почему проект компилируется, но падает в рантайме с ошибкой `ReferenceError`?
-296. Как в Angular организовать сквозное трассирование (Distributed Tracing / OpenTelemetry)
-     HTTP-запросов, генерируя уникальный `traceparent` заголовок в интерцепторе для каждого клика
-     пользователя?
-297. Как устроена интеграция Angular с GraphQL через библиотеку Apollo? Как маппить мутации и
-     запросы в типизированные RxJS потоки?
-298. Как работает механизм декорреляции зон (`Zone.js`) при использовании асинхронных генераторов
-     (`async function*`) и как это влияет на современные реактивные примитивы?
-299. Представьте, что в Angular-приложении используется сторонний скрипт. Как правильно обернуть его
-     в Angular-сервис, изолировав от основного потока детекции изменений с помощью
-     `NgZone.runOutsideAngular`?
-300. Представьте, что в ядре Angular обнаружена критическая уязвимость, связанная с санитизацией
-     URL. Опишите ваши действия как главного архитектора проекта по временному патчингу рантайма
-     (Monkey Patching) до официального релиза фикса от команды Google.
-</file>
-
-<file path="preparation/leetcode/search/binary-search.ts">
-const binarySearch = (array: number[], target: number): number => {
-	let start = 0;
-	let end = array.length - 1;
-
-	while (start <= end) {
-		const middle = Math.floor((start + end) / 2);
-
-		if (array[middle] === target) {
-			return middle;
-		} else if (array[middle] < target) {
-			start = middle + 1;
-		} else {
-			end = middle - 1;
-		}
+	protected onEdit(): void {
+		this.errorMessage.set(null);
+		this.resetForm();
+		this.isEditing.set(true);
 	}
 
-	return -1;
-};
-
-binarySearch([1, 2, 3, 4, 5], 4);
-
-// Время: O(log n)
-// Память: O(1)
-</file>
-
-<file path="preparation/leetcode/search/linary-search.ts">
-const linarySearch = (array: number[], target: number): number => {
-	// Вариант 1:
-	for (let p1 = 0; p1 < array.length; ++p1) {
-		if (array[p1] === target) {
-			return p1;
-		}
+	protected onCancel(): void {
+		this.errorMessage.set(null);
+		this.resetForm();
+		this.isEditing.set(false);
 	}
 
-	// Вариант 2:
-	for (const [index, elem] of array.entries()) {
-		if (elem === target) {
-			return index;
-		}
-	}
+	protected onSave(): void {
+		if (this.form.invalid || this.isSaving()) return;
 
-	return -1;
-};
+		const { username } = this.form.getRawValue();
+		const currentUsername = this.userStore.profile()?.username;
 
-linarySearch([1, 2, 3, 4, 5], 4);
-
-// Время: O(n)
-// Память: O(1)
-</file>
-
-<file path="preparation/leetcode/structures/linked-list.ts">
-class NodeInstance<T> {
-	element: T;
-	next: NodeInstance<T> | null;
-
-	constructor(element: T) {
-		this.element = element;
-		this.next = null;
-	}
-}
-
-class LinkedList<T = string> {
-	head: NodeInstance<T | string>;
-
-	constructor() {
-		this.head = new NodeInstance<T | string>('head');
-	}
-
-	find(item: T | string): NodeInstance<T | string> | null {
-		let currentNode: NodeInstance<T | string> | null = this.head;
-
-		while (currentNode !== null && currentNode.element !== item) {
-			currentNode = currentNode.next;
-		}
-
-		return currentNode;
-	}
-
-	insert(newElement: T, item: T | string): void {
-		const currentNode = this.find(item);
-
-		if (!currentNode) {
+		if (username === currentUsername) {
+			this.isEditing.set(false);
 			return;
 		}
 
-		const newNode = new NodeInstance<T | string>(newElement);
-		newNode.next = currentNode.next;
-		currentNode.next = newNode;
+		this.isSaving.set(true);
+		this.errorMessage.set(null);
+
+		this.userApi
+			.updateUsername(username)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (updatedProfile) => {
+					this.userStore.setProfile(updatedProfile);
+					this.form.markAsPristine();
+					this.isSaving.set(false);
+					this.isEditing.set(false);
+				},
+				error: (err) => {
+					console.error('Ошибка обновления username', err);
+					this.errorMessage.set('Не удалось обновить имя пользователя');
+					this.isSaving.set(false);
+				},
+			});
 	}
 
-	display(): void {
-		let currentNode: NodeInstance<T | string> | null = this.head;
-
-		while (currentNode && currentNode.next) {
-			console.log(currentNode.next.element);
-			currentNode = currentNode.next;
-		}
+	private resetForm(): void {
+		const currentUsername = this.userStore.profile()?.username ?? '';
+		this.form.reset({ username: currentUsername });
 	}
 }
-
-const list = new LinkedList();
-list.insert('1', 'head');
-list.insert('2', '1');
-list.insert('3', '2');
-list.display();
 </file>
 
-<file path="preparation/leetcode/1. Two Sum.ts">
-// O(1) — константное время, не зависит от размера данных
-// O(log n) — логарифмическая сложность, типична для бинарного поиска
-// O(n) — линейная сложность, один проход по данным
-// O(n log n) — типична для эффективных сортировок
-// O(n^2) — вложенные циклы по одним и тем же данным
-
-// https://leetcode.com/problems/two-sum/description
-
-// Решение 1:
-const twoSum = (array: number[], target: number): number[] => {
-	for (let p1 = 0; p1 < array.length; ++p1) {
-		for (let p2 = p1 + 1; p1 < array.length; ++p2) {
-			if (array[p1] + array[p2] === target) {
-				return [p1, p2];
-			}
-		}
-	}
-
-	return [];
-};
-
-twoSum([1, 2, 3, 4, 5], 9);
-
-// Время: O(n^2)
-// Память: O(1)
-
-// Решение 2:
-const twoSum_2 = (array: number[], target: number): number[] => {
-	const numsObj: Record<number, number> = {};
-
-	for (let p1 = 0; p1 < array.length; ++p1) {
-		if (numsObj[array[p1]] >= 0) {
-			return [numsObj[array[p1]], p1];
-		} else {
-			const complement = target - array[p1];
-			numsObj[complement] = p1;
-		}
-	}
-
-	return [];
-};
-
-twoSum_2([1, 2, 3, 4, 5], 9);
-
-// Время: O(n)
-// Память: O(n)
-
-// Решение 3:
-const twoSum_3 = (array: number[], target: number): number[] => {
-	const mapObj = new Map();
-
-	for (let p1 = 0; p1 < array.length; ++p1) {
-		if (mapObj.has(array[p1])) {
-			return [mapObj.get(array[p1]), p1];
-		}
-
-		const complement = target - array[p1];
-		mapObj.set(complement, p1);
-	}
-
-	return [];
-};
-
-twoSum_3([1, 2, 3, 4, 5], 9);
-
-// Время: O(n)
-// Память: O(n)
+<file path="src/features/update-username/index.ts">
+export * from './ui/update-username-card.component';
 </file>
 
-<file path="preparation/leetcode/11. Container With Most Water.ts">
-// https://leetcode.com/problems/container-with-most-water
+<file path="src/pages/account-overview-page/model/account-overview.store.ts">
+import { DestroyRef, Injectable, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-// 1. Инициализировать необходимые переменные: maxArea
-// 2. Пройтись по массиву 1 итерация
-// 3. Создать вложенный цикл проходиться по слудующим элементам + 1
-// 4. Внутри вложенного цикла вычислить высоту (currentHeight) чтобы вычилить минимальную высоту для того чтобы вода не была выше границы через Max.min, ширину (width), и площадь (currentArea), формулу площади: S = H * W
-// 5. Внутри вложенного цикла сравнить переменную через Math.max(maxArea, area)
+import { CourseApiService, CourseProgressStats } from '@entities/course';
 
-// Решение 1:
-function maxArea(heights: number[]): number {
-	let maxArea = 0;
-	for (let p1 = 0; p1 < heights.length; ++p1) {
-		for (let p2 = p1 + 1; p2 < heights.length; ++p2) {
-			const currentHeight = Math.min(heights[p1], heights[p2]);
-			const width = p2 - p1;
-			const currentArea = currentHeight * width;
+@Injectable({ providedIn: 'root' })
+export class AccountOverviewPageStore {
+	private readonly courseApi = inject(CourseApiService);
+	private readonly destroyRef = inject(DestroyRef);
 
-			maxArea = Math.max(maxArea, currentArea);
-		}
+	private readonly courseProgressState = signal<CourseProgressStats | null>(null);
+	private readonly loadingState = signal<boolean>(false);
+	private readonly errorState = signal<string | null>(null);
+
+	readonly courseProgress = this.courseProgressState.asReadonly();
+	readonly loading = this.loadingState.asReadonly();
+	readonly error = this.errorState.asReadonly();
+
+	load(): void {
+		this.loadingState.set(true);
+		this.errorState.set(null);
+
+		this.courseApi
+			.getCourseProgress('frontend')
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (progress) => {
+					this.courseProgressState.set(progress);
+					this.loadingState.set(false);
+				},
+				error: () => {
+					this.errorState.set('Не удалось загрузить прогресс');
+					this.loadingState.set(false);
+				},
+			});
 	}
+}
+</file>
 
-	return maxArea;
+<file path="src/pages/account-overview-page/account-overview-page.component.scss">
+.account-overview-page {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-8);
+
+	.loading-state {
+		display: flex;
+		justify-content: center;
+	}
+}
+</file>
+
+<file path="src/pages/account-settings/account-settings-page.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { DeleteAccountComponent } from '@features/delete-account';
+
+@Component({
+	selector: 'app-account-settings-page',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<app-delete-account />`,
+	imports: [DeleteAccountComponent],
+})
+export class AccountSettingsPageComponent {}
+</file>
+
+<file path="src/shared/ui/accordion/accordion.component.html">
+<div class="accordion" [class.is-open]="isOpen()">
+	<button
+		type="button"
+		class="accordion__summary"
+		[attr.aria-expanded]="isOpen()"
+		(click)="toggle()"
+		(keydown.enter)="toggle()"
+		(keydown.space)="toggle()"
+	>
+		<ng-content select="[accordion-title]"></ng-content>
+	</button>
+
+	<div #contentRef class="accordion__content">
+		<ng-content></ng-content>
+	</div>
+</div>
+</file>
+
+<file path="src/shared/ui/card/card.component.scss">
+:host {
+    display: block;
+    height: 100%;
 }
 
-// Время: O(n^2)
-// Память: O(1)
-
-const input = [1, 8, 6, 2, 5, 4, 8, 3, 7];
-
-maxArea(input);
-
-// Решение 2:
-
-// 1. Создать переменные maxArea, left, right
-// 2. создать цикл while пока right > left
-// 3. Инициализировать прееменные currentHeight (высчитать минимальное значение двух текущих
-// элементов высоты), и переменную width (высчитать right - left)
-// и переменную area (currentHeight * width)
-// 4. Проверить текущую переменную maxArea: Math.max(maxArea, area)
-// 5. Поставить учловие чтобы обновлять счётчики left и right (right > left) left++...
-// else right--
-// 6. Возвратить переменную maxArea
-
-function maxArea_2(heights: number[]): number {
-	let maxArea = 0;
-	let left = 0;
-	let right = heights.length - 1;
-
-	while (left < right) {
-		const currentHeight = Math.min(heights[left], heights[right]);
-		const width = right - left;
-
-		const area = currentHeight * width;
-		maxArea = Math.max(maxArea, area);
-
-		if (heights[left] < heights[right]) {
-			left++;
-		} else {
-			right--;
-		}
-	}
-
-	return maxArea;
+.ui-card {
+    height: 100%;
+    padding: var(--unit-6);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition:
+        box-shadow var(--transition-base),
+        border-color var(--transition-base);
 }
-
-// Время: O(n)
-// Память: O(1)
-
-const input_2 = [1, 8, 6, 2, 5, 4, 8, 3, 7];
-
-maxArea_2(input_2);
 </file>
 
-<file path="preparation/leetcode/125. Valid Palindrome.ts">
-function isPalindrome(s: string): boolean {
-	s = s.replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+<file path="src/shared/ui/card/card.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-	let start = 0;
-	let end = s.length - 1;
-
-	while (start < end) {
-		if (s[start] !== s[end]) {
-			return false;
-		}
-
-		++start;
-		--end;
-	}
-
-	return true;
-}
-
-isPalindrome('abccba');
-
-// Время: O(n)
-// Память: O(n)
+@Component({
+    selector: 'app-card',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+        <div class="ui-card">
+            <ng-content></ng-content>
+        </div>
+    `,
+    styleUrl: './card.component.scss',
+})
+export class CardComponent {}
 </file>
 
-<file path="preparation/leetcode/217. Contains Duplicate.ts">
-// 217. https://leetcode.com/problems/contains-duplicate/description/
-
-// Решение 1:
-function containsDuplicate(nums: number[]): boolean {
-	const duplicatesSet = new Set();
-
-	for (const elem of nums) {
-		if (duplicatesSet.has(elem)) {
-			return true;
-		}
-		duplicatesSet.add(elem);
-	}
-
-	return false;
-}
-
-containsDuplicate([1, 2, 3, 4, 5, 5]);
-
-// Время: O(n)
-// Память: O(n)
+<file path="src/shared/ui/card/index.ts">
+export * from './card.component';
 </file>
 
-<file path="preparation/leetcode/3. Longest Substring Without Repeating Characters.ts">
-// Input: s = 'abcabcbb';
-// Output: 3;
-
-// Input: s = 'bbbbb';
-// Output: 1;
-
-// Решение 1:
-function longestSubstring(s: string): number {
-	let maxLength = 0;
-	for (let p1 = 0; p1 < s.length; ++p1) {
-		const obj: Record<string, boolean> = {};
-		let longestLength = 0;
-		for (let p2 = p1; p2 < s.length; ++p2) {
-			if (!obj[s[p2]]) {
-				obj[s[p2]] = true;
-				longestLength++;
-
-				maxLength = Math.max(maxLength, longestLength);
-			} else {
-				break;
-			}
-		}
-	}
-
-	return maxLength;
-}
-
-const input = 'abcabcbb';
-
-longestSubstring(input);
-
-// Время: O(n^2)
-// Память: O(m)
-
-// Решение 2:
-// 1. Создание переменных макс длины, хранилище Set, левый указатель left
-// 2. Инициализация цикла, внутри цикла - текущее значение в Set
-// 3. Вложенный цикл while где рекурсивно проверяется текущего элемента цикла
-// (currentSymbol)
-// 4. После удаления текущего символа элемента в цикле, добавляем его в конец
-// 5. Длина текущего окна рассчитывается как: right - left + 1
-
-// Input: s = 'abcabcbb';
-function longestSubstring_2(s: string): number {
-	let longestLength = 0;
-	const seen = new Set();
-	let left = 0;
-
-	for (let right = 0; right < s.length; ++right) {
-		const currentSymbol = s[right];
-		while (seen.has(currentSymbol)) {
-			seen.delete(s[left]);
-			left++;
-		}
-
-		seen.add(currentSymbol);
-
-		longestLength = Math.max(longestLength, right - left + 1);
-	}
-
-	return longestLength;
-}
-
-// Время: O(n)
-// Память: O(m)
-
-const input_2 = 'abcab';
-
-longestSubstring_2(input_2);
+<file path="src/shared/ui/progress-bar/index.ts">
+export * from './progress-bar.component';
 </file>
 
-<file path="preparation/leetcode/42. Trapping Rainwater.ts">
-// https://leetcode.com/problems/trapping-rain-water
+<file path="src/shared/ui/progress-bar/progress-bar.component.html">
+<div class="progress-box">
+	<div class="progress-container">
+		<div class="progress-track"></div>
+		<div class="progress-fill" [style.width]="value + '%'"></div>
+	</div>
+	<span class="progress-text">{{ value }}%</span>
+</div>
+</file>
 
-// Input: height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
-// Output: 6;
-
-// Решение 1:
-function trap(heights: number[]): number {
-	let totalWater = 0;
-
-	for (let p = 0; p < heights.length; ++p) {
-		let leftP = p;
-		let rightP = p;
-
-		let maxLeft = 0;
-		let maxRight = 0;
-
-		while (leftP >= 0) {
-			maxLeft = Math.max(maxLeft, heights[leftP]);
-			--leftP;
-		}
-
-		while (rightP < heights.length) {
-			maxRight = Math.max(maxRight, heights[rightP]);
-			++rightP;
-		}
-
-		const currentWater = Math.min(maxLeft, maxRight) - heights[p];
-		if (currentWater >= 0) {
-			totalWater += currentWater;
-		}
-	}
-
-	return totalWater;
+<file path="src/shared/ui/progress-bar/progress-bar.component.scss">
+.progress-box {
+	display: flex;
+	gap: var(--unit-2);
+	align-items: center;
 }
 
-// Время: O(n^2)
-// Память: O(1)
-
-const input = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
-
-trap(input);
-
-// Решение 2:
-function trap_2(heights: number[]): number {
-	let total = 0,
-		left = 0,
-		right = heights.length - 1,
-		maxLeft = 0,
-		maxRight = 0;
-
-	// for (let p = 0; p < heights.length; ++p) {}
-	while (left < right) {
-		if (heights[left] < heights[right]) {
-			if (heights[left] > maxLeft) {
-				maxLeft = heights[left];
-			} else {
-				total += maxLeft - heights[left];
-			}
-			left++;
-		} else {
-			if (heights[right] > maxRight) {
-				maxRight = heights[right];
-			} else {
-				total += maxRight - heights[right];
-			}
-			right--;
-		}
-	}
-
-	return total;
+.progress-container {
+	position: relative;
+	width: 100%;
+	height: 9px;
+	background-color: var(--border-light);
+	border-radius: var(--radius-md);
+	overflow: hidden;
 }
 
-// Время: O(n)
-// Память: O(1)
-
-const input_2 = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
-
-trap_2(input_2);
-
-export {};
-</file>
-
-<file path="preparation/leetcode/680. Valid Palindrome II.ts">
-const validSubPal = (s: string, l: number, r: number): boolean => {
-	while (l < r) {
-		if (s[l] !== s[r]) {
-			return false;
-		}
-		++l;
-		--r;
-	}
-
-	return true;
-};
-
-const isAlmostPalindrom = function (s: string): boolean {
-	let left = 0;
-	let right = s.length - 1;
-
-	while (left < right) {
-		if (s[left] !== s[right]) {
-			return validSubPal(s, left + 1, right) || validSubPal(s, left, right - 1);
-		}
-
-		++left;
-		--right;
-	}
-
-	return true;
-};
-
-isAlmostPalindrom('abccdba');
-</file>
-
-<file path="preparation/leetcode/844. Backspace Compare.ts">
-// https://leetcode.com/problems/backspace-string-compare
-
-// Input: s = "ab#c", t = "ad#c"
-// Output: true
-
-// Input: s = "ab##", t = "c#d#"
-// Output: true
-
-// Решение 1:
-function buildString(s: string): string[] {
-	const array: string[] = [];
-
-	for (const elem of s) {
-		if (elem !== '#') {
-			array.push(elem);
-		} else {
-			array.pop();
-		}
-	}
-
-	return array;
+.progress-track {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	background-color: var(--border-light);
 }
 
-function backspaceCompare(s: string, t: string): boolean {
-	const finalS: string[] = buildString(s);
-	const finalT: string[] = buildString(t);
-
-	if (finalS.length !== finalT.length) return false;
-
-	for (let p = 0; p < finalS.length; ++p) {
-		if (finalS[p] !== finalT[p]) {
-			return false;
-		}
-	}
-
-	return true;
+.progress-fill {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	height: 100%;
+	background-color: var(--brand-primary);
+	transition: width var(--transition-base) ease-out;
 }
 
-backspaceCompare('ab#c', 'ad#c');
-
-// Время: O(n + m)
-// Память: O(n + m)
-
-// Решение 2:
-
-function backspaceCompare_2(s: string, t: string): boolean {
-	let p1 = s.length - 1;
-	let p2 = t.length - 1;
-
-	while (p1 >= 0 || p2 >= 0) {
-		if (s[p1] === '#' || t[p2] === '#') {
-			if (s[p1] === '#') {
-				let backCount = 2;
-				while (backCount > 0) {
-					p1--;
-					backCount--;
-
-					if (s[p1] === '#') {
-						backCount = backCount + 2;
-					}
-				}
-			}
-
-			if (t[p2] === '#') {
-				let backCount = 2;
-				while (backCount > 0) {
-					p2--;
-					backCount--;
-
-					if (t[p2] === '#') {
-						backCount = backCount + 2;
-					}
-				}
-			}
-		} else {
-			if (s[p1] !== t[p2]) {
-				return false;
-			} else {
-				p1--;
-				p2--;
-			}
-		}
-	}
-
-	return true;
+.progress-text {
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-primary);
+	white-space: nowrap;
 }
-
-backspaceCompare_2('ab#c', 'ad#c');
-
-// Время: O(n + m)
-// Память: O(1)
 </file>
 
-<file path="preparation/leetcode/big-o.ts">
-// O(1) — константное время, не зависит от размера данных
-// O(log n) — логарифмическая сложность, типична для бинарного поиска
-// O(n) — линейная сложность, один проход по данным
-// O(n log n) — типична для эффективных сортировок
-// O(n^2) — вложенные циклы по одним и тем же данным
-</file>
+<file path="src/shared/ui/progress-bar/progress-bar.component.ts">
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-<file path="public/fonts/geist-mono/.gitkeep">
-
-</file>
-
-<file path="public/fonts/geist-sans/.gitkeep">
-
-</file>
-
-<file path="public/fonts/README.md">
-# Шрифты
-
-Бинарные файлы `.woff2` не входят в дамп репозитория. Положите сюда:
-
-- `public/fonts/geist-sans/Geist-Regular.woff2`
-- `public/fonts/geist-sans/Geist-Medium.woff2`
-- `public/fonts/geist-sans/Geist-Bold.woff2`
-- `public/fonts/geist-mono/GeistMono-Regular.woff2`
-- `public/fonts/geist-mono/GeistMono-Medium.woff2`
-
-Подключение — в `src/styles/_font-faces.scss`. Без файлов приложение собирается и запускается, но в
-консоли будут 404 на шрифтах.
+@Component({
+	selector: 'app-progress-bar',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './progress-bar.component.html',
+	styleUrl: './progress-bar.component.scss',
+})
+export class ProgressBarComponent {
+	@Input() value = 0;
+}
 </file>
 
 <file path="src/app/layouts/account-layout/account-layout.component.scss">
@@ -1716,7 +1247,7 @@ backspaceCompare_2('ab#c', 'ad#c');
 		justify-content: flex-start;
 		align-items: center;
 		width: 100%;
-		max-width: var(--container-xxl);
+		max-width: var(--container-xl);
 		margin: 0 auto;
 		padding: 0 var(--unit-8);
 
@@ -1767,6 +1298,7 @@ backspaceCompare_2('ab#c', 'ad#c');
 		z-index: var(--z-sticky);
 		height: calc(100dvh - var(--unit-8));
 		padding: 0;
+		padding: var(--unit-4);
 
 		@include m.media-below('md') {
 			position: static;
@@ -1819,6 +1351,26 @@ import { HeaderComponent } from '@widgets/header';
 	imports: [HeaderComponent, RouterOutlet],
 })
 export class MainLayoutComponent {}
+</file>
+
+<file path="src/app/lib/guards/redirect-if-authenticated.guard.ts">
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
+import { UserStore } from '@entities/user';
+
+import { RouteSegments } from '@shared/config/routes.config';
+
+export const redirectIfAuthenticatedGuard: CanActivateFn = () => {
+	const userStore = inject(UserStore);
+	const router = inject(Router);
+
+	if (userStore.isAuthenticated()) {
+		return router.createUrlTree([RouteSegments.COURSES, RouteSegments.FRONTEND]);
+	}
+
+	return true;
+};
 </file>
 
 <file path="src/entities/article/ui/article-detalization/article-blocks/article-block-code/article-block-code.component.html">
@@ -2550,6 +2102,8 @@ export * from './ui/article-drawer-navigation.component';
 </file>
 
 <file path="src/entities/course/model/course.types.ts">
+import type { CourseSkeletonLesson } from '@entities/lesson';
+
 export interface BaseEntity {
 	id: string;
 	createdAt: string;
@@ -2570,18 +2124,6 @@ export interface CourseSectionEntity extends BaseEntity {
 	orderIndex: number;
 }
 
-export interface CourseSkeletonLesson {
-	id: string;
-	sectionId: string | null;
-	sequenceOrder: number;
-	title: string;
-	description: string | null;
-	durationSeconds: number;
-	isFree: boolean;
-	hasCodeEditor: boolean;
-	isCompleted: boolean;
-}
-
 export interface CourseSkeletonSection {
 	id: string;
 	title: string;
@@ -2599,31 +2141,16 @@ export interface CourseSkeleton {
 	sections: CourseSkeletonSection[];
 }
 
-export interface LessonEntity extends BaseEntity {
+export interface CourseProgressStats {
 	courseId: string;
-	sectionId: string | null;
-	sequenceOrder: number;
-	title: string;
-	description: string | null;
-	videoUrl: string | null;
-	durationSeconds: number;
-	isFree: boolean;
-	hasCodeEditor: boolean;
-}
-
-export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
-	isCompleted: boolean;
-};
-
-export interface ToggleLessonProgressResponse {
-	completed: boolean;
-}
-
-export interface CourseProgress {
+	courseSlug: string;
+	courseTitle: string;
 	totalLessons: number;
 	completedLessons: number;
 	percentage: number;
 }
+
+export type CourseProgress = CourseProgressStats;
 
 export interface CreateCourseDto {
 	slug: string;
@@ -2642,18 +2169,14 @@ export interface CreateCourseSectionDto {
 
 export type UpdateCourseSectionDto = Partial<CreateCourseSectionDto>;
 
-export interface CreateLessonDto {
-	sectionId: string;
-	sequenceOrder: number;
-	title: string;
-	description?: string;
-	videoUrl?: string;
-	durationSeconds?: number;
-	isFree?: boolean;
-	hasCodeEditor?: boolean;
-}
-
-export type UpdateLessonDto = Partial<CreateLessonDto>;
+export type {
+	CourseSkeletonLesson,
+	LessonDetail,
+	LessonEntity,
+	ToggleLessonProgressResponse,
+	CreateLessonDto,
+	UpdateLessonDto,
+} from '@entities/lesson';
 </file>
 
 <file path="src/entities/course/ui/course-progress/course-progress.component.html">
@@ -2671,43 +2194,72 @@ export type UpdateLessonDto = Partial<CreateLessonDto>;
 </div>
 </file>
 
-<file path="src/entities/user/model/user.types.ts">
-export type UserRole = 'USER' | 'ADMIN';
-export type AuthProvider = 'GOOGLE' | 'GITHUB';
+<file path="src/entities/user/model/user.store.ts">
+import { Injectable, computed, inject, signal } from '@angular/core';
 
-export interface UserProfile {
-	id: string;
-	email: string;
-	username: string;
-	firstName?: string | null;
-	lastName?: string | null;
-	avatarUrl?: string | null;
-	role: UserRole;
-	provider: AuthProvider;
-}
-</file>
+import { Observable, catchError, finalize, of, tap } from 'rxjs';
 
-<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.html">
-<div class="avatar">
-	@if (avatarUrl()) {
-		<img [src]="avatarUrl()" [alt]="name()" class="avatar__img" />
-	} @else {
-		{{ initial() }}
+import { UserApiService } from '../api/user-api.service';
+import { UserProfile } from './user.types';
+
+@Injectable({
+	providedIn: 'root',
+})
+export class UserStore {
+	private readonly userApi = inject(UserApiService);
+
+	private readonly profileState = signal<UserProfile | null>(null);
+	private readonly loadingState = signal<boolean>(false);
+	private readonly loadedState = signal<boolean>(false);
+
+	readonly profile = this.profileState.asReadonly();
+	readonly isLoading = this.loadingState.asReadonly();
+	readonly isLoaded = this.loadedState.asReadonly();
+
+	readonly isAuthenticated = computed(() => this.profileState() !== null);
+
+	load(): Observable<UserProfile | null> {
+		this.loadingState.set(true);
+
+		return this.userApi.getMyProfile().pipe(
+			tap((profile) => this.profileState.set(profile)),
+			catchError(() => {
+				this.profileState.set(null);
+				return of(null);
+			}),
+			finalize(() => {
+				this.loadingState.set(false);
+				this.loadedState.set(true);
+			}),
+		);
 	}
-</div>
 
-<div class="info">
-	<h1 class="name">{{ name() }}</h1>
-	<p class="account-type">
-		Account type: <span class="account-type__value">{{ accountType() }}</span>
-	</p>
-</div>
+	setProfile(profile: UserProfile | null): void {
+		this.profileState.set(profile);
+	}
+
+	clear(): void {
+		this.profileState.set(null);
+	}
+}
 </file>
 
 <file path="src/environments/environment.development.ts">
 export const environment = {
 	production: false,
 	apiUrl: 'http://localhost:3000/api',
+};
+</file>
+
+<file path="src/features/auth-by-oauth/lib/guards/auth.guard.ts">
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
+import { UserStore } from '@entities/user';
+
+export const authGuard: CanActivateFn = () => {
+	const store = inject(UserStore);
+	return store.isAuthenticated() ? true : inject(Router).createUrlTree(['/courses/frontend']);
 };
 </file>
 
@@ -2921,11 +2473,6 @@ import { IconComponent } from '@shared/ui/icon';
 export class GoogleOauthButtonComponent {
 	readonly clickButton = output<void>();
 }
-</file>
-
-<file path="src/features/auth-by-oauth/index.ts">
-export * from './ui/auth-by-oauth.component';
-export * from './lib/guards/auth.guard';
 </file>
 
 <file path="src/features/create-category/ui/create-category.component.scss">
@@ -3320,25 +2867,17 @@ export function populateArticleBlocks(
 <file path="src/features/manage-article/model/article-form.types.ts">
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
-import {
-	ArticleBlockType,
-	ArticleLevel,
-	ArticleStatus,
-	NavigationTag,
-	NoteType,
-	TextFormat,
-} from '@entities/article';
-
-// --- Формы контентных блоков ---
+import type { ArticleBlockType, ArticleLevel, ArticleStatus } from '@entities/article';
+import type { NavigationTag } from '@entities/article';
 
 export interface TextBlockForm {
-	format: FormControl<TextFormat>;
+	format: FormControl<string>;
 	content: FormControl<string>;
 }
 
 export interface NoteBlockForm {
 	text: FormControl<string>;
-	noteType: FormControl<NoteType>;
+	noteType: FormControl<string>;
 }
 
 export interface CodeBlockForm {
@@ -3371,11 +2910,8 @@ export interface FeaturesBlockForm {
 
 export interface BlockFormGroup {
 	type: FormControl<ArticleBlockType>;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	data: FormGroup<any>;
+	data: FormGroup;
 }
-
-// --- Вспомогательные формы ---
 
 export interface CoverImageForm {
 	url: FormControl<string>;
@@ -3383,33 +2919,18 @@ export interface CoverImageForm {
 	caption: FormControl<string | null>;
 }
 
-export interface SeoForm {
-	description: FormControl<string | null>;
-	keywords: FormControl<string[]>;
-}
-
-// --- Главная форма ---
-
 export interface ArticleFormModel {
 	problemId: FormControl<string | null>;
 	readingTimeMinutes: FormControl<number>;
-
 	title: FormControl<string>;
 	slug: FormControl<string>;
 	categoryId: FormControl<string>;
-
 	status: FormControl<ArticleStatus>;
 	level: FormControl<ArticleLevel>;
-
 	leadText: FormControl<string>;
 	description: FormControl<string>;
-
 	coverImage: FormGroup<CoverImageForm>;
-
 	tags: FormControl<NavigationTag[]>;
-
-	seo: FormGroup<SeoForm>;
-
 	blocks: FormArray<FormGroup<BlockFormGroup>>;
 }
 </file>
@@ -4088,16 +3609,48 @@ export { ManageArticleComponent } from './ui/manage-article.component';
 </file>
 
 <file path="src/pages/account-overview-page/account-overview-page.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+
+import { UpdateUsernameCardComponent } from '@features/update-username';
+
+import { CourseProgressCardComponent } from '@entities/course';
+
+import { RouteSegments } from '@shared/config/routes.config';
+
+import { AccountOverviewPageStore } from './model/account-overview.store';
 
 @Component({
 	selector: 'app-account-overview-page',
 	standalone: true,
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	template: `<div>Account Overview</div>`,
-	imports: [],
+	template: `<div class="account-overview-page">
+		<app-update-username-card />
+		@if (progressStats(); as progress) {
+			<app-course-progress-card [navigateTo]="coursePath" [progress]="progress" />
+		} @else if (loading()) {
+			<div class="loading-state">Загрузка курса...</div>
+		} @else if (error()) {
+			<div class="loading-state">{{ error() }}</div>
+		} @else {
+			<div class="loading-state">Прогресс отсутствует</div>
+		}
+	</div>`,
+
+	styleUrl: './account-overview-page.component.scss',
+	imports: [UpdateUsernameCardComponent, CourseProgressCardComponent],
 })
-export class AccountOverviewPageComponent {}
+export class AccountOverviewPageComponent implements OnInit {
+	protected readonly coursePath = `/${RouteSegments.COURSES}/${RouteSegments.FRONTEND}`;
+	private readonly accountStore = inject(AccountOverviewPageStore);
+
+	readonly progressStats = this.accountStore.courseProgress;
+	readonly loading = this.accountStore.loading;
+	readonly error = this.accountStore.error;
+
+	ngOnInit(): void {
+		this.accountStore.load();
+	}
+}
 </file>
 
 <file path="src/pages/account-transactions-page/account-transactions-page.component.ts">
@@ -4134,12 +3687,14 @@ export * from './ui/home-page.component';
 <file path="src/shared/api/api-paths.ts">
 /** Пути REST-эндпоинтов. Намеренно отделены от сегментов роутера. */
 export const ApiPaths = {
+	AUTH: 'auth',
 	COURSES: 'courses',
 	SECTIONS: 'sections',
 	LESSONS: 'lessons',
 	PROFILES: 'profiles',
 	ARTICLES: 'articles',
 	NAVIGATION: 'navigation',
+	ME: 'me',
 } as const;
 </file>
 
@@ -4226,14 +3781,25 @@ export function uniqueId(prefix: string): string {
 }
 
 .accordion {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+
 	&__summary {
-		padding: var(--unit-2) 0;
+		display: flex;
+		align-items: center;
+		width: 100%;
+		padding-bottom: var(--unit-2);
+		background: none;
+		border: none;
 		font-size: var(--font-size-base);
 		font-weight: var(--font-weight-medium);
 		color: var(--text-primary);
+		text-align: left;
 		transition: color var(--transition-fast);
 		cursor: pointer;
 		user-select: none;
+		outline: none;
 
 		&:hover {
 			color: var(--brand-primary);
@@ -4243,48 +3809,59 @@ export function uniqueId(prefix: string): string {
 			outline: var(--focus-ring-width) solid var(--border-focus);
 			outline-offset: var(--focus-ring-offset);
 		}
-
-		&::marker,
-		&::-webkit-details-marker {
-			color: var(--text-muted);
-		}
 	}
 
 	&__content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--unit-1);
-		margin: 0 0 0 var(--unit-2);
-		padding: var(--unit-2) 0 var(--unit-2) var(--unit-4);
-		border-left: 1px solid var(--border-light);
+		max-height: 0;
+		max-height: var(--accordion-content-height, 0);
+		padding: 0;
+		transition:
+			max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+			padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+			margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		overflow: hidden;
+
+		.is-open & {
+			margin: 0;
+			padding: 0 0 0 var(--unit-2);
+			border-left: 1px solid var(--border-light);
+		}
 	}
 }
 </file>
 
 <file path="src/shared/ui/accordion/accordion.component.ts">
-import { ChangeDetectionStrategy, Component, model } from '@angular/core';
+import {
+	AfterViewChecked,
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	ViewChild,
+	model,
+} from '@angular/core';
 
 @Component({
 	selector: 'app-accordion',
 	standalone: true,
-	template: `
-		<details class="accordion" [open]="isOpen()" (toggle)="onToggle($event)">
-			<summary class="accordion__summary">
-				<ng-content select="[accordion-title]"></ng-content>
-			</summary>
-			<div class="accordion__content">
-				<ng-content></ng-content>
-			</div>
-		</details>
-	`,
+	templateUrl: `./accordion.component.html`,
 	styleUrl: './accordion.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccordionComponent {
+export class AccordionComponent implements AfterViewChecked {
 	readonly isOpen = model<boolean>(false);
+	@ViewChild('contentRef', { static: false }) contentRef!: ElementRef<HTMLDivElement>;
 
-	protected onToggle(event: Event): void {
-		this.isOpen.set((event.target as HTMLDetailsElement).open);
+	toggle(): void {
+		this.isOpen.update((state) => !state);
+	}
+
+	ngAfterViewChecked(): void {
+		if (this.contentRef) {
+			const height = this.isOpen()
+				? `${this.contentRef.nativeElement.scrollHeight}px`
+				: '0px';
+			this.contentRef.nativeElement.style.setProperty('--accordion-content-height', height);
+		}
 	}
 }
 </file>
@@ -6064,7 +5641,7 @@ $breakpoints: (
 
 .account-nav {
 	display: flex;
-	gap: var(--unit-1);
+	gap: var(--unit-2);
 	width: 100%;
 	flex-flow: row nowrap;
 
@@ -6075,9 +5652,14 @@ $breakpoints: (
 
 	@include m.media-below('md') {
 		width: 100%;
-		padding-right: var(--unit-4);
-		padding-bottom: var(--unit-4);
-		padding-left: var(--unit-4);
+		padding: var(--unit-2) var(--unit-4);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-sm);
+		transition:
+			box-shadow var(--transition-base),
+			border-color var(--transition-base);
 	}
 
 	&__link {
@@ -6299,330 +5881,6 @@ import { AppComponent } from './app/ui/app.component';
 bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
 </file>
 
-<file path="CHANGES.md">
-# Исправления: страница редактора статьи и связанные модули
-
-## Критические
-
-1. **Не было маршрутов `edit` и `details`.** В `RouteSegments` добавлены `ARTICLE_DETAILS: ':id'` и
-   `ARTICLE_EDIT: ':id/edit'`; в `ARTICLE_ROUTES` подключены `create`, `:id/edit`, `:id` (порядок:
-   статический → с параметром). Раньше после сохранения роутер не находил `/articles/{id}` и
-   выбрасывал на главную.
-2. **Не существовала страница просмотра статьи.** Добавлена `src/pages/article-details-page`
-   (`getArticleById` + рендер `app-article-content` со состояниями загрузки/ошибки).
-3. **Захардкоженный `authorId`** в `manage-article` (`62bb502e-…`) заменён на реальный профиль из
-   `UserApiService.getMyProfile()` (с фолбэком, если профиль не отдался, — тогда `authorId` не
-   отправляется).
-4. **`tags-input`: плейсхолдер не показывался никогда.** Было
-   `[placeholder]="tags.length === 0 ? … : ''"`, где `tags` — сигнал. Исправлено на `tags().length`.
-
-## Значимые
-
-5. **Мёртвые CSS-классы** в `article-form.component.html` (`h2`, `mt-4`, `mt-3`, `fw-bold`,
-   `.empty-state`, `.error-text`) — не были определены нигде. Лишние удалены из шаблона;
-   `.empty-state` добавлен в SCSS формы; `.error-text` перенесён в `styles` рендерера.
-6. **Невалидная разметка `fieldset`**: `<legend>` был вложен в `<div>`. Теперь `legend` — первый
-   ребёнок `fieldset`.
-7. **Кнопка «Сохранить» блокировалась `form().invalid`**, из-за чего `markAllAsTouched()` в
-   `onSubmit` был недостижим. Оставлена блокировка только по `isSubmitting()`.
-8. **`patchValue(article)` заливал в форму весь объект статьи**, включая `blocks`, до пересборки
-   через `populateArticleBlocks`. Теперь патчатся только скалярные поля и вложенные группы, а
-   `blocks` собираются отдельно.
-9. **`ArticleNavigationApiService`** переведён на `BaseApiService`, удалён неиспользуемый
-   `getNavigationTree()`. Пути: чтение — `articles/navigation`, создание — `navigation/sections` и
-   `navigation/categories` (подтверждены бэкендом).
-
-## Мелкие
-
-10. `entities/article/index.ts` — убраны дублирующиеся `export *`, добавлены недостающие публичные
-    экспорты.
-11. `create-category` — добавлен `ChangeDetectionStrategy.OnPush` (как в `create-section`).
-12. `getArticleById`/`updateArticle`/`deleteArticle` — `encodeURIComponent` для идентификатора (слаг
-    с пробелами/кириллицей ломал URL).
-13. `article-editor-page.component.scss` — локальная `--max-width: 1440px` заменена на токен
-    `--container-xxl`.
-14. Файл `articles.editor-page.component.ts` переименован в `article-editor-page.component.ts`;
-    добавлен `index.ts` для страницы.
-15. `manage-article` — навигация через `RouteBuilder`, добавлен `markAllAsTouched()`,
-    `readingTimeMinutes` приводится к числу при сборке payload.
-
-## Что нужно доложить вручную
-
-- Шрифты Geist (`.woff2`) — см. `public/fonts/README.md`.
-</file>
-
-<file path="README-REFACTOR.md">
-# Ngalg — рефакторинг (итог)
-
-Архив содержит ПОЛНОЕ дерево проекта (293 файла) с применёнными правками. Распаковывать поверх корня
-репозитория.
-
-## Что изменено
-
-### Стили
-
-- `_reset.scss`: удалён дубль `body.lock-scroll` (было 2 блока -> 1).
-- `_tokens.scss`: добавлен токен `--focus-ring` (использовался в `_reset.scss`, но не был объявлен).
-
-### Утилиты
-
-- Новый `src/shared/lib/utils/unique-id.ts` (детерминированные id).
-- `input` / `textarea` / `select`: `Math.random()` для id заменён на `uniqueId(...)`.
-
-### Типы (перенос из shared в entities)
-
-- `shared/types/course.types.ts` -> `entities/course/model/course.types.ts` (+ экспорт из
-  `@entities/course`).
-- `shared/types/navigation-overview.types.ts` ->
-  `entities/article-navigation/model/navigation-overview.types.ts` (+ экспорт из
-  `@entities/article-navigation`).
-- Обновлены все импорты в 11 файлах. Папка `src/shared/types/` удалена.
-
-### API: пути бэкенда отделены от роутера
-
-- Новый `src/shared/api/api-paths.ts` (`ApiPaths`).
-- `course-api`, `lesson-api`, `user-api`, `article-api`, `article-navigation-api` переведены с
-  `RouteSegments`/`RouteBuilder`/хардкода на `ApiPaths`.
-- `routes.config.ts`: удалены неиспользуемые сегменты (`COURSE_CREATE`, `COURSE_EDIT`, `LESSONS`,
-  `SECTIONS`, `PROFILES`).
-
-### Обвязка
-
-- `app.config.ts`: добавлены `provideZonelessChangeDetection()`,
-  `provideBrowserGlobalErrorListeners()`, `withFetch()`, `withInMemoryScrolling(...)`. (Angular 22,
-  zone.js в зависимостях отсутствует и в `angular.json` нет polyfills.)
-
-### Формы статьи: entities -> features
-
-- `entities/article/ui/article-creation/**` -> `features/manage-article/ui/article-creation/**`.
-- `entities/article/model/types/{article-form.types,article-form.factory,article-blocks-form.factory}.ts`
-  -> `features/manage-article/model/`.
-- `entities/article/index.ts` очищен от экспорта форм; `manage-article` импортирует формы локально.
-
-### Исправленные опечатки
-
-- `aritcle-text-block-form` -> `article-text-block-form`
-- `widgets/article-navigation-managment` -> `article-navigation-management` (папка, файлы, класс,
-  селектор, templateUrl/styleUrl, импорты в `articles-editor-page`)
-- `article-block-complexity.ts` -> `article-block-complexity.component.ts`
-
-## Проверки, выполненные при сборке
-
-- Импорты/шаблоны: 0 битых (377 импортов + все templateUrl/styleUrl разрешаются).
-- grep по дереву: `aritcle`=0, `managment`=0, `@shared/types`=0, `Math.random` в `shared/ui`=0.
-
-## Что нужно сделать у себя
-
-```
-pnpm install
-pnpm typecheck
-pnpm lint
-pnpm build
-```
-
-## Честные оговорки
-
-- Сборку (`ng build`) я НЕ прогоняла: в моём окружении нет Node/ng и сети. Проверена разрешимость
-  импортов и путей, но НЕ типы и НЕ компиляция.
-- Страница `article-details-page` и роут `ARTICLE_DETAILS` СОЗНАТЕЛЬНО оставлены: она реализована и
-  рендерит `ArticleComponent`; удаление сломало бы просмотр статей.
-- `articles-drawer-sidebar` НЕ трогала: блокировку скролла там делает сам виджет (`DrawerComponent`
-  класса `lock-scroll` не ставит), поэтому `effect` нужен.
-- `strictTemplates`, `noUnusedLocals`, `exactOptionalPropertyTypes` включены — если после распаковки
-  что-то всплывёт, это почти всегда неиспользуемый импорт.
-</file>
-
-<file path="vercel.json">
-{
-	"rewrites": [
-		{
-			"source": "/(.*)",
-			"destination": "/index.html"
-		}
-	]
-}
-</file>
-
-<file path=".github/workflows/ci.yml">
-name: CI
-
-on:
-    push:
-        branches: [main, master]
-    pull_request:
-        branches: [main, master]
-
-concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
-
-jobs:
-    validate-and-build:
-        runs-on: ubuntu-latest
-
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-                  cache: 'pnpm'
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Strict Typecheck
-              run: pnpm typecheck
-
-            - name: Check formatting (Prettier)
-              run: pnpm -w format:check
-
-            - name: Lint (ESLint & Stylelint)
-              run: pnpm -w lint
-
-            - name: Build Application
-              run: pnpm -w build:prod
-
-            - name: Upload Build Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: dist
-                  path: dist
-                  retention-days: 7
-</file>
-
-<file path=".husky/pre-commit">
-pnpm  lint-staged
-pnpm  typecheck
-</file>
-
-<file path="public/assets/eye-closed.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" d="M14.505 5.631a.75.75 0 0 1 1.219.875A9.6 9.6 0 0 1 13.8 8.501l1.355 1.712c.263.332.195.774-.15.986-.344.213-.836.116-1.099-.216l-1.329-1.68a9.5 9.5 0 0 1-1.972.806l.62 2.704c.092.403-.16.8-.564.886a.765.765 0 0 1-.9-.576l-.624-2.72a9.6 9.6 0 0 1-2.275.003l-.62 2.717a.765.765 0 0 1-.901.576.736.736 0 0 1-.565-.886l.618-2.698a9.4 9.4 0 0 1-1.977-.805l-1.323 1.673c-.263.332-.755.429-1.1.216-.344-.212-.41-.654-.148-.986l1.348-1.704a9.5 9.5 0 0 1-1.91-1.982.75.75 0 0 1 1.219-.875c3.19 4.44 9.811 4.424 13.002-.021"/></svg>
-</file>
-
-<file path="public/assets/eye-opened.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.87 8.515 1.641 8l.229-.515a6.708 6.708 0 0 1 12.26 0l.228.515-.229.515a6.708 6.708 0 0 1-12.259 0M.5 6.876l-.26.585a1.33 1.33 0 0 0 0 1.079l.26.584a8.208 8.208 0 0 0 15 0l.26-.584a1.33 1.33 0 0 0 0-1.08l-.26-.584a8.208 8.208 0 0 0-15 0M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/logo-github.svg">
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 438.549 438.549" class="undefined lH8o3oFcT0JxdwXEIoPc"><path fill="currentColor" d="M409.132 114.573q-29.41-50.392-79.798-79.8C295.736 15.166 259.057 5.365 219.271 5.365c-39.781 0-76.472 9.804-110.063 29.408-33.596 19.605-60.192 46.204-79.8 79.8Q0 164.966 0 224.63c0 47.78 13.94 90.745 41.827 128.906q41.827 57.245 108.063 79.227c5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562q0-.855-.144-15.417a2550 2550 0 0 1-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999q-10.28-1.848-19.13-8.559c-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559q-6.139-7.995-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429q-1.712-1.996-2.568-3.997-.86-2.002 1.427-3.289c1.525-.859 4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851q8.42 5.71 13.846 14.842c4.38 7.806 9.657 13.754 15.846 17.847q9.277 6.138 18.699 6.136 9.42-.001 16.274-1.423 6.848-1.43 12.847-4.285 2.57-19.135 13.988-29.41c-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979q-5.852-18.56-5.852-42.826c0-23.035 7.52-42.637 22.557-58.817q-10.566-25.977 1.997-58.24c5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994s9.089 5.618 12.135 7.708q26.556-7.42 54.818-7.421c28.262-.001 37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979q-9.286 11.282-23.131 18.986c-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146q14.841 12.845 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995q66.244-21.98 108.068-79.226c27.88-38.161 41.825-81.126 41.825-128.906-.01-39.771-9.818-76.454-29.414-110.049"></path></svg>
-</file>
-
-<file path="public/assets/logo-google.svg">
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 533.5 544.3" class="undefined lzy6UeGBe3aifQ4z6hGe"><path d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8h147c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2" style="fill: rgb(66, 133, 244);"></path><path d="M272.1 544.3c73.4 0 135.3-24.1 180.4-65.7l-87.7-68c-24.4 16.6-55.9 26-92.6 26-71 0-131.2-47.9-152.8-112.3H28.9v70.1c46.2 91.9 140.3 149.9 243.2 149.9" style="fill: rgb(52, 168, 83);"></path><path d="M119.3 324.3c-11.4-33.8-11.4-70.4 0-104.2V150H28.9c-38.6 76.9-38.6 167.5 0 244.4z" style="fill: rgb(251, 188, 4);"></path><path d="M272.1 107.7c38.8-.6 76.3 14 104.4 40.8l77.7-77.7C405 24.6 339.7-.8 272.1 0 169.2 0 75.1 58 28.9 150l90.4 70.1c21.5-64.5 81.8-112.4 152.8-112.4" style="fill: rgb(234, 67, 53);"></path></svg>
-</file>
-
-<file path="public/assets/logo.svg">
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
- "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="1280.000000pt" height="400.000000pt" viewBox="0 0 1280.000000 400.000000"
- preserveAspectRatio="xMidYMid meet">
-
-<g transform="translate(0.000000,400.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
-<path d="M2090 3454 c0 -12 923 -1994 927 -1990 7 7 101 1511 94 1518 -3 4
--231 111 -506 238 -274 127 -503 234 -507 236 -4 3 -8 2 -8 -2z"/>
-<path d="M905 3216 l-499 -233 2 -49 c9 -160 93 -1478 95 -1480 2 -2 915 1960
-925 1987 2 5 -2 9 -10 8 -7 -1 -238 -106 -513 -233z"/>
-<path d="M4120 2258 c-157 -446 -311 -885 -342 -975 l-57 -163 189 0 188 0 80
-238 79 237 368 0 368 0 81 -237 81 -238 188 0 c106 0 187 4 185 9 -1 5 -156
-444 -343 975 l-340 966 -220 0 -220 0 -285 -812z m643 29 c70 -210 127 -386
-127 -390 0 -4 -119 -7 -265 -7 -146 0 -265 4 -265 9 0 8 227 687 249 744 6 15
-14 27 18 27 5 0 66 -172 136 -383z"/>
-<path d="M9800 2095 l0 -975 170 0 170 0 0 975 0 975 -170 0 -170 0 0 -975z"/>
-<path d="M1751 2670 c-70 -160 -357 -871 -353 -875 6 -6 732 -7 732 -1 0 2
--83 205 -184 452 -165 402 -185 446 -195 424z"/>
-<path d="M6205 2586 c-115 -28 -214 -100 -267 -193 -16 -29 -34 -56 -39 -59
--5 -3 -9 48 -9 120 l0 126 -165 0 -165 0 0 -730 0 -730 170 0 170 0 0 428 c0
-235 5 458 10 496 24 165 139 266 304 266 86 0 148 -23 200 -76 81 -81 80 -74
-84 -626 l3 -488 169 0 170 0 0 523 c0 581 -2 595 -66 718 -62 118 -179 203
--313 229 -71 13 -193 11 -256 -4z"/>
-<path d="M7361 2584 c-203 -54 -363 -233 -423 -470 -30 -119 -32 -390 -4 -499
-44 -170 145 -316 271 -390 195 -115 459 -109 614 15 21 16 55 54 76 85 21 30
-42 55 47 55 4 0 8 -76 8 -168 0 -206 -11 -254 -74 -317 -130 -130 -425 -123
--548 13 -19 22 -40 48 -46 58 -10 18 -16 17 -154 -15 -78 -18 -149 -36 -156
--40 -21 -12 44 -127 109 -192 193 -193 628 -237 927 -93 88 43 187 135 226
-211 57 113 56 99 56 955 l0 788 -170 0 -170 0 0 -120 c0 -66 -3 -120 -7 -120
--5 0 -19 19 -32 42 -54 95 -151 173 -250 202 -68 20 -226 20 -300 0z m380
--291 c56 -25 120 -87 149 -143 74 -144 81 -398 15 -546 -66 -150 -220 -222
--384 -180 -161 41 -246 174 -258 401 -6 116 11 211 53 306 34 75 115 152 182
-174 65 20 183 15 243 -12z"/>
-<path d="M10685 2585 c-163 -36 -285 -114 -366 -231 -28 -41 -73 -143 -66
--150 4 -5 272 -44 297 -44 11 0 26 12 34 28 22 43 87 103 136 126 66 30 228
-30 285 -1 53 -28 81 -60 100 -112 21 -61 19 -113 -6 -145 -27 -34 -91 -51
--269 -71 -359 -40 -512 -111 -593 -274 -31 -63 -32 -70 -31 -181 1 -142 21
--203 96 -285 85 -93 187 -139 336 -151 203 -17 373 57 474 206 16 24 17 22 17
--77 l1 -103 165 0 165 0 0 538 c0 423 -3 548 -14 588 -46 172 -191 295 -398
-338 -93 19 -279 20 -363 1z m434 -892 c-4 -105 -7 -124 -33 -176 -54 -111
--162 -170 -312 -170 -128 0 -209 50 -235 145 -24 89 14 163 107 209 48 24 96
-36 215 54 85 13 172 30 194 38 70 25 67 30 64 -100z"/>
-<path d="M12158 2586 c-100 -36 -169 -98 -216 -192 -14 -30 -30 -54 -34 -54
--4 0 -8 54 -8 120 l0 120 -165 0 -165 0 0 -730 0 -730 169 0 170 0 3 468 3
-467 26 55 c34 71 89 126 158 159 47 21 71 25 146 26 50 0 105 -3 123 -7 l32
--7 0 159 0 160 -102 0 c-58 -1 -119 -7 -140 -14z"/>
-<path d="M8403 2058 c4 -582 5 -589 73 -719 68 -128 186 -208 341 -231 206
--30 407 62 493 225 14 26 28 47 32 47 5 0 8 -58 8 -130 l0 -130 165 0 165 0 0
-730 0 730 -170 0 -170 0 0 -443 c0 -484 -4 -523 -58 -601 -60 -88 -185 -144
--290 -132 -96 11 -176 69 -216 156 -20 43 -21 62 -24 533 l-3 487 -175 0 -176
-0 5 -522z"/>
-<path d="M1127 1173 c-37 -91 -66 -171 -64 -177 3 -6 161 -100 351 -209 l347
--198 354 202 354 203 -15 35 c-9 20 -41 98 -72 174 l-56 137 -565 0 -566 0
--68 -167z"/>
-</g>
-</svg>
-</file>
-
-<file path="src/app/layouts/account-layout/account-layout.component.html">
-<div class="account-layout">
-	<div class="account-layout__header">
-		<div class="account-layout__hero-container">
-			@if (userStore.profile(); as user) {
-				<app-user-profile-hero [profile]="user" />
-			}
-		</div>
-	</div>
-
-	<main class="account-layout__main">
-		<div class="account-layout__container">
-			<aside class="account-layout__sidebar">
-				<app-account-navigation />
-			</aside>
-			<div class="account-layout__content">
-				<router-outlet />
-			</div>
-		</div>
-	</main>
-</div>
-</file>
-
-<file path="src/app/layouts/account-layout/account-layout.component.ts">
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-
-import { AccountNavigationComponent } from '@widgets/account-navigation';
-
-import { UserProfileHeroComponent, UserStore } from '@entities/user';
-
-@Component({
-	selector: 'app-account-layout',
-	standalone: true,
-	imports: [RouterOutlet, AccountNavigationComponent, UserProfileHeroComponent],
-	templateUrl: './account-layout.component.html',
-	styleUrl: './account-layout.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class AccountLayoutComponent {
-	protected readonly userStore = inject(UserStore);
-}
-</file>
-
 <file path="src/app/ui/app.component.ts">
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
@@ -6647,6 +5905,7 @@ import { BaseApiService } from '@shared/api/base-api.service';
 
 import {
 	Article,
+	ArticleListResponse,
 	CreateArticleDto,
 	GetArticlesQueryDto,
 	UpdateArticleDto,
@@ -6662,14 +5921,14 @@ export class ArticleApiService extends BaseApiService {
 	 * Создание новой статьи
 	 */
 	public createArticle(dto: CreateArticleDto): Observable<Article> {
-		return this.post<Article>(this.basePath, dto);
+		return this.post<Article, CreateArticleDto>(this.basePath, dto);
 	}
 
 	/**
 	 * Получение списка статей с фильтрацией
 	 */
-	public getArticles(query?: GetArticlesQueryDto): Observable<Article[]> {
-		return this.get<Article[]>(
+	public getArticles(query?: GetArticlesQueryDto): Observable<ArticleListResponse> {
+		return this.get<ArticleListResponse>(
 			this.basePath,
 			query as Record<
 				string,
@@ -6679,25 +5938,24 @@ export class ArticleApiService extends BaseApiService {
 	}
 
 	/**
-	 * Получение конкретной статьи.
-	 * Бекенд парсит UUID из строки, можно передавать как 'id', так и 'id-slug'
+	 * Получение статьи по ID
 	 */
-	public getArticleById(idWithSlug: string): Observable<Article> {
-		return this.get<Article>(`${this.basePath}/${encodeURIComponent(idWithSlug)}`);
+	public getArticleById(id: string): Observable<Article> {
+		return this.get<Article>(`${this.basePath}/${id}`);
 	}
 
 	/**
-	 * Частичное обновление статьи
+	 * Обновление статьи
 	 */
-	public updateArticle(idWithSlug: string, dto: UpdateArticleDto): Observable<Article> {
-		return this.patch<Article>(`${this.basePath}/${encodeURIComponent(idWithSlug)}`, dto);
+	public updateArticle(id: string, dto: UpdateArticleDto): Observable<Article> {
+		return this.patch<Article, UpdateArticleDto>(`${this.basePath}/${id}`, dto);
 	}
 
 	/**
 	 * Удаление статьи
 	 */
-	public deleteArticle(idWithSlug: string): Observable<void> {
-		return this.delete<void>(`${this.basePath}/${encodeURIComponent(idWithSlug)}`);
+	public deleteArticle(id: string): Observable<void> {
+		return this.delete<void>(`${this.basePath}/${id}`);
 	}
 }
 </file>
@@ -6913,9 +6171,11 @@ export const ARTICLE_BLOCK_REGISTRY: Record<ArticleBlockType, Type<unknown>> = {
 		</div>
 	</div>
 
-	<p class="description">
-		{{ lesson().description }}
-	</p>
+	@if (lesson().description) {
+		<p class="description">
+			{{ lesson().description }}
+		</p>
+	}
 </header>
 </file>
 
@@ -6932,131 +6192,71 @@ import { UserProfile } from '../model/user.types';
 @Injectable({ providedIn: 'root' })
 export class UserApiService extends BaseApiService {
 	private readonly profilePath = ApiPaths.PROFILES;
+	private readonly profileMePath = ApiPaths.ME;
 
+	/**
+	 * Запрос на получение профиля текущего пользователя
+	 */
 	getMyProfile(): Observable<UserProfile> {
-		return this.get<UserProfile>(`/${this.profilePath}/me`);
+		return this.get<UserProfile>(`${this.profilePath}/${this.profileMePath}`);
+	}
+
+	/**
+	 * Обновление поля username текущего профиля
+	 */
+	public updateUsername(username: string): Observable<UserProfile> {
+		return this.patch<UserProfile, { username: string }>(
+			`${this.profilePath}/${this.profileMePath}`,
+			{ username },
+		);
 	}
 }
 </file>
 
-<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.scss">
-@use 'media' as m;
+<file path="src/entities/user/model/user.types.ts">
+export type UserRole = 'USER' | 'ADMIN';
+export type AuthProvider = 'GOOGLE' | 'GITHUB';
 
-:host {
-	display: flex;
-	flex-direction: row;
-	gap: var(--unit-4);
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	padding: var(--unit-8) 0 var(--unit-4) 0;
-	background-color: transparent;
-	text-align: left;
-
-	@include m.media-above('md') {
-		gap: var(--unit-5);
-		padding: var(--unit-16) 0 var(--unit-4) 0;
-	}
+export interface OAuthAccount {
+	provider: AuthProvider;
+	providerId: string;
 }
 
-.avatar {
-	display: flex;
-	flex-shrink: 0;
-	justify-content: center;
-	align-items: center;
-	width: 4.5rem;
-	height: 4.5rem;
-	background-color: var(--brand-primary);
-	border-radius: var(--radius-full);
-	font-size: var(--font-size-xl);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-on-dark);
-	overflow: hidden;
-
-	@include m.media-above('md') {
-		width: 5rem;
-		height: 5rem;
-		font-size: var(--font-size-xxl);
-	}
-
-	&__img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-}
-
-.info {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-1);
-	justify-content: center;
-}
-
-.name {
-	margin: 0;
-	font-size: var(--font-size-xxl);
-	font-weight: var(--font-weight-medium);
-	line-height: var(--line-height-none);
-	color: var(--text-primary);
-	letter-spacing: -0.02em;
-
-	@include m.media-above('md') {
-		font-size: var(--font-size-xxxl);
-	}
-}
-
-.account-type {
-	margin: 0;
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-regular);
-	line-height: var(--line-height-normal);
-	color: var(--text-secondary);
-
-	&__value {
-		font-weight: var(--font-weight-regular);
-		color: var(--text-secondary);
-	}
+export interface UserProfile {
+	id: string;
+	email: string;
+	username: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	avatarUrl?: string | null;
+	role: UserRole;
+	accounts: OAuthAccount[];
+	provider: AuthProvider;
 }
 </file>
 
-<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.ts">
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.html">
+<div class="avatar">
+	@if (avatarUrl()) {
+		<img [src]="avatarUrl()" [alt]="name()" class="avatar__img" />
+	} @else {
+		{{ initial() }}
+	}
+</div>
 
-import { UserProfile } from '../../model/user.types';
-
-const PROVIDER_LABELS: Record<UserProfile['provider'], string> = {
-	GOOGLE: 'Google',
-	GITHUB: 'GitHub',
-};
-
-@Component({
-	selector: 'app-user-profile-hero',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './user-profile-hero.component.html',
-	styleUrl: './user-profile-hero.component.scss',
-})
-export class UserProfileHeroComponent {
-	readonly profile = input.required<UserProfile>();
-
-	readonly name = computed(() => {
-		const profile = this.profile();
-		const fullName = `${profile.firstName ?? ''} ${profile.lastName ?? ''}`.trim();
-		return fullName || profile.username;
-	});
-
-	readonly initial = computed(() => this.name().charAt(0).toUpperCase());
-	readonly avatarUrl = computed(() => this.profile().avatarUrl ?? null);
-	readonly accountType = computed(() => PROVIDER_LABELS[this.profile().provider]);
-}
-</file>
-
-<file path="src/entities/user/index.ts">
-export * from './ui/user-profile-hero/user-profile-hero.component';
-export * from './api/user-api.service';
-export * from './model/user.types';
-export * from './model/user.store';
+<div class="info">
+	<h1 class="name">{{ name() }}</h1>
+	<p class="account-type">
+		Account type:
+		<span class="account-type__value">
+			@for (account of accountType(); track account.provider) {
+				@if (providerLabels()[account.provider]) {
+					<span class="account-type__provider">{{ providerLabels()[account.provider] }}</span>
+				}
+			}
+		</span>
+	</p>
+</div>
 </file>
 
 <file path="src/environments/environment.ts">
@@ -7118,42 +6318,9 @@ export const environment = {
 }
 </file>
 
-<file path="src/features/auth-by-oauth/ui/auth-by-oauth.component.ts">
-import { ChangeDetectionStrategy, Component, inject, model } from '@angular/core';
-
-import { ENVIRONMENT } from '@shared/config/environment.config';
-import { ModalComponent } from '@shared/ui/modal';
-
-import { GithubOauthButtonComponent } from './github-button/github-button.component';
-import { GoogleOauthButtonComponent } from './google-button/google-button.component';
-
-type OAuthProvider = 'github' | 'google';
-
-@Component({
-	selector: 'app-auth-by-oauth',
-	standalone: true,
-	imports: [ModalComponent, GoogleOauthButtonComponent, GithubOauthButtonComponent],
-	templateUrl: './auth-by-oauth.component.html',
-	styleUrl: './auth-by-oauth.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class AuthByOauthComponent {
-	readonly isOpen = model<boolean>(false);
-
-	private readonly environment = inject(ENVIRONMENT);
-
-	protected loginWithGitHub(): void {
-		this.redirectToProvider('github');
-	}
-
-	protected loginWithGoogle(): void {
-		this.redirectToProvider('google');
-	}
-
-	private redirectToProvider(provider: OAuthProvider): void {
-		window.location.href = `${this.environment.apiUrl}/auth/${provider}`;
-	}
-}
+<file path="src/features/auth-by-oauth/index.ts">
+export * from './ui/auth-by-oauth.component';
+export * from './lib/guards/auth.guard';
 </file>
 
 <file path="src/features/manage-article/ui/article-creation/article-text-block-form/article-text-block-form.component.ts">
@@ -7589,6 +6756,12 @@ export abstract class BaseApiService {
 		outline-offset: var(--focus-ring-offset);
 	}
 }
+
+.link {
+	display: flex;
+	gap: var(--unit-1);
+	align-items: center;
+}
 </file>
 
 <file path="src/shared/ui/app-link/app-link.component.ts">
@@ -7600,7 +6773,7 @@ export type LinkTarget = '_blank' | '_self' | '_parent' | '_top';
 @Component({
 	selector: 'a[app-link]',
 	standalone: true,
-	template: '<ng-content />',
+	template: '<span class="link"><ng-content /></span>',
 	styleUrl: './app-link.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	host: {
@@ -7953,6 +7126,14 @@ export class InputComponent implements ControlValueAccessor {
 	pointer-events: auto;
 	overflow: hidden;
 
+	&--size-l {
+		max-width: 32rem;
+
+		.modal-panel__content {
+			padding: 0;
+		}
+	}
+
 	&--size-m {
 		max-width: 24rem;
 
@@ -8018,7 +7199,7 @@ import { ChangeDetectionStrategy, Component, HostListener, input, model } from '
 
 import { IconComponent } from '../icon';
 
-export type ModalSize = 's' | 'm';
+export type ModalSize = 's' | 'm' | 'l';
 
 @Component({
 	selector: 'app-modal',
@@ -8281,243 +7462,48 @@ export class TextareaComponent implements ControlValueAccessor {
 </div>
 </file>
 
-<file path=".commitlintrc.json">
-{
-	"extends": ["@commitlint/config-conventional"],
-	"rules": {
-		"type-enum": [
-			2,
-			"always",
-			[
-				"build",
-				"ci",
-				"docs",
-				"feat",
-				"fix",
-				"perf",
-				"refactor",
-				"revert",
-				"style",
-				"test",
-				"chore"
-			]
-		],
-		"subject-case": [2, "never", ["sentence-case", "start-case", "pascal-case", "upper-case"]],
-		"subject-empty": [2, "never"],
-		"type-empty": [2, "never"]
-	}
+<file path="src/app/layouts/account-layout/account-layout.component.html">
+<div class="account-layout">
+	<div class="account-layout__header">
+		<div class="account-layout__hero-container">
+			@if (userStore.profile(); as user) {
+				<app-user-profile-hero [profile]="user" />
+			}
+		</div>
+	</div>
+
+	<main class="account-layout__main">
+		<div class="account-layout__container">
+			<aside class="account-layout__sidebar">
+				<app-account-navigation />
+			</aside>
+			<div class="account-layout__content">
+				<router-outlet />
+			</div>
+		</div>
+	</main>
+</div>
+</file>
+
+<file path="src/app/layouts/account-layout/account-layout.component.ts">
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+import { AccountNavigationComponent } from '@widgets/account-navigation';
+
+import { UserProfileHeroComponent, UserStore } from '@entities/user';
+
+@Component({
+	selector: 'app-account-layout',
+	standalone: true,
+	imports: [RouterOutlet, AccountNavigationComponent, UserProfileHeroComponent],
+	templateUrl: './account-layout.component.html',
+	styleUrl: './account-layout.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AccountLayoutComponent {
+	protected readonly userStore = inject(UserStore);
 }
-</file>
-
-<file path=".gitignore">
-# --- Сборка, кэш и компиляция ---
-/dist/
-/tmp/
-/out-tsc/
-/.angular/
-.tsbuildinfo
-.sass-cache/
-
-# --- Зависимости ---
-node_modules/
-.pnpm-store/
-
-# --- Логи и отчеты тестов ---
-*.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
-/coverage/
-
-# --- Переменные окружения и секреты ---
-.env
-.env.local
-.env.*.local
-!.env.example
-
-# --- IDE (JetBrains / Visual Studio) ---
-.idea/
-*.suo
-*.sln
-*.sw?
-
-# --- VS Code (Только командные конфиги, без персонального мусора) ---
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/
-
-# --- Системные файлы ---
-.DS_Store
-.DS_Store?
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-</file>
-
-<file path=".lintstagedrc.json">
-{
-	"*.ts": ["eslint --fix", "prettier --write"],
-	"*.html": ["eslint --fix", "prettier --write"],
-	"*.{scss,css}": ["stylelint --fix", "prettier --write"],
-	"*.{json,md,yml,yaml}": ["prettier --write"]
-}
-</file>
-
-<file path="pnpm-workspace.yaml">
-allowBuilds:
-    '@parcel/watcher': true
-    esbuild: true
-    lmdb: true
-    msgpackr-extract: true
-    unrs-resolver: true
-</file>
-
-<file path="tsconfig.json">
-{
-	"$schema": "https://json.schemastore.org/tsconfig",
-	"compileOnSave": false,
-	"compilerOptions": {
-		"target": "es2022",
-		"module": "preserve",
-		"moduleResolution": "bundler",
-		"lib": ["es2022", "dom", "dom.iterable"],
-
-		/* Строгость типов */
-		"strict": true,
-		"noImplicitAny": true,
-		"strictNullChecks": true,
-		"noImplicitOverride": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"exactOptionalPropertyTypes": true,
-		"noUncheckedIndexedAccess": true,
-
-		/* Совместимость и безопасность */
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": true,
-		"isolatedModules": true,
-		"useDefineForClassFields": true,
-
-		/* Декораторы Angular */
-		"experimentalDecorators": true,
-		"importHelpers": true,
-
-		/* Path Aliases (FSD Архитектура) */
-		"rootDir": ".",
-		"paths": {
-			"@app/*": ["./src/app/*"],
-			"@pages/*": ["./src/pages/*"],
-			"@widgets/*": ["./src/widgets/*"],
-			"@features/*": ["./src/features/*"],
-			"@entities/*": ["./src/entities/*"],
-			"@shared/*": ["./src/shared/*"]
-		}
-	},
-
-	"angularCompilerOptions": {
-		"strictTemplates": true,
-		"enableI18nLegacyMessageIdFormat": false,
-		"strictInjectionParameters": true,
-		"strictInputAccessModifiers": true,
-		"strictAttributeTypes": true,
-		"strictOutputEventTypes": true,
-		"strictNullInputTypes": true,
-		"extendedDiagnostics": {
-			"defaultCategory": "error"
-		}
-	},
-
-	"files": [],
-	"references": [
-		{
-			"path": "./tsconfig.app.json"
-		}
-	]
-}
-</file>
-
-<file path=".husky/commit-msg">
-pnpm exec commitlint --edit "$1"
-</file>
-
-<file path="public/assets/arrow-right.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.25 8A.75.75 0 0 1 2 7.25h10.19L9.47 4.53a.75.75 0 0 1 1.06-1.06l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 1 1-1.06-1.06l2.72-2.72H2A.75.75 0 0 1 1.25 8" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/bars.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.25 3.25A.75.75 0 0 1 2 2.5h12A.75.75 0 0 1 14 4H2a.75.75 0 0 1-.75-.75m0 4.75A.75.75 0 0 1 2 7.25h12a.75.75 0 0 1 0 1.5H2A.75.75 0 0 1 1.25 8M2 12a.75.75 0 0 0 0 1.5h12a.75.75 0 0 0 0-1.5z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/book-open.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M7.345 2.634q.136.069.268.145L8 3l.387-.221q.133-.076.268-.145a6.7 6.7 0 0 1 6.052-.03c.486.242.793.74.793 1.283v8.938c0 .65-.526 1.175-1.175 1.175h-.04c-.187 0-.37-.05-.529-.146a4.8 4.8 0 0 0-4.61-.177l-.199.1A2.1 2.1 0 0 1 8 14h-.117a1.6 1.6 0 0 1-.726-.171l-.233-.117a4.94 4.94 0 0 0-4.748.183.74.74 0 0 1-.381.105h-.12A1.175 1.175 0 0 1 .5 12.825V3.887c0-.543.307-1.04.793-1.284a6.7 6.7 0 0 1 6.052.03m1.405 9.572V4.3l.382-.218A5.2 5.2 0 0 1 14 3.927v8.357a6.3 6.3 0 0 0-5.25-.078m-1.5.005V4.299l-.382-.218A5.2 5.2 0 0 0 2 3.927v8.365a6.44 6.44 0 0 1 5.25-.082" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/check.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M13.488 3.43a.75.75 0 0 1 .081 1.058l-6 7a.75.75 0 0 1-1.1.042l-3.5-3.5A.75.75 0 0 1 4.03 6.97l2.928 2.927 5.473-6.385a.75.75 0 0 1 1.057-.081" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/circle-info-fill.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14m1-9.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0M8 7.75a.75.75 0 0 1 .75.75V11a.75.75 0 0 1-1.5 0V8.5A.75.75 0 0 1 8 7.75" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/circle-xmark-fill.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14M6.53 5.47a.75.75 0 0 0-1.06 1.06L6.94 8 5.47 9.47a.75.75 0 1 0 1.06 1.06L8 9.06l1.47 1.47a.75.75 0 1 0 1.06-1.06L9.06 8l1.47-1.47a.75.75 0 1 0-1.06-1.06L8 6.94z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/clock.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M13.5 8a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0M8.75 4.5a.75.75 0 0 0-1.5 0V8a.75.75 0 0 0 .3.6l2 1.5a.75.75 0 1 0 .9-1.2l-1.7-1.275z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/credit-card.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M12.5 4h-9A1.5 1.5 0 0 0 2 5.5h12A1.5 1.5 0 0 0 12.5 4M2 10.5V7h12v3.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 10.5m1.5-8a3 3 0 0 0-3 3v5a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-5a3 3 0 0 0-3-3zM4.25 9a.75.75 0 0 0 0 1.5h2.5a.75.75 0 0 0 0-1.5z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/envelope.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M3.5 4h9c.25 0 .485.06.692.169L8.75 7.5a1.25 1.25 0 0 1-1.5 0L2.808 4.169C3.015 4.06 3.251 4 3.5 4M2.001 5.438 2 5.5v5A1.5 1.5 0 0 0 3.5 12h9a1.5 1.5 0 0 0 1.5-1.5v-5l-.001-.062L9.65 8.7a2.75 2.75 0 0 1-3.3 0zM.5 5.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/floppy-disk.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M3 11.5A1.5 1.5 0 0 0 4.5 13v-2.5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2V13a1.5 1.5 0 0 0 1.5-1.5V6.036a1 1 0 0 0-.293-.708l-2.035-2.035A1 1 0 0 0 9.964 3H6v1a.5.5 0 0 0 .5.5h3a.75.75 0 0 1 0 1.5h-3a2 2 0 0 1-2-2V3A1.5 1.5 0 0 0 3 4.5zm-1.5 0a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3V6.036a2.5 2.5 0 0 0-.732-1.768l-2.036-2.036A2.5 2.5 0 0 0 9.964 1.5H4.5a3 3 0 0 0-3 3zm8.5-1V13H6v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/lock.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M10.5 6V5a2.5 2.5 0 0 0-5 0v1zM4 5v1a3 3 0 0 0-3 3v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3V5a4 4 0 0 0-8 0m6.5 2.5H12A1.5 1.5 0 0 1 13.5 9v3a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 12V9A1.5 1.5 0 0 1 4 7.5zm-1.75 2a.75.75 0 0 0-1.5 0v2a.75.75 0 0 0 1.5 0z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/moon.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M8 13.5a5.5 5.5 0 0 0 2.263-10.514 5.5 5.5 0 0 1-7.278 7.278A5.5 5.5 0 0 0 8 13.5M1.045 8.795a7.001 7.001 0 1 0 7.75-7.75l-.028-.003A7 7 0 0 0 8 1c-.527 0-.59.842-.185 1.18a4 4 0 0 1 .342.322A4 4 0 1 1 2.18 7.814C1.842 7.41 1 7.474 1 8a7 7 0 0 0 .045.794" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/pencil-to-square.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M6.169 6.331a3 3 0 0 0-.833 1.6l-.338 1.912a1 1 0 0 0 1.159 1.159l1.912-.338a3 3 0 0 0 1.6-.833l3.07-3.07 2-2A.9.9 0 0 0 15 4.13 3.13 3.13 0 0 0 11.87 1a.9.9 0 0 0-.632.262l-2 2zm3.936-1.814L7.229 7.392a1.5 1.5 0 0 0-.416.8L6.6 9.4l1.208-.213.057-.01a1.5 1.5 0 0 0 .743-.406l2.875-2.876a1.63 1.63 0 0 0-1.378-1.378m2.558.199a3.14 3.14 0 0 0-1.379-1.38l.82-.82a1.63 1.63 0 0 1 1.38 1.38zM8 2.25a.75.75 0 0 0-.75-.75H4.5a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3V8.75a.75.75 0 0 0-1.5 0v2.75a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 11.5v-7A1.5 1.5 0 0 1 4.5 3h2.75A.75.75 0 0 0 8 2.25" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/person.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" d="M8 8.5c3.85 0 7 2.5 7 4.5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2c0-2 3.15-4.5 7-4.5M8 10c-1.61 0-3.064.526-4.092 1.234C2.798 12.001 2.5 12.733 2.5 13a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5c0-.267-.297-1-1.408-1.766C11.064 10.526 9.609 10 8 10m0-9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7m0 1.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/></svg>
-</file>
-
-<file path="public/assets/sun.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M8 3a.75.75 0 0 1-.75-.75V.75a.75.75 0 0 1 1.5 0v1.5A.75.75 0 0 1 8 3m0 7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8m-.75 3.25a.75.75 0 0 0 1.5 0v-1.5a.75.75 0 0 0-1.5 0zM13 8a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 13 8M.75 7.25a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5zm10.786-2.786a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 0 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0m-9.193 8.132a.75.75 0 0 0 1.06 1.06l1.062-1.06a.75.75 0 0 0-1.061-1.06zm9.193-1.06a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06M3.404 2.343a.75.75 0 0 0-1.06 1.06l1.06 1.061a.75.75 0 1 0 1.06-1.06z" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/triangle-exclamation-fill.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M5.835 2.244c.963-1.665 3.367-1.665 4.33 0l4.916 8.505c.964 1.666-.24 3.751-2.164 3.751H3.083c-1.925 0-3.128-2.085-2.165-3.751zM8 5a.75.75 0 0 1 .75.75v2a.75.75 0 1 1-1.5 0v-2A.75.75 0 0 1 8 5m1 5.75a1 1 0 1 1-2 0 1 1 0 0 1 2 0" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/triangle-exclamation.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M7.134 2.994 2.217 11.5a1 1 0 0 0 .866 1.5h9.834a1 1 0 0 0 .866-1.5L8.866 2.993a1 1 0 0 0-1.732 0m3.03-.75c-.962-1.665-3.366-1.665-4.329 0L.918 10.749c-.963 1.666.24 3.751 2.165 3.751h9.834c1.925 0 3.128-2.085 2.164-3.751zM8 5a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2A.75.75 0 0 1 8 5m1 5.75a1 1 0 1 1-2 0 1 1 0 0 1 2 0" clip-rule="evenodd"/></svg>
-</file>
-
-<file path="public/assets/xmark.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8 3.47 4.53a.75.75 0 0 1 0-1.06" clip-rule="evenodd"/></svg>
 </file>
 
 <file path="src/app/layouts/main-layout/main-layout.component.scss">
@@ -8583,7 +7569,7 @@ export type NoteType = 'INFO' | 'WARNING' | 'ERROR';
 export type TextFormat = 'HTML' | 'MARKDOWN';
 
 export interface TextBlockData {
-	format: string;
+	format: TextFormat;
 	content: string;
 }
 
@@ -8601,13 +7587,13 @@ export interface CodeBlockData {
 export interface ImageBlockData {
 	url: string;
 	alt: string;
-	caption?: string;
+	caption?: string | null;
 }
 
 export interface ComplexityBlockData {
 	time: string;
 	space: string;
-	description: string;
+	description?: string;
 }
 
 export interface FeatureItem {
@@ -8616,82 +7602,66 @@ export interface FeatureItem {
 }
 
 export interface FeaturesBlockData {
-	sectionTitle: string;
+	sectionTitle?: string | null;
 	items: FeatureItem[];
 }
 
-export interface TextBlock {
-	type: 'TEXT';
-	data: TextBlockData;
-}
-export interface NoteBlock {
-	type: 'NOTE';
-	data: NoteBlockData;
-}
-export interface CodeBlock {
-	type: 'CODE';
-	data: CodeBlockData;
-}
-export interface ImageBlock {
-	type: 'IMAGE';
-	data: ImageBlockData;
-}
-export interface ComplexityBlock {
-	type: 'COMPLEXITY';
-	data: ComplexityBlockData;
-}
-export interface FeaturesBlock {
-	type: 'FEATURES';
-	data: FeaturesBlockData;
+export type ArticleBlockType = 'TEXT' | 'CODE' | 'NOTE' | 'COMPLEXITY' | 'IMAGE' | 'FEATURES';
+
+export type ArticleBlockData =
+	| TextBlockData
+	| CodeBlockData
+	| NoteBlockData
+	| ComplexityBlockData
+	| ImageBlockData
+	| FeaturesBlockData;
+
+export interface ArticleBlock {
+	id: string;
+	type: ArticleBlockType;
+	data: ArticleBlockData;
 }
 
-export type ArticleContentBlock =
-	TextBlock | NoteBlock | CodeBlock | ImageBlock | ComplexityBlock | FeaturesBlock;
-
-export type ArticleBlockType = ArticleContentBlock['type'];
-
-export interface ArticleImage {
+export interface CoverImage {
 	url: string;
 	alt: string;
-	caption?: string;
+	caption?: string | null;
 }
 
-export interface SeoMetadata {
-	description?: string;
-	keywords?: string[];
+export interface NavigationTag {
+	id: string;
+	name: string;
+	slug: string;
 }
-
-export type ProblemId = string;
-export type AuthorId = string;
-export type ArticleId = string;
-export type CategoryId = string;
-
-export type NavigationTag =
-	'THEORY' | 'COMPONENT' | 'EXAMPLE' | 'ALGORITHM' | 'STRUCTURE' | 'ARCHITECTURE' | 'PATTERNS';
 
 export interface Article {
-	id: ArticleId;
-	slug: string;
+	id: string;
 	title: string;
+	slug: string;
 	leadText: string;
 	description: string;
-	problemId?: ProblemId;
-	authorId?: AuthorId;
-	categoryId: CategoryId;
-	tags: NavigationTag[];
+	coverImage: CoverImage;
 	status: ArticleStatus;
 	level: ArticleLevel;
-	coverImage?: ArticleImage;
+	tags: NavigationTag[];
+	blocks: ArticleBlock[];
 	readingTimeMinutes: number;
-	seo: SeoMetadata;
-	blocks: ArticleContentBlock[];
+	authorId: string;
+	categoryId: string;
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface ArticleListResponse {
+	items: Article[];
+	total: number;
 }
 
 export interface GetArticlesQueryDto {
 	status?: ArticleStatus;
 	categoryId?: string;
+	limit?: number;
+	offset?: number;
 }
 
 export type CreateArticleDto = Omit<Article, 'id' | 'createdAt' | 'updatedAt'>;
@@ -8890,7 +7860,7 @@ export class ArticleNavigationApiService extends BaseApiService {
 	&__section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--unit-2);
+		gap: var(--unit-1);
 	}
 
 	&__section-title {
@@ -9010,7 +7980,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { CircularProgressComponent } from '@shared/ui/circular-progress';
 
-import { CourseProgress } from '../../model/course.types';
+import { CourseProgressStats } from '../../model/course.types';
 
 @Component({
 	selector: 'app-course-progress',
@@ -9021,15 +7991,17 @@ import { CourseProgress } from '../../model/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseProgressComponent {
-	readonly progress = input.required<CourseProgress>();
+	readonly progress = input.required<CourseProgressStats>();
 }
 </file>
 
 <file path="src/entities/lesson/api/lesson-api.service.ts">
-/* eslint-disable @conarti/feature-sliced/layers-slices */
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
+
+import { ApiPaths } from '@shared/api/api-paths';
+import { BaseApiService } from '@shared/api/base-api.service';
 
 import {
 	CreateLessonDto,
@@ -9037,10 +8009,7 @@ import {
 	LessonEntity,
 	ToggleLessonProgressResponse,
 	UpdateLessonDto,
-} from '@entities/course';
-
-import { ApiPaths } from '@shared/api/api-paths';
-import { BaseApiService } from '@shared/api/base-api.service';
+} from '../model/lesson.types';
 
 @Injectable({ providedIn: 'root' })
 export class LessonApiService extends BaseApiService {
@@ -9048,32 +8017,32 @@ export class LessonApiService extends BaseApiService {
 	private readonly lessonsPath = ApiPaths.LESSONS;
 
 	getLessonDetail(id: string): Observable<LessonDetail> {
-		return this.get<LessonDetail>(`/${this.coursesPath}/${this.lessonsPath}/${id}`);
+		return this.get<LessonDetail>(`${this.coursesPath}/${this.lessonsPath}/${id}`);
 	}
 
 	toggleLessonProgress(id: string): Observable<ToggleLessonProgressResponse> {
 		return this.patch<ToggleLessonProgressResponse, Record<string, never>>(
-			`/${this.coursesPath}/${this.lessonsPath}/${id}/progress`,
+			`${this.coursesPath}/${this.lessonsPath}/${id}/progress`,
 			{},
 		);
 	}
 
 	createLesson(courseId: string, dto: CreateLessonDto): Observable<LessonEntity> {
 		return this.post<LessonEntity, CreateLessonDto>(
-			`/${this.coursesPath}/${courseId}/${this.lessonsPath}`,
+			`${this.coursesPath}/${courseId}/${this.lessonsPath}`,
 			dto,
 		);
 	}
 
 	updateLesson(id: string, dto: UpdateLessonDto): Observable<LessonEntity> {
 		return this.patch<LessonEntity, UpdateLessonDto>(
-			`/${this.coursesPath}/${this.lessonsPath}/${id}`,
+			`${this.coursesPath}/${this.lessonsPath}/${id}`,
 			dto,
 		);
 	}
 
 	deleteLesson(id: string): Observable<void> {
-		return this.delete<void>(`/${this.coursesPath}/${this.lessonsPath}/${id}`);
+		return this.delete<void>(`${this.coursesPath}/${this.lessonsPath}/${id}`);
 	}
 }
 </file>
@@ -9138,12 +8107,11 @@ export class LessonApiService extends BaseApiService {
 </file>
 
 <file path="src/entities/lesson/ui/lesson-header/lesson-header.component.ts">
-/* eslint-disable @conarti/feature-sliced/layers-slices */
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-import { CourseSkeletonLesson } from '@entities/course';
-
 import { IconComponent } from '@shared/ui/icon';
+
+import { CourseSkeletonLesson } from '../../model/lesson.types';
 
 @Component({
 	selector: 'app-lesson-header',
@@ -9160,10 +8128,175 @@ export class LessonHeaderComponent {
 }
 </file>
 
+<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.scss">
+@use 'media' as m;
+
+:host {
+	display: flex;
+	flex-direction: row;
+	gap: var(--unit-4);
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	padding-top: var(--unit-4);
+	background-color: transparent;
+	text-align: left;
+
+	@include m.media-above('md') {
+		gap: var(--unit-5);
+		padding: var(--unit-16) 0 var(--unit-4) 0;
+	}
+}
+
+.avatar {
+	display: flex;
+	flex-shrink: 0;
+	justify-content: center;
+	align-items: center;
+	width: 4.5rem;
+	height: 4.5rem;
+	background-color: var(--brand-primary);
+	border-radius: var(--radius-full);
+	font-size: var(--font-size-xl);
+	font-weight: var(--font-weight-medium);
+	color: var(--text-on-dark);
+	overflow: hidden;
+
+	@include m.media-above('md') {
+		width: 5rem;
+		height: 5rem;
+		font-size: var(--font-size-xxl);
+	}
+
+	&__img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+}
+
+.info {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-1);
+	justify-content: center;
+}
+
+.name {
+	margin: 0;
+	font-size: var(--font-size-xxl);
+	font-weight: var(--font-weight-medium);
+	line-height: var(--line-height-none);
+	color: var(--text-primary);
+	letter-spacing: -0.02em;
+
+	@include m.media-above('md') {
+		font-size: var(--font-size-xxxl);
+	}
+}
+
+.account-type {
+	display: flex;
+	gap: var(--unit-1);
+	align-items: center;
+	margin: 0;
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-normal);
+	color: var(--text-secondary);
+
+	&__value {
+		font-weight: var(--font-weight-regular);
+		color: var(--text-secondary);
+	}
+}
+</file>
+
+<file path="src/entities/user/ui/user-profile-hero/user-profile-hero.component.ts">
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+import { UserProfile } from '../../model/user.types';
+
+@Component({
+	selector: 'app-user-profile-hero',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './user-profile-hero.component.html',
+	styleUrl: './user-profile-hero.component.scss',
+})
+export class UserProfileHeroComponent {
+	readonly profile = input.required<UserProfile>();
+
+	readonly name = computed(() => {
+		const profile = this.profile();
+		const fullName = `${profile.firstName ?? ''} ${profile.lastName ?? ''}`.trim();
+		return fullName || profile.username;
+	});
+
+	readonly initial = computed(() => this.name().charAt(0).toUpperCase());
+	readonly avatarUrl = computed(() => this.profile().avatarUrl ?? null);
+	readonly accountType = computed(() => this.profile().accounts);
+
+	readonly providerLabels = computed(
+		() =>
+			({
+				GOOGLE: 'Google',
+				GITHUB: 'GitHub',
+			}) as Record<UserProfile['provider'], string>,
+	);
+}
+</file>
+
+<file path="src/entities/user/index.ts">
+export * from './ui/user-profile-hero/user-profile-hero.component';
+export * from './api/user-api.service';
+export * from './model/user.types';
+export * from './model/user.store';
+</file>
+
+<file path="src/features/auth-by-oauth/ui/auth-by-oauth.component.ts">
+import { ChangeDetectionStrategy, Component, inject, model } from '@angular/core';
+
+import { ENVIRONMENT } from '@shared/config/environment.config';
+import { ModalComponent } from '@shared/ui/modal';
+
+import { GithubOauthButtonComponent } from './github-button/github-button.component';
+import { GoogleOauthButtonComponent } from './google-button/google-button.component';
+
+type OAuthProvider = 'github' | 'google';
+
+@Component({
+	selector: 'app-auth-by-oauth',
+	standalone: true,
+	imports: [ModalComponent, GoogleOauthButtonComponent, GithubOauthButtonComponent],
+	templateUrl: './auth-by-oauth.component.html',
+	styleUrl: './auth-by-oauth.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AuthByOauthComponent {
+	readonly isOpen = model<boolean>(false);
+
+	private readonly environment = inject(ENVIRONMENT);
+
+	protected loginWithGitHub(): void {
+		this.redirectToProvider('github');
+	}
+
+	protected loginWithGoogle(): void {
+		this.redirectToProvider('google');
+	}
+
+	private redirectToProvider(provider: OAuthProvider): void {
+		sessionStorage.setItem('authReturnUrl', window.location.pathname + window.location.search);
+		window.location.href = `${this.environment.apiUrl}/auth/${provider}`;
+	}
+}
+</file>
+
 <file path="src/features/lesson-navigation/ui/lesson-navigation-controls.component.ts">
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-import { CourseSkeletonLesson } from '@entities/course';
+import { CourseSkeletonLesson } from '@entities/lesson';
 
 import { ButtonComponent } from '@shared/ui/button';
 import { IconComponent } from '@shared/ui/icon';
@@ -9193,14 +8326,8 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 
 import { CourseApiService } from '@entities/course';
-import {
-	CourseProgress,
-	CourseSkeleton,
-	CourseSkeletonLesson,
-	CourseSkeletonSection,
-	LessonDetail,
-} from '@entities/course';
-import { LessonApiService } from '@entities/lesson';
+import { CourseProgressStats, CourseSkeleton, CourseSkeletonSection } from '@entities/course';
+import { CourseSkeletonLesson, LessonApiService, LessonDetail } from '@entities/lesson';
 
 @Injectable()
 export class CoursePageStore {
@@ -9210,6 +8337,7 @@ export class CoursePageStore {
 	private readonly courseState = signal<CourseSkeleton | null>(null);
 	private readonly activeLessonIdState = signal<string | null>(null);
 	private readonly activeLessonDetailState = signal<LessonDetail | null>(null);
+	private readonly progressState = signal<CourseProgressStats | null>(null);
 	private readonly loadingState = signal<boolean>(false);
 	private readonly errorState = signal<string | null>(null);
 
@@ -9218,6 +8346,7 @@ export class CoursePageStore {
 	readonly course = this.courseState.asReadonly();
 	readonly activeLessonId = this.activeLessonIdState.asReadonly();
 	readonly activeLessonDetail = this.activeLessonDetailState.asReadonly();
+	readonly progress = this.progressState.asReadonly();
 	readonly loading = this.loadingState.asReadonly();
 	readonly error = this.errorState.asReadonly();
 
@@ -9227,14 +8356,21 @@ export class CoursePageStore {
 		this.sections().flatMap((section) => section.lessons),
 	);
 
-	readonly progress = computed<CourseProgress>(() => {
+	readonly localProgress = computed<CourseProgressStats>(() => {
 		const lessons = this.lessons();
 		const totalLessons = lessons.length;
 		const completedLessons = lessons.filter((lesson) => lesson.isCompleted).length;
 		const percentage =
 			totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
-		return { totalLessons, completedLessons, percentage };
+		return {
+			courseId: this.courseState()?.id ?? '',
+			courseSlug: this.courseState()?.slug ?? '',
+			courseTitle: this.courseState()?.title ?? '',
+			totalLessons,
+			completedLessons,
+			percentage,
+		};
 	});
 
 	readonly activeLesson = computed<CourseSkeletonLesson | null>(() => {
@@ -9251,6 +8387,7 @@ export class CoursePageStore {
 	load(slug: string): void {
 		if (this.loadedSlug !== slug) {
 			this.courseState.set(null);
+			this.progressState.set(null);
 			this.loadedSlug = null;
 		}
 
@@ -9269,12 +8406,20 @@ export class CoursePageStore {
 					this.loadedSlug = slug;
 					this.courseState.set(course);
 					this.selectInitialLesson(course);
+					this.loadProgress(slug);
 				},
 				error: () => {
 					this.loadedSlug = null;
 					this.errorState.set('Не удалось загрузить курс');
 				},
 			});
+	}
+
+	loadProgress(slug: string): void {
+		this.courseApi.getCourseProgress(slug).subscribe({
+			next: (progress) => this.progressState.set(progress),
+			error: () => this.progressState.set(null),
+		});
 	}
 
 	selectLesson(id: string): void {
@@ -9410,6 +8555,348 @@ import { ButtonComponent } from '@shared/ui/button';
 export class HomePageComponent {
 	protected readonly frontendRoute = `/${RouteSegments.COURSES}/${RouteSegments.FRONTEND}`;
 }
+</file>
+
+<file path="src/shared/ui/drawer/drawer.component.html">
+@if (isOpen()) {
+	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
+}
+
+<aside
+	role="dialog"
+	class="drawer-panel"
+	[class.drawer-panel--open]="isOpen()"
+	[attr.aria-hidden]="!isOpen()"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="aside"
+>
+	@if (showCloseBtn()) {
+		<button
+			app-button
+			type="button"
+			variant="clear"
+			color="default"
+			size="s"
+			(click)="close()"
+			class="drawer-panel__close"
+			[class.drawer-panel__close--left]="closeBtnPosition() === 'left'"
+			[class.drawer-panel__close--right]="closeBtnPosition() === 'right'"
+			aria-label="Закрыть панель"
+		>
+			<app-icon [name]="'xmark'" size="l" />
+		</button>
+	}
+
+	<header class="drawer-panel__header">
+		<ng-content select="[drawer-header]"></ng-content>
+	</header>
+
+	<div class="drawer-panel__content">
+		<ng-content />
+	</div>
+</aside>
+</file>
+
+<file path="src/index.html">
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<title>Ngalg — интерактивные курсы по программированию</title>
+		<base href="/" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta
+			name="description"
+			content="Фундаментальный курс по Angular-разработке: от основ до продвинутых паттернов реактивности."
+		/>
+		<link rel="icon" type="image/x-icon" href="favicon.ico" />
+	</head>
+	<body>
+		<app-root></app-root>
+	</body>
+</html>
+</file>
+
+<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.ts">
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+
+import { AccordionComponent } from '@shared/ui/accordion/accordion.component';
+import { AppLinkComponent } from '@shared/ui/app-link';
+import { BadgeComponent } from '@shared/ui/badge';
+
+import { ArticleNavigationApiService } from '../../../api/article-navigation-api.service';
+
+@Component({
+	selector: 'app-article-drawer-navigation',
+	standalone: true,
+	imports: [AppLinkComponent, BadgeComponent, AccordionComponent],
+	templateUrl: './article-drawer-navigation.component.html',
+	styleUrl: './article-drawer-navigation.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ArticleDrawerNavigationComponent {
+	private readonly navigationApi = inject(ArticleNavigationApiService);
+
+	readonly navigationTree = toSignal(this.navigationApi.navigationTree$);
+	readonly selectedId = input<string | null>(null);
+	readonly articleSelected = output<string | number>();
+
+	public onArticleClick(id: string | number): void {
+		this.articleSelected.emit(id);
+	}
+}
+</file>
+
+<file path="src/entities/course/api/course-api.service.ts">
+import { Injectable } from '@angular/core';
+
+import { Observable } from 'rxjs';
+
+import { ApiPaths } from '@shared/api/api-paths';
+import { BaseApiService } from '@shared/api/base-api.service';
+
+import {
+	CourseEntity,
+	CourseProgressStats,
+	CourseSectionEntity,
+	CourseSkeleton,
+	CreateCourseDto,
+	CreateCourseSectionDto,
+	UpdateCourseDto,
+	UpdateCourseSectionDto,
+} from '../model/course.types';
+
+@Injectable({ providedIn: 'root' })
+export class CourseApiService extends BaseApiService {
+	private readonly coursesPath = ApiPaths.COURSES;
+	private readonly sectionsPath = ApiPaths.SECTIONS;
+
+	getCourseSkeleton(slug: string): Observable<CourseSkeleton> {
+		return this.get<CourseSkeleton>(`${this.coursesPath}/${slug}`);
+	}
+
+	getCourseProgress(slug: string): Observable<CourseProgressStats> {
+		return this.get<CourseProgressStats>(`${this.coursesPath}/${slug}/progress`);
+	}
+
+	createCourse(dto: CreateCourseDto): Observable<CourseEntity> {
+		return this.post<CourseEntity, CreateCourseDto>(this.coursesPath, dto);
+	}
+
+	updateCourse(id: string, dto: UpdateCourseDto): Observable<CourseEntity> {
+		return this.patch<CourseEntity, UpdateCourseDto>(`${this.coursesPath}/${id}`, dto);
+	}
+
+	deleteCourse(id: string): Observable<void> {
+		return this.delete<void>(`${this.coursesPath}/${id}`);
+	}
+
+	createSection(courseId: string, dto: CreateCourseSectionDto): Observable<CourseSectionEntity> {
+		return this.post<CourseSectionEntity, CreateCourseSectionDto>(
+			`${this.coursesPath}/${courseId}/${this.sectionsPath}`,
+			dto,
+		);
+	}
+
+	updateSection(id: string, dto: UpdateCourseSectionDto): Observable<CourseSectionEntity> {
+		return this.patch<CourseSectionEntity, UpdateCourseSectionDto>(
+			`${this.coursesPath}/${this.sectionsPath}/${id}`,
+			dto,
+		);
+	}
+
+	deleteSection(id: string): Observable<void> {
+		return this.delete<void>(`${this.coursesPath}/${this.sectionsPath}/${id}`);
+	}
+}
+</file>
+
+<file path="src/entities/lesson/ui/lesson-card/lesson-card.component.ts">
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+
+import { IconComponent } from '@shared/ui/icon';
+
+import { CourseSkeletonLesson } from '../../model/lesson.types';
+
+@Component({
+	selector: 'app-lesson-card',
+	standalone: true,
+	imports: [IconComponent],
+	templateUrl: './lesson-card.component.html',
+	styleUrl: './lesson-card.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class LessonCardComponent {
+	readonly lesson = input.required<CourseSkeletonLesson>();
+	readonly isActive = input<boolean>(false);
+	readonly selectLesson = output<string>();
+
+	readonly isLocked = computed(() => !this.lesson().isFree && !this.lesson().isCompleted);
+
+	protected onSelect(): void {
+		if (this.isLocked()) {
+			return;
+		}
+		this.selectLesson.emit(this.lesson().id);
+	}
+}
+</file>
+
+<file path="src/entities/lesson/index.ts">
+export * from './model/lesson.types';
+export * from './api/lesson-api.service';
+export * from './ui/lesson-card/lesson-card.component';
+export * from './ui/lesson-header/lesson-header.component';
+</file>
+
+<file path="src/features/manage-article/ui/manage-article.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	OnInit,
+	computed,
+	inject,
+	input,
+	signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { finalize } from 'rxjs';
+
+import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '@entities/article';
+import { ArticleNavigationApiService } from '@entities/article-navigation';
+
+import { RouteBuilder } from '@shared/config/routes.config';
+
+import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
+import { ArticleFormComponent } from './article-creation/article-form.component';
+
+@Component({
+	selector: 'app-manage-article',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [ReactiveFormsModule, ArticleFormComponent],
+	template: `
+		<app-article-form
+			[form]="articleForm"
+			[isEditMode]="isEditMode()"
+			[isSubmitting]="isSubmitting()"
+			[navigationTree]="navigationTree()"
+			(save)="handleSave()"
+			(cancel)="handleCancel()"
+		/>
+	`,
+})
+export class ManageArticleComponent implements OnInit {
+	readonly articleId = input<string | null>(null);
+
+	protected readonly isSubmitting = signal<boolean>(false);
+
+	private readonly fb = inject(NonNullableFormBuilder);
+	private readonly router = inject(Router);
+	private readonly articleApi = inject(ArticleApiService);
+	private readonly navigationApi = inject(ArticleNavigationApiService);
+	private readonly destroyRef = inject(DestroyRef);
+
+	protected readonly articleForm = createInitialArticleForm(this.fb);
+
+	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
+		initialValue: [],
+	});
+
+	readonly isEditMode = computed(() => !!this.articleId());
+
+	ngOnInit(): void {
+		const id = this.articleId();
+		if (!id) return;
+
+		this.articleApi
+			.getArticleById(id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (article) => this.patchForm(article),
+				error: (err) =>
+					console.error('Не удалось загрузить статью для редактирования', err),
+			});
+	}
+
+	private patchForm(article: Article): void {
+		this.articleForm.patchValue({
+			title: article.title,
+			slug: article.slug,
+			categoryId: article.categoryId,
+			status: article.status,
+			level: article.level,
+			leadText: article.leadText,
+			description: article.description,
+			// problemId: article.problemId ?? null,
+			readingTimeMinutes: article.readingTimeMinutes,
+			coverImage: {
+				url: article.coverImage?.url ?? '',
+				alt: article.coverImage?.alt ?? '',
+				caption: article.coverImage?.caption ?? null,
+			},
+			tags: article.tags,
+			seo: {
+				description: article.seo?.description ?? null,
+				keywords: article.seo?.keywords ?? [],
+			},
+		});
+
+		populateArticleBlocks(this.fb, this.articleForm.controls.blocks, article.blocks);
+	}
+
+	private buildPayload(): CreateArticleDto {
+		const raw = this.articleForm.getRawValue();
+
+		return {
+			...raw,
+			readingTimeMinutes: Number(raw.readingTimeMinutes) || 0,
+			problemId: raw.problemId || undefined,
+		} as CreateArticleDto;
+	}
+
+	protected handleCancel(): void {
+		this.router.navigateByUrl(RouteBuilder.ARTICLES());
+	}
+
+	protected handleSave(): void {
+		if (this.articleForm.invalid) {
+			this.articleForm.markAllAsTouched();
+			return;
+		}
+
+		const id = this.articleId();
+		const payload = this.buildPayload();
+
+		this.isSubmitting.set(true);
+
+		const request$ = this.isEditMode()
+			? this.articleApi.updateArticle(id!, payload as UpdateArticleDto)
+			: this.articleApi.createArticle(payload);
+
+		request$
+			.pipe(
+				finalize(() => this.isSubmitting.set(false)),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: () => this.router.navigateByUrl(RouteBuilder.COURSE_DETAILS('frontend')),
+				error: (err) => console.error('Ошибка при сохранении статьи', err),
+			});
+	}
+}
+</file>
+
+<file path="src/pages/course-page/index.ts">
+export * from './ui/course-page.component';
+export * from './lib/guards/course.guard';
+export * from './model/course-page.store';
 </file>
 
 <file path="src/shared/ui/button/button.component.scss">
@@ -9573,6 +9060,12 @@ export class HomePageComponent {
 	}
 }
 
+.app-button__content {
+	display: flex;
+	gap: var(--unit-1);
+	align-items: center;
+}
+
 .app-button__loader {
 	position: absolute;
 	top: 50%;
@@ -9595,676 +9088,6 @@ export class HomePageComponent {
 		transform: translate(-50%, -50%) rotate(360deg);
 	}
 }
-</file>
-
-<file path="src/shared/ui/drawer/drawer.component.html">
-@if (isOpen()) {
-	<div class="drawer-backdrop" (click)="close()" aria-hidden="true"></div>
-}
-
-<aside
-	role="dialog"
-	class="drawer-panel"
-	[class.drawer-panel--open]="isOpen()"
-	[attr.aria-hidden]="!isOpen()"
-	role="dialog"
-	aria-modal="true"
-	aria-labelledby="aside"
->
-	@if (showCloseBtn()) {
-		<button
-			app-button
-			type="button"
-			variant="clear"
-			color="default"
-			size="s"
-			(click)="close()"
-			class="drawer-panel__close"
-			[class.drawer-panel__close--left]="closeBtnPosition() === 'left'"
-			[class.drawer-panel__close--right]="closeBtnPosition() === 'right'"
-			aria-label="Закрыть панель"
-		>
-			<app-icon [name]="'xmark'" size="l" />
-		</button>
-	}
-
-	<header class="drawer-panel__header">
-		<ng-content select="[drawer-header]"></ng-content>
-	</header>
-
-	<div class="drawer-panel__content">
-		<ng-content />
-	</div>
-</aside>
-</file>
-
-<file path="src/index.html">
-<!doctype html>
-<html lang="ru">
-	<head>
-		<meta charset="utf-8" />
-		<title>Ngalg — интерактивные курсы по программированию</title>
-		<base href="/" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta
-			name="description"
-			content="Фундаментальный курс по Angular-разработке: от основ до продвинутых паттернов реактивности."
-		/>
-		<link rel="icon" type="image/x-icon" href="favicon.ico" />
-	</head>
-	<body>
-		<app-root></app-root>
-	</body>
-</html>
-</file>
-
-<file path=".editorconfig">
-# https://editorconfig.org
-root = true
-
-# --- ГЛОБАЛЬНЫЕ НАСТРОЙКИ ---
-[*]
-charset = utf-8
-end_of_line = lf
-insert_final_newline = true
-trim_trailing_whitespace = true
-indent_style = tab
-tab_width = 4
-
-# --- МАРКДАУН ---
-[*.md]
-trim_trailing_whitespace = false
-
-# --- СКРИПТЫ И СИСТЕМНЫЕ ФАЙЛЫ ---
-[*.sh]
-end_of_line = lf
-
-# --- МАКЕФАЙЛЫ ---
-[{Makefile,*.mk}]
-</file>
-
-<file path=".prettierrc">
-{
-	"$schema": "https://json.schemastore.org/prettierrc",
-	"printWidth": 100,
-	"tabWidth": 4,
-	"useTabs": true,
-	"semi": true,
-	"singleQuote": true,
-	"quoteProps": "as-needed",
-	"trailingComma": "all",
-	"bracketSpacing": true,
-	"bracketSameLine": false,
-	"arrowParens": "always",
-	"endOfLine": "lf",
-	"htmlWhitespaceSensitivity": "css",
-	"singleAttributePerLine": false,
-	"plugins": ["@trivago/prettier-plugin-sort-imports"],
-
-	"importOrder": [
-		"^@angular/(.*)$",
-		"^@nestjs/(.*)$",
-		"<THIRD_PARTY_MODULES>",
-		"^@app/(.*)$",
-		"^@pages/(.*)$",
-		"^@widgets/(.*)$",
-		"^@features/(.*)$",
-		"^@entities/(.*)$",
-		"^@shared/(.*)$",
-		"^[./]"
-	],
-
-	"importOrderSeparation": true,
-	"importOrderSortSpecifiers": true,
-	"importOrderParserPlugins": ["typescript", "decorators-legacy"],
-	"overrides": [
-		{
-			"files": "*.html",
-			"options": {
-				"parser": "angular",
-				"printWidth": 120,
-				"singleQuote": false
-			}
-		},
-		{
-			"files": ["*.json", "*.jsonc"],
-			"options": {
-				"parser": "json"
-			}
-		},
-		{
-			"files": ["*.yaml", "*.yml"],
-			"options": {
-				"parser": "yaml"
-			}
-		},
-		{
-			"files": "*.md",
-			"options": {
-				"parser": "markdown",
-				"proseWrap": "always"
-			}
-		}
-	]
-}
-</file>
-
-<file path=".stylelintrc.json">
-{
-	"extends": ["stylelint-config-standard-scss"],
-	"plugins": ["stylelint-order"],
-	"rules": {
-		"order/properties-order": [
-			[
-				"position",
-				"top",
-				"right",
-				"bottom",
-				"left",
-				"z-index",
-
-				"display",
-				"flex",
-				"flex-direction",
-				"flex-wrap",
-				"flex-grow",
-				"flex-shrink",
-				"flex-basis",
-				"grid",
-				"grid-template-columns",
-				"grid-template-rows",
-				"grid-template-areas",
-				"grid-column",
-				"grid-row",
-				"gap",
-				"row-gap",
-				"column-gap",
-				"justify-content",
-				"justify-items",
-				"justify-self",
-				"align-items",
-				"align-content",
-				"align-self",
-
-				"width",
-				"min-width",
-				"max-width",
-				"height",
-				"min-height",
-				"max-height",
-
-				"margin",
-				"margin-top",
-				"margin-right",
-				"margin-bottom",
-				"margin-left",
-				"padding",
-				"padding-top",
-				"padding-right",
-				"padding-bottom",
-				"padding-left",
-
-				"background",
-				"background-color",
-				"background-image",
-				"border",
-				"border-radius",
-				"box-shadow",
-				"opacity",
-
-				"font-family",
-				"font-size",
-				"font-weight",
-				"line-height",
-				"color",
-				"text-align",
-
-				"transition",
-				"animation",
-				"cursor"
-			],
-			{
-				"unspecified": "bottom",
-				"emptyLineBeforeUnspecified": "never"
-			}
-		],
-
-		"selector-pseudo-class-no-unknown": [
-			true,
-			{
-				"ignorePseudoClasses": ["host", "host-context"]
-			}
-		],
-		"selector-pseudo-element-no-unknown": [
-			true,
-			{
-				"ignorePseudoElements": ["ng-deep"]
-			}
-		],
-
-		"declaration-no-important": true,
-		"max-nesting-depth": 4,
-		"color-named": "never",
-		"declaration-block-no-redundant-longhand-properties": true,
-		"no-empty-source": null,
-
-		"declaration-property-unit-allowed-list": [
-			{
-				"font-size": ["px", "rem", "em"],
-				"margin": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
-				"padding": ["px", "rem", "em", "%", "vh", "vw", "dvh"],
-				"width": ["px", "rem", "%", "vw", "vh", "dvh", "em", "fr"],
-				"height": ["px", "rem", "%", "vh", "vw", "dvh", "em", "fr"]
-			},
-			{
-				"ignore": ["inside-function"]
-			}
-		],
-
-		"selector-class-pattern": "^[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
-		"scss/selector-no-redundant-nesting-selector": null,
-		"scss/at-mixin-pattern": null,
-		"scss/at-if-no-null": null
-	}
-}
-</file>
-
-<file path="eslint.config.ts">
-import fsdPlugin from '@conarti/eslint-plugin-feature-sliced';
-import eslint from '@eslint/js';
-import angular from 'angular-eslint';
-import { defineConfig } from 'eslint/config';
-import tseslint from 'typescript-eslint';
-
-export default defineConfig([
-	{
-		files: ['**/*.ts'],
-		extends: [
-			eslint.configs.recommended,
-			...tseslint.configs.recommended,
-			...tseslint.configs.stylistic,
-			...angular.configs.tsRecommended,
-		],
-		processor: angular.processInlineTemplates as any,
-		rules: {
-			'@angular-eslint/directive-selector': [
-				'error',
-				{
-					type: 'attribute',
-					prefix: 'app',
-					style: 'camelCase',
-				},
-			],
-			'@angular-eslint/component-selector': [
-				'error',
-				{
-					type: ['element', 'attribute'],
-					prefix: 'app',
-					style: 'kebab-case',
-				},
-			],
-			'@angular-eslint/prefer-standalone': 'error',
-			'@angular-eslint/component-class-suffix': 'error',
-			'@angular-eslint/directive-class-suffix': 'error',
-			'@typescript-eslint/explicit-function-return-type': [
-				'error',
-				{
-					allowExpressions: true,
-					allowTypedFunctionExpressions: true,
-					allowHigherOrderFunctions: true,
-					allowDirectConstAssertionInArrowFunctions: true,
-				},
-			],
-			'@typescript-eslint/no-explicit-any': 'warn',
-		},
-	},
-	{
-		files: ['**/*.ts'],
-		...fsdPlugin(),
-		rules: {
-			'@conarti/feature-sliced/layers-slices': ['error', { allowTypeImports: true }],
-			'@conarti/feature-sliced/absolute-relative': 'error',
-			'@conarti/feature-sliced/public-api': 'error',
-		},
-	},
-	{
-		files: ['**/*.html'],
-		extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
-		rules: {
-			'@angular-eslint/template/no-negated-async': 'error',
-			'@angular-eslint/template/prefer-control-flow': 'error',
-		},
-	},
-]);
-</file>
-
-<file path="tsconfig.app.json">
-{
-	"extends": "./tsconfig.json",
-	"compilerOptions": {
-		"outDir": "./out-tsc/app",
-		"types": []
-	},
-	"files": ["src/index.ts"],
-	"include": ["src/**/*.d.ts", "src/**/*.ts", "eslint.config.ts"],
-	"exclude": ["node_modules", "dist"]
-}
-</file>
-
-<file path="src/app/providers/app.config.ts">
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import {
-	ApplicationConfig,
-	inject,
-	provideAppInitializer,
-	provideBrowserGlobalErrorListeners,
-	provideZonelessChangeDetection,
-} from '@angular/core';
-import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
-
-import { UserStore } from '@entities/user';
-
-import { apiInterceptor } from '@shared/api/api.interceptor';
-import { ENVIRONMENT } from '@shared/config/environment.config';
-
-import { environment } from '../../environments/environment';
-import { APP_ROUTES } from '../routes/app.routes';
-
-export const appConfig: ApplicationConfig = {
-	providers: [
-		provideBrowserGlobalErrorListeners(),
-		provideZonelessChangeDetection(),
-		provideRouter(
-			APP_ROUTES,
-			withComponentInputBinding(),
-			withInMemoryScrolling({
-				scrollPositionRestoration: 'enabled',
-				anchorScrolling: 'enabled',
-			}),
-		),
-		provideHttpClient(withFetch(), withInterceptors([apiInterceptor])),
-		{ provide: ENVIRONMENT, useValue: environment },
-		provideAppInitializer(() => {
-			inject(UserStore).load();
-		}),
-	],
-};
-</file>
-
-<file path="src/entities/article-navigation/ui/article-drawer-navigation/ui/article-drawer-navigation.component.ts">
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-
-import { AccordionComponent } from '@shared/ui/accordion/accordion.component';
-import { AppLinkComponent } from '@shared/ui/app-link';
-import { BadgeComponent } from '@shared/ui/badge';
-
-import { ArticleNavigationApiService } from '../../../api/article-navigation-api.service';
-
-@Component({
-	selector: 'app-article-drawer-navigation',
-	standalone: true,
-	imports: [AppLinkComponent, BadgeComponent, AccordionComponent],
-	templateUrl: './article-drawer-navigation.component.html',
-	styleUrl: './article-drawer-navigation.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class ArticleDrawerNavigationComponent {
-	private readonly navigationApi = inject(ArticleNavigationApiService);
-
-	readonly navigationTree = toSignal(this.navigationApi.navigationTree$);
-	readonly selectedId = input<string | null>(null);
-	readonly articleSelected = output<string | number>();
-
-	public onArticleClick(id: string | number): void {
-		this.articleSelected.emit(id);
-	}
-}
-</file>
-
-<file path="src/entities/course/api/course-api.service.ts">
-import { Injectable } from '@angular/core';
-
-import { Observable } from 'rxjs';
-
-import { ApiPaths } from '@shared/api/api-paths';
-import { BaseApiService } from '@shared/api/base-api.service';
-
-import {
-	CourseEntity,
-	CourseSectionEntity,
-	CourseSkeleton,
-	CreateCourseDto,
-	CreateCourseSectionDto,
-	UpdateCourseDto,
-	UpdateCourseSectionDto,
-} from '../model/course.types';
-
-@Injectable({ providedIn: 'root' })
-export class CourseApiService extends BaseApiService {
-	private readonly coursesPath = ApiPaths.COURSES;
-	private readonly sectionsPath = ApiPaths.SECTIONS;
-
-	getCourseSkeleton(slug: string): Observable<CourseSkeleton> {
-		return this.get<CourseSkeleton>(`/${this.coursesPath}/${slug}`);
-	}
-
-	createCourse(dto: CreateCourseDto): Observable<CourseEntity> {
-		return this.post<CourseEntity, CreateCourseDto>(`/${this.coursesPath}`, dto);
-	}
-
-	updateCourse(id: string, dto: UpdateCourseDto): Observable<CourseEntity> {
-		return this.patch<CourseEntity, UpdateCourseDto>(`/${this.coursesPath}/${id}`, dto);
-	}
-
-	deleteCourse(id: string): Observable<void> {
-		return this.delete<void>(`/${this.coursesPath}/${id}`);
-	}
-
-	createSection(courseId: string, dto: CreateCourseSectionDto): Observable<CourseSectionEntity> {
-		return this.post<CourseSectionEntity, CreateCourseSectionDto>(
-			`/${this.coursesPath}/${courseId}/${this.sectionsPath}`,
-			dto,
-		);
-	}
-
-	updateSection(id: string, dto: UpdateCourseSectionDto): Observable<CourseSectionEntity> {
-		return this.patch<CourseSectionEntity, UpdateCourseSectionDto>(
-			`/${this.coursesPath}/${this.sectionsPath}/${id}`,
-			dto,
-		);
-	}
-
-	deleteSection(id: string): Observable<void> {
-		return this.delete<void>(`/${this.coursesPath}/${this.sectionsPath}/${id}`);
-	}
-}
-</file>
-
-<file path="src/entities/lesson/ui/lesson-card/lesson-card.component.ts">
-/* eslint-disable @conarti/feature-sliced/layers-slices */
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-
-import { CourseSkeletonLesson } from '@entities/course';
-
-import { IconComponent } from '@shared/ui/icon';
-
-@Component({
-	selector: 'app-lesson-card',
-	standalone: true,
-	imports: [IconComponent],
-	templateUrl: './lesson-card.component.html',
-	styleUrl: './lesson-card.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class LessonCardComponent {
-	readonly lesson = input.required<CourseSkeletonLesson>();
-	readonly isActive = input<boolean>(false);
-	readonly selectLesson = output<string>();
-
-	readonly isLocked = computed(() => !this.lesson().isFree && !this.lesson().isCompleted);
-
-	protected onSelect(): void {
-		if (this.isLocked()) {
-			return;
-		}
-		this.selectLesson.emit(this.lesson().id);
-	}
-}
-</file>
-
-<file path="src/entities/lesson/index.ts">
-export * from './api/lesson-api.service';
-export * from './ui/lesson-card/lesson-card.component';
-export * from './ui/lesson-header/lesson-header.component';
-</file>
-
-<file path="src/features/manage-article/ui/manage-article.component.ts">
-import {
-	ChangeDetectionStrategy,
-	Component,
-	DestroyRef,
-	OnInit,
-	computed,
-	inject,
-	input,
-	signal,
-} from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-import { finalize } from 'rxjs';
-
-import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '@entities/article';
-import { ArticleNavigationApiService } from '@entities/article-navigation';
-
-import { RouteBuilder } from '@shared/config/routes.config';
-
-import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
-import { ArticleFormComponent } from './article-creation/article-form.component';
-
-@Component({
-	selector: 'app-manage-article',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [ReactiveFormsModule, ArticleFormComponent],
-	template: `
-		<app-article-form
-			[form]="articleForm"
-			[isEditMode]="isEditMode()"
-			[isSubmitting]="isSubmitting()"
-			[navigationTree]="navigationTree()"
-			(save)="handleSave()"
-			(cancel)="handleCancel()"
-		/>
-	`,
-})
-export class ManageArticleComponent implements OnInit {
-	readonly articleId = input<string | null>(null);
-
-	protected readonly isSubmitting = signal<boolean>(false);
-
-	private readonly fb = inject(NonNullableFormBuilder);
-	private readonly router = inject(Router);
-	private readonly articleApi = inject(ArticleApiService);
-	private readonly navigationApi = inject(ArticleNavigationApiService);
-	private readonly destroyRef = inject(DestroyRef);
-
-	protected readonly articleForm = createInitialArticleForm(this.fb);
-
-	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
-		initialValue: [],
-	});
-
-	readonly isEditMode = computed(() => !!this.articleId());
-
-	ngOnInit(): void {
-		const id = this.articleId();
-		if (!id) return;
-
-		this.articleApi
-			.getArticleById(id)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: (article) => this.patchForm(article),
-				error: (err) =>
-					console.error('Не удалось загрузить статью для редактирования', err),
-			});
-	}
-
-	private patchForm(article: Article): void {
-		this.articleForm.patchValue({
-			title: article.title,
-			slug: article.slug,
-			categoryId: article.categoryId,
-			status: article.status,
-			level: article.level,
-			leadText: article.leadText,
-			description: article.description,
-			problemId: article.problemId ?? null,
-			readingTimeMinutes: article.readingTimeMinutes,
-			coverImage: {
-				url: article.coverImage?.url ?? '',
-				alt: article.coverImage?.alt ?? '',
-				caption: article.coverImage?.caption ?? null,
-			},
-			tags: article.tags,
-			seo: {
-				description: article.seo?.description ?? null,
-				keywords: article.seo?.keywords ?? [],
-			},
-		});
-
-		populateArticleBlocks(this.fb, this.articleForm.controls.blocks, article.blocks);
-	}
-
-	private buildPayload(): CreateArticleDto {
-		const raw = this.articleForm.getRawValue();
-
-		return {
-			...raw,
-			readingTimeMinutes: Number(raw.readingTimeMinutes) || 0,
-			problemId: raw.problemId || undefined,
-		} as CreateArticleDto;
-	}
-
-	protected handleCancel(): void {
-		this.router.navigateByUrl(RouteBuilder.ARTICLES());
-	}
-
-	protected handleSave(): void {
-		if (this.articleForm.invalid) {
-			this.articleForm.markAllAsTouched();
-			return;
-		}
-
-		const id = this.articleId();
-		const payload = this.buildPayload();
-
-		this.isSubmitting.set(true);
-
-		const request$ = this.isEditMode()
-			? this.articleApi.updateArticle(id!, payload as UpdateArticleDto)
-			: this.articleApi.createArticle(payload);
-
-		request$
-			.pipe(
-				finalize(() => this.isSubmitting.set(false)),
-				takeUntilDestroyed(this.destroyRef),
-			)
-			.subscribe({
-				next: () => this.router.navigateByUrl(RouteBuilder.COURSE_DETAILS('frontend')),
-				error: (err) => console.error('Ошибка при сохранении статьи', err),
-			});
-	}
-}
-</file>
-
-<file path="src/pages/course-page/index.ts">
-export * from './ui/course-page.component';
-export * from './lib/guards/course.guard';
-export * from './model/course-page.store';
 </file>
 
 <file path="src/widgets/articles-drawer-sidebar/ui/articles-drawer-sidebar.component.html">
@@ -10331,7 +9154,9 @@ export * from './model/course-page.store';
 
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.html">
 <aside class="sidebar">
-	<app-course-progress [progress]="progress()" />
+	@if (progress(); as progressData) {
+		<app-course-progress [progress]="progressData" />
+	}
 
 	<div class="lessons-container">
 		@for (section of sections(); track section.id) {
@@ -10352,49 +9177,13 @@ export * from './model/course-page.store';
 </aside>
 </file>
 
-<file path="src/widgets/header/ui/header.component.scss">
-@use 'media' as m;
-
-:host {
-	display: block;
-	width: 100%;
-}
-
-.header {
-	position: relative;
-	z-index: var(--z-elevate);
-	width: 100%;
-	background-color: transparent;
-
-	&__container {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		max-width: var(--container-xxl);
-		height: var(--unit-16);
-		margin: 0 auto;
-		padding: 0 var(--unit-8);
-
-		@include m.media-below('lg') {
-			padding: 0 var(--unit-4);
-		}
-	}
-
-	&__actions {
-		display: flex;
-		gap: var(--unit-2);
-		align-items: center;
-	}
-}
-</file>
-
 <file path="src/widgets/lesson-content/ui/lesson-content.component.ts">
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 import { LessonNavigationControlsComponent } from '@features/lesson-navigation';
 import { MarkLessonWatchedComponent } from '@features/mark-lesson-watched';
 
-import { CourseSkeletonLesson } from '@entities/course';
+import { CourseSkeletonLesson } from '@entities/lesson';
 import { LessonHeaderComponent } from '@entities/lesson';
 
 import { VideoPlayerComponent } from '@shared/ui/video-player';
@@ -10422,6 +9211,45 @@ export class LessonContentComponent {
 }
 </file>
 
+<file path="src/app/providers/app.config.ts">
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import {
+	ApplicationConfig,
+	inject,
+	provideAppInitializer,
+	provideBrowserGlobalErrorListeners,
+	provideZonelessChangeDetection,
+} from '@angular/core';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+
+import { UserStore } from '@entities/user';
+
+import { apiInterceptor } from '@shared/api/api.interceptor';
+import { ENVIRONMENT } from '@shared/config/environment.config';
+
+import { environment } from '../../environments/environment';
+import { APP_ROUTES } from '../routes/app.routes';
+
+export const appConfig: ApplicationConfig = {
+	providers: [
+		provideBrowserGlobalErrorListeners(),
+		provideZonelessChangeDetection(),
+		provideRouter(
+			APP_ROUTES,
+			withComponentInputBinding(),
+			withInMemoryScrolling({
+				scrollPositionRestoration: 'enabled',
+				anchorScrolling: 'enabled',
+			}),
+		),
+		provideHttpClient(withFetch(), withInterceptors([apiInterceptor])),
+		{ provide: ENVIRONMENT, useValue: environment },
+
+		provideAppInitializer(() => inject(UserStore).load()),
+	],
+};
+</file>
+
 <file path="src/entities/article/index.ts">
 export * from './api/article-api.service';
 
@@ -10437,6 +9265,7 @@ export * from './ui/article-view/article-view.component';
 export * from './api/course-api.service';
 export * from './model/course.types';
 export * from './ui/course-progress/course-progress.component';
+export * from './ui/course-progress-card/course-progress-card.component';
 </file>
 
 <file path="src/shared/layouts/sidebar-layout/sidebar-layout.component.scss">
@@ -10792,26 +9621,40 @@ app-course-progress {
 }
 </file>
 
-<file path="src/widgets/header/ui/header.component.html">
-<header class="header">
-	<div class="header__container">
-		<app-logo />
+<file path="src/widgets/header/ui/header.component.scss">
+@use 'media' as m;
 
-		<div class="header__actions">
-			@if (userStore.isAuthenticated()) {
-				<button app-button type="button" variant="filled" color="default" size="m" (click)="openProfile()">
-					Профиль
-				</button>
-			} @else {
-				<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">
-					Войти
-				</button>
-			}
-		</div>
-	</div>
-</header>
+:host {
+	display: block;
+	width: 100%;
+}
 
-<app-auth-by-oauth [(isOpen)]="isAuthOpen" />
+.header {
+	position: relative;
+	z-index: var(--z-elevate);
+	width: 100%;
+	background-color: transparent;
+
+	&__container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		max-width: var(--container-xxl);
+		height: var(--unit-16);
+		margin: 0 auto;
+		padding: 0 var(--unit-8);
+
+		@include m.media-below('lg') {
+			padding: 0 var(--unit-4);
+		}
+	}
+
+	&__actions {
+		display: flex;
+		gap: var(--unit-2);
+		align-items: center;
+	}
+}
 </file>
 
 <file path="src/widgets/lesson-content/ui/lesson-content.component.scss">
@@ -10862,110 +9705,6 @@ app-course-progress {
 .lesson-button-next {
 	display: flex;
 	justify-content: end;
-}
-</file>
-
-<file path="angular.json">
-{
-	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-	"version": 1,
-	"cli": {
-		"packageManager": "pnpm",
-		"analytics": false
-	},
-	"newProjectRoot": "projects",
-	"projects": {
-		"ngalg": {
-			"projectType": "application",
-			"schematics": {
-				"@schematics/angular:component": {
-					"style": "scss",
-					"changeDetection": "OnPush",
-					"displayBlock": true,
-					"skipTests": false
-				}
-			},
-			"root": "",
-			"sourceRoot": "src",
-			"prefix": "app",
-			"architect": {
-				"build": {
-					"builder": "@angular/build:application",
-					"options": {
-						"outputPath": "dist/ngalg",
-						"index": "src/index.html",
-						"browser": "src/index.ts",
-						"tsConfig": "tsconfig.app.json",
-						"inlineStyleLanguage": "scss",
-						"styles": ["src/index.scss"],
-						"stylePreprocessorOptions": {
-							"includePaths": ["src/styles"]
-						},
-						"assets": [
-							{
-								"glob": "**/*",
-								"input": "public"
-							}
-						]
-					},
-					"configurations": {
-						"production": {
-							"budgets": [
-								{
-									"type": "initial",
-									"maximumWarning": "500kB",
-									"maximumError": "1MB"
-								},
-								{
-									"type": "anyComponentStyle",
-									"maximumWarning": "4kB",
-									"maximumError": "8kB"
-								}
-							],
-							"outputHashing": "all",
-							"optimization": true,
-							"sourceMap": false,
-							"namedChunks": false
-						},
-						"development": {
-							"optimization": false,
-							"extractLicenses": false,
-							"sourceMap": {
-								"scripts": true,
-								"styles": true
-							},
-							"namedChunks": true,
-							"fileReplacements": [
-								{
-									"replace": "src/environments/environment.ts",
-									"with": "src/environments/environment.development.ts"
-								}
-							]
-						}
-					},
-					"defaultConfiguration": "production"
-				},
-				"serve": {
-					"builder": "@angular/build:dev-server",
-					"configurations": {
-						"production": {
-							"buildTarget": "ngalg:build:production"
-						},
-						"development": {
-							"buildTarget": "ngalg:build:development"
-						}
-					},
-					"defaultConfiguration": "development"
-				},
-				"lint": {
-					"builder": "@angular-eslint/builder:lint",
-					"options": {
-						"lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
-					}
-				}
-			}
-		}
-	}
 }
 </file>
 
@@ -11205,8 +9944,8 @@ export class ArticlesDrawerSidebarComponent {
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.ts">
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { CourseProgressStats, CourseSkeletonSection } from '@entities/course';
 import { CourseProgressComponent } from '@entities/course';
-import { CourseProgress, CourseSkeletonSection } from '@entities/course';
 import { LessonCardComponent } from '@entities/lesson';
 
 @Component({
@@ -11218,7 +9957,7 @@ import { LessonCardComponent } from '@entities/lesson';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseSidebarComponent {
-	readonly progress = input.required<CourseProgress>();
+	readonly progress = input<CourseProgressStats | null>(null);
 	readonly sections = input.required<CourseSkeletonSection[]>();
 	readonly activeLessonId = input<string | null>(null);
 
@@ -11226,131 +9965,27 @@ export class CourseSidebarComponent {
 }
 </file>
 
-<file path="src/widgets/header/ui/header.component.ts">
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+<file path="src/widgets/header/ui/header.component.html">
+<header class="header">
+	<div class="header__container">
+		<app-logo />
 
-import { AuthByOauthComponent } from '@features/auth-by-oauth';
+		<div class="header__actions">
+			@if (userStore.isAuthenticated()) {
+				<button app-button type="button" variant="filled" color="default" size="m" (click)="openProfile()">
+					<app-icon [name]="'person-fill'" size="s" />
+					<span>Профиль</span>
+				</button>
+			} @else {
+				<button app-button type="button" variant="filled" color="default" size="m" (click)="openAuth()">
+					Войти
+				</button>
+			}
+		</div>
+	</div>
+</header>
 
-import { UserStore } from '@entities/user';
-
-import { AppLogoComponent } from '@shared/ui/app-logo';
-import { ButtonComponent } from '@shared/ui/button';
-
-@Component({
-	selector: 'app-header',
-	standalone: true,
-	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HeaderComponent {
-	readonly router = inject(Router);
-	protected readonly userStore = inject(UserStore);
-
-	readonly isAuthOpen = signal<boolean>(false);
-
-	protected openAuth(): void {
-		this.isAuthOpen.set(true);
-	}
-
-	protected openProfile(): void {
-		this.router.navigate(['/', 'account', 'overview']);
-	}
-}
-</file>
-
-<file path="package.json">
-{
-	"name": "ngalg",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"packageManager": "pnpm@11.7.0",
-	"scripts": {
-		"ng": "ng",
-		"start:dev": "ng serve",
-		"build:prod": "ng build",
-		"watch:dev": "ng build --watch --configuration development",
-		"lint": "pnpm lint:ts && pnpm lint:styles",
-		"lint:ts": "ng lint",
-		"lint:ts:fix": "ng lint --fix",
-		"lint:styles": "stylelint \"src/**/*.{css,scss}\"",
-		"lint:styles:fix": "stylelint \"src/**/*.{css,scss}\" --fix",
-		"format:check": "prettier --check .",
-		"format:write": "prettier --write .",
-		"prepare": "husky",
-		"typecheck": "tsc --noEmit -p tsconfig.app.json",
-		"repomix": "npx repomix"
-	},
-	"dependencies": {
-		"@angular/common": "^22.1.7",
-		"@angular/compiler": "^22.1.7",
-		"@angular/core": "^22.1.7",
-		"@angular/forms": "^22.1.7",
-		"@angular/platform-browser": "^22.1.7",
-		"@angular/router": "^22.1.7",
-		"isomorphic-dompurify": "^4.3.0",
-		"marked": "^18.0.14",
-		"rxjs": "^7.8.2",
-		"tslib": "^2.8.1"
-	},
-	"devDependencies": {
-		"@angular-eslint/builder": "^22.5.0",
-		"@angular/build": "^22.1.8",
-		"@angular/cli": "^22.1.8",
-		"@angular/compiler-cli": "^22.1.7",
-		"@commitlint/cli": "^21.2.2",
-		"@commitlint/config-conventional": "^21.2.2",
-		"@conarti/eslint-plugin-feature-sliced": "^2.0.0",
-		"@eslint/compat": "^2.1.1",
-		"@eslint/js": "^10.0.1",
-		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
-		"angular-eslint": "^22.5.0",
-		"eslint": "^10.10.0",
-		"husky": "^9.1.7",
-		"jiti": "^2.7.0",
-		"lint-staged": "^17.5.1",
-		"prettier": "^3.9.7",
-		"repomix": "^1.18.0",
-		"stylelint": "^17.15.0",
-		"stylelint-config-standard-scss": "^17.0.0",
-		"stylelint-order": "^8.1.1",
-		"typescript": "~6.0.2",
-		"typescript-eslint": "^8.70.0"
-	}
-}
-</file>
-
-<file path="src/shared/ui/icon/icon.types.ts">
-export type IconName =
-	| 'sun'
-	| 'moon'
-	| 'logo'
-	| 'eye-opened'
-	| 'eye-closed'
-	| 'person'
-	| 'credit-card'
-	| 'pencil-to-square'
-	| 'floppy-disk'
-	| 'check'
-	| 'lock'
-	| 'clock'
-	| 'envelope'
-	| 'arrow-right'
-	| 'book-open'
-	| 'xmark'
-	| 'bars'
-	| 'logo-github'
-	| 'logo-google'
-	| 'triangle-exclamation'
-	| 'triangle-exclamation-fill'
-	| 'circle-xmark-fill'
-	| 'circle-info-fill';
+<app-auth-by-oauth [(isOpen)]="isAuthOpen" />
 </file>
 
 <file path="src/styles/_tokens.scss">
@@ -11476,6 +10111,41 @@ export type IconName =
 }
 </file>
 
+<file path="src/widgets/header/ui/header.component.ts">
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AuthByOauthComponent } from '@features/auth-by-oauth';
+
+import { UserStore } from '@entities/user';
+
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+import { IconComponent } from '@shared/ui/icon';
+
+@Component({
+	selector: 'app-header',
+	standalone: true,
+	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent, IconComponent],
+	templateUrl: './header.component.html',
+	styleUrl: './header.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HeaderComponent {
+	private readonly router = inject(Router);
+	protected readonly userStore = inject(UserStore);
+	protected readonly isAuthOpen = signal<boolean>(false);
+
+	protected openAuth(): void {
+		this.isAuthOpen.set(true);
+	}
+
+	protected openProfile(): void {
+		this.router.navigate(['/', 'account', 'overview']);
+	}
+}
+</file>
+
 <file path="src/pages/course-page/ui/course-page.component.html">
 <div class="course-page__mobile-action">
 	<button app-button type="button" (click)="toggleMobileMenu()" aria-label="Открыть меню курса">
@@ -11548,6 +10218,7 @@ export const RouteSegments = {
 	ACCOUNT: 'account',
 	OVERVIEW: 'overview',
 	TRANSACTIONS: 'transactions',
+	SETTINGS: 'settings',
 
 	WILDCARD: '**',
 } as const;
@@ -11561,6 +10232,7 @@ export const RouteBuilder = {
 
 	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
 	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,
+	ACCOUNT_SETTINGS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.SETTINGS}`,
 
 	COURSE_DETAILS: (slug: string) => `/${RouteSegments.COURSES}/${slug}`,
 } as const;
@@ -11568,108 +10240,38 @@ export const RouteBuilder = {
 export const ACCOUNT_SIDEBAR_ITEMS: NavItem[] = [
 	{ path: RouteBuilder.ACCOUNT_OVERVIEW(), label: 'Профиль', icon: 'person' },
 	{ path: RouteBuilder.ACCOUNT_TRANSACTIONS(), label: 'Подписки', icon: 'credit-card' },
+	{ path: RouteBuilder.ACCOUNT_SETTINGS(), label: 'Аккаунт', icon: 'gear' },
 ];
 </file>
 
-<file path="src/app/routes/app.routes.ts">
-import { Routes } from '@angular/router';
-
-import { courseSlugGuard } from '@pages/course-page';
-
-import { authGuard } from '@features/auth-by-oauth';
-
-import { RouteSegments } from '@shared/config/routes.config';
-
-import { AccountLayoutComponent } from '../layouts/account-layout/account-layout.component';
-import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
-
-export const COURSE_ROUTES: Routes = [
-	{
-		path: ':slug',
-		canActivate: [courseSlugGuard],
-		children: [
-			{
-				path: RouteSegments.ROOT,
-				loadComponent: () =>
-					import('@pages/course-page').then((c) => c.CoursePageComponent),
-				title: 'Course',
-			},
-			{
-				path: RouteSegments.WILDCARD,
-				redirectTo: '',
-			},
-		],
-	},
-];
-
-export const ARTICLE_ROUTES: Routes = [
-	{
-		path: RouteSegments.ARTICLES_CREATE,
-		loadComponent: () =>
-			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
-		title: 'Create Article',
-	},
-	{
-		path: RouteSegments.ARTICLE_EDIT,
-		loadComponent: () =>
-			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
-		title: 'Edit Article',
-	},
-];
-
-export const ACCOUNT_ROUTES: Routes = [
-	{
-		path: RouteSegments.ROOT,
-		redirectTo: RouteSegments.OVERVIEW,
-		pathMatch: 'full',
-	},
-	{
-		path: RouteSegments.OVERVIEW,
-		loadComponent: () =>
-			import('@pages/account-overview-page/account-overview-page.component').then(
-				(c) => c.AccountOverviewPageComponent,
-			),
-		title: 'Account Overview',
-	},
-	{
-		path: RouteSegments.TRANSACTIONS,
-		loadComponent: () =>
-			import('@pages/account-transactions-page/account-transactions-page.component').then(
-				(c) => c.AccountTransactionsPageComponent,
-			),
-		title: 'Account Transactions',
-	},
-];
-
-export const APP_ROUTES: Routes = [
-	{
-		path: RouteSegments.ROOT,
-		pathMatch: 'full',
-		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
-	},
-	{
-		path: RouteSegments.COURSES,
-		component: MainLayoutComponent,
-		children: COURSE_ROUTES,
-	},
-
-	{
-		path: RouteSegments.ARTICLES,
-		component: MainLayoutComponent,
-		children: ARTICLE_ROUTES,
-	},
-
-	{
-		path: RouteSegments.ACCOUNT,
-		component: AccountLayoutComponent,
-		canActivate: [authGuard],
-		children: ACCOUNT_ROUTES,
-	},
-	{
-		path: RouteSegments.WILDCARD,
-		redirectTo: RouteSegments.ROOT,
-	},
-];
+<file path="src/shared/ui/icon/icon.types.ts">
+export type IconName =
+	| 'sun'
+	| 'moon'
+	| 'logo'
+	| 'eye-opened'
+	| 'eye-closed'
+	| 'person'
+	| 'credit-card'
+	| 'pencil-to-square'
+	| 'floppy-disk'
+	| 'check'
+	| 'lock'
+	| 'clock'
+	| 'envelope'
+	| 'arrow-right'
+	| 'book-open'
+	| 'xmark'
+	| 'bars'
+	| 'logo-github'
+	| 'logo-google'
+	| 'triangle-exclamation'
+	| 'triangle-exclamation-fill'
+	| 'circle-xmark-fill'
+	| 'circle-info-fill'
+	| 'person-fill'
+	| 'gear'
+	| 'trash-bin';
 </file>
 
 <file path="src/pages/course-page/ui/course-page.component.ts">
@@ -11758,6 +10360,119 @@ export class CoursePageComponent {
 		this.isMobileMenuOpen.update((state) => !state);
 	}
 }
+</file>
+
+<file path="src/app/routes/app.routes.ts">
+import { Routes } from '@angular/router';
+
+import { courseSlugGuard } from '@pages/course-page';
+
+import { authGuard } from '@features/auth-by-oauth';
+
+import { RouteSegments } from '@shared/config/routes.config';
+
+import { AccountLayoutComponent } from '../layouts/account-layout/account-layout.component';
+import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
+import { redirectIfAuthenticatedGuard } from '../lib/guards/redirect-if-authenticated.guard';
+
+export const COURSE_ROUTES: Routes = [
+	{
+		path: ':slug',
+		canActivate: [courseSlugGuard],
+		children: [
+			{
+				path: RouteSegments.ROOT,
+				loadComponent: () =>
+					import('@pages/course-page').then((c) => c.CoursePageComponent),
+				title: 'Course',
+			},
+			{
+				path: RouteSegments.WILDCARD,
+				redirectTo: '',
+			},
+		],
+	},
+];
+
+export const ARTICLE_ROUTES: Routes = [
+	{
+		path: RouteSegments.ARTICLES_CREATE,
+		loadComponent: () =>
+			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
+		title: 'Create Article',
+	},
+	{
+		path: RouteSegments.ARTICLE_EDIT,
+		loadComponent: () =>
+			import('@pages/articles-editor-page').then((c) => c.ArticleEditorPageComponent),
+		title: 'Edit Article',
+	},
+];
+
+export const ACCOUNT_ROUTES: Routes = [
+	{
+		path: RouteSegments.ROOT,
+		redirectTo: RouteSegments.OVERVIEW,
+		pathMatch: 'full',
+	},
+	{
+		path: RouteSegments.OVERVIEW,
+		loadComponent: () =>
+			import('@pages/account-overview-page/account-overview-page.component').then(
+				(c) => c.AccountOverviewPageComponent,
+			),
+		title: 'Account Overview',
+	},
+	{
+		path: RouteSegments.TRANSACTIONS,
+		loadComponent: () =>
+			import('@pages/account-transactions-page/account-transactions-page.component').then(
+				(c) => c.AccountTransactionsPageComponent,
+			),
+		title: 'Account Transactions',
+	},
+
+	{
+		path: RouteSegments.SETTINGS,
+		loadComponent: () =>
+			import('@pages/account-settings/account-settings-page.component').then(
+				(c) => c.AccountSettingsPageComponent,
+			),
+		title: 'Account Settings',
+	},
+];
+
+export const APP_ROUTES: Routes = [
+	{
+		path: RouteSegments.ROOT,
+		pathMatch: 'full',
+		canActivate: [redirectIfAuthenticatedGuard],
+		loadComponent: () => import('@pages/home-page').then((m) => m.HomePageComponent),
+	},
+	{
+		path: RouteSegments.COURSES,
+		component: MainLayoutComponent,
+		children: COURSE_ROUTES,
+	},
+
+	{
+		path: RouteSegments.ARTICLES,
+		component: MainLayoutComponent,
+		children: ARTICLE_ROUTES,
+	},
+
+	{
+		path: RouteSegments.ACCOUNT,
+		component: AccountLayoutComponent,
+		canActivate: [authGuard],
+		children: ACCOUNT_ROUTES,
+	},
+	{
+		path: RouteSegments.WILDCARD,
+		canActivate: [redirectIfAuthenticatedGuard],
+		redirectTo: RouteSegments.ROOT,
+	},
+];
 </file>
 
 </files>

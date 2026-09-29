@@ -1,12 +1,12 @@
-<div class="lesson-box" [class.is-active]="isActive()" [class.is-locked]="isLocked()">
-	<button type="button" class="lesson-card" [disabled]="isLocked()" (click)="onSelect()">
-		<span class="lesson-title">{{ lesson().sequenceOrder }} - {{ lesson().title }}</span>
+<div class="lesson-card" [class.lesson-card--active]="isActive()" [class.lesson-card--locked]="isLocked()">
+	<button type="button" class="lesson-card__button" [disabled]="isLocked()" (click)="onSelect()">
+		<span class="lesson-card__title">{{ lesson().sequenceOrder }} - {{ lesson().title }}</span>
 	</button>
 
 	<span
-		class="lesson-status"
-		[class.is-free]="lesson().isFree && !lesson().isCompleted"
-		[class.is-completed]="lesson().isCompleted"
+		class="lesson-card__status"
+		[class.lesson-card__status--free]="lesson().isFree && !lesson().isCompleted"
+		[class.lesson-card__status--completed]="lesson().isCompleted"
 	>
 		@if (lesson().isCompleted) {
 			<app-icon name="check" size="s" />

@@ -1,13 +1,15 @@
 <header class="lesson-header">
-	<div class="header-top">
-		<h1 class="title">{{ lesson().sequenceOrder }} - {{ lesson().title }}</h1>
-		<div class="duration">
+	<div class="lesson-header__top">
+		<h1 class="lesson-header__title">{{ lesson().sequenceOrder }} - {{ lesson().title }}</h1>
+		<div class="lesson-header__duration">
 			<app-icon name="clock" />
 			{{ durationMinutes() }} min
 		</div>
 	</div>
 
-	<p class="description">
-		{{ lesson().description }}
-	</p>
+	@if (lesson().description) {
+		<p class="lesson-header__description">
+			{{ lesson().description }}
+		</p>
+	}
 </header>

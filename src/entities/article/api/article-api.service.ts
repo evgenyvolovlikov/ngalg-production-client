@@ -7,6 +7,7 @@ import { BaseApiService } from '@shared/api/base-api.service';
 
 import {
 	Article,
+	ArticleListResponse,
 	CreateArticleDto,
 	GetArticlesQueryDto,
 	UpdateArticleDto,
@@ -22,14 +23,14 @@ export class ArticleApiService extends BaseApiService {
 	 * Создание новой статьи
 	 */
 	public createArticle(dto: CreateArticleDto): Observable<Article> {
-		return this.post<Article>(this.basePath, dto);
+		return this.post<Article, CreateArticleDto>(this.basePath, dto);
 	}
 
 	/**
 	 * Получение списка статей с фильтрацией
 	 */
-	public getArticles(query?: GetArticlesQueryDto): Observable<Article[]> {
-		return this.get<Article[]>(
+	public getArticles(query?: GetArticlesQueryDto): Observable<ArticleListResponse> {
+		return this.get<ArticleListResponse>(
 			this.basePath,
 			query as Record<
 				string,
@@ -39,24 +40,23 @@ export class ArticleApiService extends BaseApiService {
 	}
 
 	/**
-	 * Получение конкретной статьи.
-	 * Бекенд парсит UUID из строки, можно передавать как 'id', так и 'id-slug'
+	 * Получение статьи по ID
 	 */
-	public getArticleById(idWithSlug: string): Observable<Article> {
-		return this.get<Article>(`${this.basePath}/${encodeURIComponent(idWithSlug)}`);
+	public getArticleById(id: string): Observable<Article> {
+		return this.get<Article>(`${this.basePath}/${id}`);
 	}
 
 	/**
-	 * Частичное обновление статьи
+	 * Обновление статьи
 	 */
-	public updateArticle(idWithSlug: string, dto: UpdateArticleDto): Observable<Article> {
-		return this.patch<Article>(`${this.basePath}/${encodeURIComponent(idWithSlug)}`, dto);
+	public updateArticle(id: string, dto: UpdateArticleDto): Observable<Article> {
+		return this.patch<Article, UpdateArticleDto>(`${this.basePath}/${id}`, dto);
 	}
 
 	/**
 	 * Удаление статьи
 	 */
-	public deleteArticle(idWithSlug: string): Observable<void> {
-		return this.delete<void>(`${this.basePath}/${encodeURIComponent(idWithSlug)}`);
+	public deleteArticle(id: string): Observable<void> {
+		return this.delete<void>(`${this.basePath}/${id}`);
 	}
 }

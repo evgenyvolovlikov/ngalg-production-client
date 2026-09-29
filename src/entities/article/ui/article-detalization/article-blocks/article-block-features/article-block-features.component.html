@@ -1,12 +1,12 @@
-<div class="features-list">
+<div class="article-block-features">
 	@if (data().sectionTitle) {
-		<h3 class="features-list__title">{{ data().sectionTitle }}</h3>
+		<h3 class="article-block-features__title">{{ data().sectionTitle }}</h3>
 	}
-	<ul class="features-list__wrapper">
+	<ul class="article-block-features__list">
 		@for (item of data().items; track item.title) {
-			<li class="features-list__item">
-				<strong class="keyword">{{ item.title }}</strong>
-				<span class="text"> — {{ item.text }}</span>
+			<li class="article-block-features__item">
+				<strong class="article-block-features__keyword">{{ item.title }}</strong>
+				<span class="article-block-features__text"> \u2014 {{ item.text }}</span>
 			</li>
 		}
 	</ul>

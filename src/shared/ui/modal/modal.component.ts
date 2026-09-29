@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, HostListener, input, model } from '
 
 import { IconComponent } from '../icon';
 
-export type ModalSize = 's' | 'm';
+export type ModalSize = 's' | 'm' | 'l';
 
 @Component({
 	selector: 'app-modal',

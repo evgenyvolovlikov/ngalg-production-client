@@ -1,3 +1,5 @@
+import type { CourseSkeletonLesson } from '@entities/lesson';
+
 export interface BaseEntity {
 	id: string;
 	createdAt: string;
@@ -18,18 +20,6 @@ export interface CourseSectionEntity extends BaseEntity {
 	orderIndex: number;
 }
 
-export interface CourseSkeletonLesson {
-	id: string;
-	sectionId: string | null;
-	sequenceOrder: number;
-	title: string;
-	description: string | null;
-	durationSeconds: number;
-	isFree: boolean;
-	hasCodeEditor: boolean;
-	isCompleted: boolean;
-}
-
 export interface CourseSkeletonSection {
 	id: string;
 	title: string;
@@ -47,31 +37,16 @@ export interface CourseSkeleton {
 	sections: CourseSkeletonSection[];
 }
 
-export interface LessonEntity extends BaseEntity {
+export interface CourseProgressStats {
 	courseId: string;
-	sectionId: string | null;
-	sequenceOrder: number;
-	title: string;
-	description: string | null;
-	videoUrl: string | null;
-	durationSeconds: number;
-	isFree: boolean;
-	hasCodeEditor: boolean;
-}
-
-export type LessonDetail = Omit<LessonEntity, 'createdAt' | 'updatedAt'> & {
-	isCompleted: boolean;
-};
-
-export interface ToggleLessonProgressResponse {
-	completed: boolean;
-}
-
-export interface CourseProgress {
+	courseSlug: string;
+	courseTitle: string;
 	totalLessons: number;
 	completedLessons: number;
 	percentage: number;
 }
+
+export type CourseProgress = CourseProgressStats;
 
 export interface CreateCourseDto {
 	slug: string;
@@ -90,15 +65,11 @@ export interface CreateCourseSectionDto {
 
 export type UpdateCourseSectionDto = Partial<CreateCourseSectionDto>;
 
-export interface CreateLessonDto {
-	sectionId: string;
-	sequenceOrder: number;
-	title: string;
-	description?: string;
-	videoUrl?: string;
-	durationSeconds?: number;
-	isFree?: boolean;
-	hasCodeEditor?: boolean;
-}
-
-export type UpdateLessonDto = Partial<CreateLessonDto>;
+export type {
+	CourseSkeletonLesson,
+	LessonDetail,
+	LessonEntity,
+	ToggleLessonProgressResponse,
+	CreateLessonDto,
+	UpdateLessonDto,
+} from '@entities/lesson';

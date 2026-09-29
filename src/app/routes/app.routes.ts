@@ -66,6 +66,15 @@ export const ACCOUNT_ROUTES: Routes = [
 			),
 		title: 'Account Transactions',
 	},
+
+	{
+		path: RouteSegments.SETTINGS,
+		loadComponent: () =>
+			import('@pages/account-settings/account-settings-page.component').then(
+				(c) => c.AccountSettingsPageComponent,
+			),
+		title: 'Account Settings',
+	},
 ];
 
 export const APP_ROUTES: Routes = [

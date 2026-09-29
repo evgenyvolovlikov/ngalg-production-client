@@ -37,6 +37,10 @@ export class UserStore {
 		);
 	}
 
+	setProfile(profile: UserProfile | null): void {
+		this.profileState.set(profile);
+	}
+
 	clear(): void {
 		this.profileState.set(null);
 	}

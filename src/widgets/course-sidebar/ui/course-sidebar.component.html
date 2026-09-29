@@ -1,5 +1,7 @@
 <aside class="sidebar">
-	<app-course-progress [progress]="progress()" />
+	@if (progress(); as progressData) {
+		<app-course-progress [progress]="progressData" />
+	}
 
 	<div class="lessons-container">
 		@for (section of sections(); track section.id) {

@@ -6,7 +6,7 @@ export type LinkTarget = '_blank' | '_self' | '_parent' | '_top';
 @Component({
 	selector: 'a[app-link]',
 	standalone: true,
-	template: '<ng-content />',
+	template: '<span class="link"><ng-content /></span>',
 	styleUrl: './app-link.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	host: {

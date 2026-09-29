@@ -21,6 +21,7 @@ export const RouteSegments = {
 	ACCOUNT: 'account',
 	OVERVIEW: 'overview',
 	TRANSACTIONS: 'transactions',
+	SETTINGS: 'settings',
 
 	WILDCARD: '**',
 } as const;
@@ -34,6 +35,7 @@ export const RouteBuilder = {
 
 	ACCOUNT_OVERVIEW: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.OVERVIEW}`,
 	ACCOUNT_TRANSACTIONS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.TRANSACTIONS}`,
+	ACCOUNT_SETTINGS: () => `/${RouteSegments.ACCOUNT}/${RouteSegments.SETTINGS}`,
 
 	COURSE_DETAILS: (slug: string) => `/${RouteSegments.COURSES}/${slug}`,
 } as const;
@@ -41,4 +43,5 @@ export const RouteBuilder = {
 export const ACCOUNT_SIDEBAR_ITEMS: NavItem[] = [
 	{ path: RouteBuilder.ACCOUNT_OVERVIEW(), label: 'Профиль', icon: 'person' },
 	{ path: RouteBuilder.ACCOUNT_TRANSACTIONS(), label: 'Подписки', icon: 'credit-card' },
+	{ path: RouteBuilder.ACCOUNT_SETTINGS(), label: 'Аккаунт', icon: 'gear' },
 ];

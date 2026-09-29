@@ -1,0 +1,17 @@
+<app-card>
+	<div class="course-progress-card__header">
+		<app-icon name="book-open" />
+		<h3 class="course-progress-card__title">Прогресс курса</h3>
+	</div>
+
+	<div class="course-progress-card__content">
+		<app-progress-bar [value]="progress().percentage"></app-progress-bar>
+	</div>
+
+	<div class="course-progress-card__footer">
+		<a app-link routerLink="{{ navigateTo() }}">
+			<span>Продолжить</span>
+			<app-icon [name]="'arrow-right'"></app-icon>
+		</a>
+	</div>
+</app-card>

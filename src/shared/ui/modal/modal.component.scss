@@ -39,6 +39,14 @@
 	pointer-events: auto;
 	overflow: hidden;
 
+	&--size-l {
+		max-width: 32rem;
+
+		.modal-panel__content {
+			padding: 0;
+		}
+	}
+
 	&--size-m {
 		max-width: 24rem;
 

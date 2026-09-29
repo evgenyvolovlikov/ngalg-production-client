@@ -1,24 +1,16 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
-import {
-	ArticleBlockType,
-	ArticleLevel,
-	ArticleStatus,
-	NavigationTag,
-	NoteType,
-	TextFormat,
-} from '@entities/article';
-
-// --- Формы контентных блоков ---
+import type { ArticleBlockType, ArticleLevel, ArticleStatus } from '@entities/article';
+import type { NavigationTag } from '@entities/article';
 
 export interface TextBlockForm {
-	format: FormControl<TextFormat>;
+	format: FormControl<string>;
 	content: FormControl<string>;
 }
 
 export interface NoteBlockForm {
 	text: FormControl<string>;
-	noteType: FormControl<NoteType>;
+	noteType: FormControl<string>;
 }
 
 export interface CodeBlockForm {
@@ -51,11 +43,8 @@ export interface FeaturesBlockForm {
 
 export interface BlockFormGroup {
 	type: FormControl<ArticleBlockType>;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	data: FormGroup<any>;
+	data: FormGroup;
 }
-
-// --- Вспомогательные формы ---
 
 export interface CoverImageForm {
 	url: FormControl<string>;
@@ -68,27 +57,18 @@ export interface SeoForm {
 	keywords: FormControl<string[]>;
 }
 
-// --- Главная форма ---
-
 export interface ArticleFormModel {
 	problemId: FormControl<string | null>;
 	readingTimeMinutes: FormControl<number>;
-
 	title: FormControl<string>;
 	slug: FormControl<string>;
 	categoryId: FormControl<string>;
-
 	status: FormControl<ArticleStatus>;
 	level: FormControl<ArticleLevel>;
-
 	leadText: FormControl<string>;
 	description: FormControl<string>;
-
 	coverImage: FormGroup<CoverImageForm>;
-
 	tags: FormControl<NavigationTag[]>;
-
-	seo: FormGroup<SeoForm>;
-
+	seo: FormGroup<SeoForm>; // ← ДОБАВИТЬ
 	blocks: FormArray<FormGroup<BlockFormGroup>>;
 }

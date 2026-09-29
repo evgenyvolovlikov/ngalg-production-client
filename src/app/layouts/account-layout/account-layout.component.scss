@@ -29,7 +29,7 @@
 		justify-content: flex-start;
 		align-items: center;
 		width: 100%;
-		max-width: var(--container-xxl);
+		max-width: var(--container-xl);
 		margin: 0 auto;
 		padding: 0 var(--unit-8);
 
@@ -80,6 +80,7 @@
 		z-index: var(--z-sticky);
 		height: calc(100dvh - var(--unit-8));
 		padding: 0;
+		padding: var(--unit-4);
 
 		@include m.media-below('md') {
 			position: static;

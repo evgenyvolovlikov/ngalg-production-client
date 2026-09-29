@@ -1,0 +1,16 @@
+<div class="accordion" [class.is-open]="isOpen()">
+	<button
+		type="button"
+		class="accordion__summary"
+		[attr.aria-expanded]="isOpen()"
+		(click)="toggle()"
+		(keydown.enter)="toggle()"
+		(keydown.space)="toggle()"
+	>
+		<ng-content select="[accordion-title]"></ng-content>
+	</button>
+
+	<div #contentRef class="accordion__content">
+		<ng-content></ng-content>
+	</div>
+</div>

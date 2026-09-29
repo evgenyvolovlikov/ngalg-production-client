@@ -12,8 +12,8 @@
 		Account type:
 		<span class="account-type__value">
 			@for (account of accountType(); track account.provider) {
-				@if (providerLabels[account.provider]) {
-					<span class="account-type__provider">{{ providerLabels[account.provider] }}</span>
+				@if (providerLabels()[account.provider]) {
+					<span class="account-type__provider">{{ providerLabels()[account.provider] }}</span>
 				}
 			}
 		</span>

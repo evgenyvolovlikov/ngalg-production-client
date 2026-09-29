@@ -4,7 +4,7 @@ export type NoteType = 'INFO' | 'WARNING' | 'ERROR';
 export type TextFormat = 'HTML' | 'MARKDOWN';
 
 export interface TextBlockData {
-	format: string;
+	format: TextFormat;
 	content: string;
 }
 
@@ -22,13 +22,13 @@ export interface CodeBlockData {
 export interface ImageBlockData {
 	url: string;
 	alt: string;
-	caption?: string;
+	caption?: string | null;
 }
 
 export interface ComplexityBlockData {
 	time: string;
 	space: string;
-	description: string;
+	description?: string;
 }
 
 export interface FeatureItem {
@@ -37,84 +37,80 @@ export interface FeatureItem {
 }
 
 export interface FeaturesBlockData {
-	sectionTitle: string;
+	sectionTitle?: string | null;
 	items: FeatureItem[];
 }
 
-export interface TextBlock {
-	type: 'TEXT';
-	data: TextBlockData;
-}
-export interface NoteBlock {
-	type: 'NOTE';
-	data: NoteBlockData;
-}
-export interface CodeBlock {
-	type: 'CODE';
-	data: CodeBlockData;
-}
-export interface ImageBlock {
-	type: 'IMAGE';
-	data: ImageBlockData;
-}
-export interface ComplexityBlock {
-	type: 'COMPLEXITY';
-	data: ComplexityBlockData;
-}
-export interface FeaturesBlock {
-	type: 'FEATURES';
-	data: FeaturesBlockData;
+export type ArticleBlockType = 'TEXT' | 'CODE' | 'NOTE' | 'COMPLEXITY' | 'IMAGE' | 'FEATURES';
+
+export type ArticleBlockData =
+	| TextBlockData
+	| CodeBlockData
+	| NoteBlockData
+	| ComplexityBlockData
+	| ImageBlockData
+	| FeaturesBlockData;
+
+export interface ArticleBlock {
+	id: string;
+	type: ArticleBlockType;
+	data: ArticleBlockData;
 }
 
-export type ArticleContentBlock =
-	TextBlock | NoteBlock | CodeBlock | ImageBlock | ComplexityBlock | FeaturesBlock;
+/** Alias used by article-block-renderer and manage-article */
+export type ArticleContentBlock = ArticleBlock;
 
-export type ArticleBlockType = ArticleContentBlock['type'];
-
-export interface ArticleImage {
+export interface CoverImage {
 	url: string;
 	alt: string;
-	caption?: string;
+	caption?: string | null;
+}
+
+export interface NavigationTag {
+	id: string;
+	name: string;
+	slug: string;
 }
 
 export interface SeoMetadata {
-	description?: string;
+	description?: string | null;
 	keywords?: string[];
 }
 
-export type ProblemId = string;
-export type AuthorId = string;
-export type ArticleId = string;
-export type CategoryId = string;
-
-export type NavigationTag =
-	'THEORY' | 'COMPONENT' | 'EXAMPLE' | 'ALGORITHM' | 'STRUCTURE' | 'ARCHITECTURE' | 'PATTERNS';
-
 export interface Article {
-	id: ArticleId;
-	slug: string;
+	id: string;
 	title: string;
+	slug: string;
 	leadText: string;
 	description: string;
-	problemId?: ProblemId;
-	authorId?: AuthorId;
-	categoryId: CategoryId;
-	tags: NavigationTag[];
+	coverImage: CoverImage;
 	status: ArticleStatus;
 	level: ArticleLevel;
-	coverImage?: ArticleImage;
+	tags: NavigationTag[];
+	blocks: ArticleBlock[];
 	readingTimeMinutes: number;
-	seo: SeoMetadata;
-	blocks: ArticleContentBlock[];
+	authorId: string;
+	categoryId: string;
+	seo?: SeoMetadata;
+	problemId?: string | null;
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface ArticleListResponse {
+	items: Article[];
+	total: number;
 }
 
 export interface GetArticlesQueryDto {
 	status?: ArticleStatus;
 	categoryId?: string;
+	limit?: number;
+	offset?: number;
 }
 
-export type CreateArticleDto = Omit<Article, 'id' | 'createdAt' | 'updatedAt'>;
+export type CreateArticleDto = Omit<Article, 'id' | 'createdAt' | 'updatedAt' | 'authorId'> & {
+	authorId?: string;
+};
 
 export type UpdateArticleDto = Partial<CreateArticleDto>;

@@ -1,5 +1,5 @@
-<div class="lesson-box">
-	<div class="lesson-content">
+<div class="lesson-content">
+	<div class="lesson-content__main">
 		<app-lesson-header [lesson]="lesson()" />
 		<app-video-player [src]="videoUrl()" />
 
@@ -12,7 +12,7 @@
 		</div>
 	</div>
 
-	<div class="lesson-button-next">
+	<div class="lesson-content__next">
 		<app-lesson-navigation-controls [nextLesson]="nextLesson()" (nextLessonSelect)="selectLesson.emit($event)" />
 	</div>
 </div>

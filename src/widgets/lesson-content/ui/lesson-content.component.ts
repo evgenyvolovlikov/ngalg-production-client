@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { LessonNavigationControlsComponent } from '@features/lesson-navigation';
 import { MarkLessonWatchedComponent } from '@features/mark-lesson-watched';
 
-import { CourseSkeletonLesson } from '@entities/course';
+import { CourseSkeletonLesson } from '@entities/lesson';
 import { LessonHeaderComponent } from '@entities/lesson';
 
 import { VideoPlayerComponent } from '@shared/ui/video-player';

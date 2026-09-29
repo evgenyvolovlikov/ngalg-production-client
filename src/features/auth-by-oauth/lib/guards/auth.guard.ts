@@ -5,5 +5,5 @@ import { UserStore } from '@entities/user';
 
 export const authGuard: CanActivateFn = () => {
 	const store = inject(UserStore);
-	return store.isAuthenticated() ? true : inject(Router).createUrlTree(['/']);
+	return store.isAuthenticated() ? true : inject(Router).createUrlTree(['/courses/frontend']);
 };

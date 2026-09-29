@@ -5,7 +5,7 @@
 	width: 100%;
 }
 
-.lesson-box {
+.lesson-content {
 	display: flex;
 	flex-direction: column;
 	gap: var(--unit-8);
@@ -13,21 +13,21 @@
 	@include m.media-below('lg') {
 		gap: var(--unit-4);
 	}
-}
 
-.lesson-content {
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-6);
-	padding: var(--unit-8);
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-md);
-	font-family: var(--font-family-sans);
+	&__main {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-6);
+		padding: var(--unit-8);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-md);
+		font-family: var(--font-family-sans);
 
-	@include m.media-below('lg') {
-		gap: var(--unit-4);
-		padding: var(--unit-4);
+		@include m.media-below('lg') {
+			gap: var(--unit-4);
+			padding: var(--unit-4);
+		}
 	}
 
 	&__actions {
@@ -40,9 +40,9 @@
 		padding-top: var(--unit-6);
 		border-top: 1px solid var(--border-light);
 	}
-}
 
-.lesson-button-next {
-	display: flex;
-	justify-content: end;
+	&__next {
+		display: flex;
+		justify-content: end;
+	}
 }

@@ -35,7 +35,7 @@ export class CoursePageComponent {
 	private readonly store = inject(CoursePageStore);
 
 	readonly sections = this.store.sections;
-	readonly progress = this.store.progress;
+	readonly progress = this.store.localProgress;
 	readonly activeLesson = this.store.activeLesson;
 	readonly activeLessonId = this.store.activeLessonId;
 	readonly activeLessonDetail = this.store.activeLessonDetail;
@@ -68,6 +68,10 @@ export class CoursePageComponent {
 			if (slug) {
 				this.store.load(slug);
 			}
+		});
+
+		effect(() => {
+			console.log(this.progress());
 		});
 	}
 

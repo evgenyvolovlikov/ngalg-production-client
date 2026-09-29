@@ -1,25 +1,33 @@
-import { ChangeDetectionStrategy, Component, model } from '@angular/core';
+import {
+	AfterViewChecked,
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	ViewChild,
+	model,
+} from '@angular/core';
 
 @Component({
 	selector: 'app-accordion',
 	standalone: true,
-	template: `
-		<details class="accordion" [open]="isOpen()" (toggle)="onToggle($event)">
-			<summary class="accordion__summary">
-				<ng-content select="[accordion-title]"></ng-content>
-			</summary>
-			<div class="accordion__content">
-				<ng-content></ng-content>
-			</div>
-		</details>
-	`,
+	templateUrl: `./accordion.component.html`,
 	styleUrl: './accordion.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccordionComponent {
+export class AccordionComponent implements AfterViewChecked {
 	readonly isOpen = model<boolean>(false);
+	@ViewChild('contentRef', { static: false }) contentRef!: ElementRef<HTMLDivElement>;
 
-	protected onToggle(event: Event): void {
-		this.isOpen.set((event.target as HTMLDetailsElement).open);
+	toggle(): void {
+		this.isOpen.update((state) => !state);
+	}
+
+	ngAfterViewChecked(): void {
+		if (this.contentRef) {
+			const height = this.isOpen()
+				? `${this.contentRef.nativeElement.scrollHeight}px`
+				: '0px';
+			this.contentRef.nativeElement.style.setProperty('--accordion-content-height', height);
+		}
 	}
 }

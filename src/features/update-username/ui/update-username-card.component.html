@@ -1,0 +1,42 @@
+<app-card>
+	<div class="card-header">
+		<app-icon name="person" />
+		<h3>Username</h3>
+	</div>
+
+	<div class="card-description">
+		<p>Ваш псевдоним будет виден другим пользователям.</p>
+	</div>
+
+	<div class="card-content">
+		@if (!isEditing()) {
+			<div class="view-mode">
+				<p class="username-value">{{ userStore.profile()?.username }}</p>
+				<button app-button type="button" variant="outline" (click)="onEdit()">
+					<app-icon name="pencil-to-square" />
+					<span>Редактировать</span>
+				</button>
+			</div>
+		} @else {
+			<form [formGroup]="form" (ngSubmit)="onSave()" class="edit-mode">
+				<div class="input-wrapper">
+					<app-input formControlName="username"></app-input>
+				</div>
+
+				@if (errorMessage()) {
+					<p class="form-error">{{ errorMessage() }}</p>
+				}
+
+				<div class="form-actions">
+					<button app-button type="submit" [disabled]="form.invalid || isSaving()">
+						<app-icon name="floppy-disk" />
+						<span>{{ isSaving() ? "Сохранение..." : "Сохранить" }}</span>
+					</button>
+					<button app-button type="button" variant="outline" [disabled]="isSaving()" (click)="onCancel()">
+						Отмена
+					</button>
+				</div>
+			</form>
+		}
+	</div>
+</app-card>

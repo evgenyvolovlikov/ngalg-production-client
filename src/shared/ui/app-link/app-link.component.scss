@@ -51,3 +51,9 @@
 		outline-offset: var(--focus-ring-offset);
 	}
 }
+
+.link {
+	display: flex;
+	gap: var(--unit-1);
+	align-items: center;
+}

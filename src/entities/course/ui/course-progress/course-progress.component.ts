@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { CircularProgressComponent } from '@shared/ui/circular-progress';
 
-import { CourseProgress } from '../../model/course.types';
+import { CourseProgressStats } from '../../model/course.types';
 
 @Component({
 	selector: 'app-course-progress',
@@ -13,5 +13,5 @@ import { CourseProgress } from '../../model/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseProgressComponent {
-	readonly progress = input.required<CourseProgress>();
+	readonly progress = input.required<CourseProgressStats>();
 }

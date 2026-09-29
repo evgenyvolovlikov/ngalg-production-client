@@ -22,4 +22,6 @@ export type IconName =
 	| 'triangle-exclamation-fill'
 	| 'circle-xmark-fill'
 	| 'circle-info-fill'
-	| 'person-fill';
+	| 'person-fill'
+	| 'gear'
+	| 'trash-bin';

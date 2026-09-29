@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { CourseProgressStats, CourseSkeletonSection } from '@entities/course';
 import { CourseProgressComponent } from '@entities/course';
-import { CourseProgress, CourseSkeletonSection } from '@entities/course';
 import { LessonCardComponent } from '@entities/lesson';
 
 @Component({
@@ -13,7 +13,7 @@ import { LessonCardComponent } from '@entities/lesson';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseSidebarComponent {
-	readonly progress = input.required<CourseProgress>();
+	readonly progress = input<CourseProgressStats | null>(null);
 	readonly sections = input.required<CourseSkeletonSection[]>();
 	readonly activeLessonId = input<string | null>(null);
 

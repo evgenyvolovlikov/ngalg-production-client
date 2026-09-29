@@ -3,14 +3,8 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 
 import { CourseApiService } from '@entities/course';
-import {
-	CourseProgress,
-	CourseSkeleton,
-	CourseSkeletonLesson,
-	CourseSkeletonSection,
-	LessonDetail,
-} from '@entities/course';
-import { LessonApiService } from '@entities/lesson';
+import { CourseProgressStats, CourseSkeleton, CourseSkeletonSection } from '@entities/course';
+import { CourseSkeletonLesson, LessonApiService, LessonDetail } from '@entities/lesson';
 
 @Injectable()
 export class CoursePageStore {
@@ -20,6 +14,7 @@ export class CoursePageStore {
 	private readonly courseState = signal<CourseSkeleton | null>(null);
 	private readonly activeLessonIdState = signal<string | null>(null);
 	private readonly activeLessonDetailState = signal<LessonDetail | null>(null);
+	private readonly progressState = signal<CourseProgressStats | null>(null);
 	private readonly loadingState = signal<boolean>(false);
 	private readonly errorState = signal<string | null>(null);
 
@@ -28,6 +23,7 @@ export class CoursePageStore {
 	readonly course = this.courseState.asReadonly();
 	readonly activeLessonId = this.activeLessonIdState.asReadonly();
 	readonly activeLessonDetail = this.activeLessonDetailState.asReadonly();
+	readonly progress = this.progressState.asReadonly();
 	readonly loading = this.loadingState.asReadonly();
 	readonly error = this.errorState.asReadonly();
 
@@ -37,14 +33,21 @@ export class CoursePageStore {
 		this.sections().flatMap((section) => section.lessons),
 	);
 
-	readonly progress = computed<CourseProgress>(() => {
+	readonly localProgress = computed<CourseProgressStats>(() => {
 		const lessons = this.lessons();
 		const totalLessons = lessons.length;
 		const completedLessons = lessons.filter((lesson) => lesson.isCompleted).length;
 		const percentage =
 			totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
-		return { totalLessons, completedLessons, percentage };
+		return {
+			courseId: this.courseState()?.id ?? '',
+			courseSlug: this.courseState()?.slug ?? '',
+			courseTitle: this.courseState()?.title ?? '',
+			totalLessons,
+			completedLessons,
+			percentage,
+		};
 	});
 
 	readonly activeLesson = computed<CourseSkeletonLesson | null>(() => {
@@ -61,6 +64,7 @@ export class CoursePageStore {
 	load(slug: string): void {
 		if (this.loadedSlug !== slug) {
 			this.courseState.set(null);
+			this.progressState.set(null);
 			this.loadedSlug = null;
 		}
 
@@ -79,12 +83,20 @@ export class CoursePageStore {
 					this.loadedSlug = slug;
 					this.courseState.set(course);
 					this.selectInitialLesson(course);
+					this.loadProgress(slug);
 				},
 				error: () => {
 					this.loadedSlug = null;
 					this.errorState.set('Не удалось загрузить курс');
 				},
 			});
+	}
+
+	loadProgress(slug: string): void {
+		this.courseApi.getCourseProgress(slug).subscribe({
+			next: (progress) => this.progressState.set(progress),
+			error: () => this.progressState.set(null),
+		});
 	}
 
 	selectLesson(id: string): void {

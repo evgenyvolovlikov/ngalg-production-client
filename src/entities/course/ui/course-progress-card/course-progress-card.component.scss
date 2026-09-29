@@ -1,0 +1,23 @@
+.course-progress-card {
+	&__header {
+		display: flex;
+		gap: var(--unit-2);
+		align-items: center;
+	}
+
+	&__title {
+		margin: 0;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-medium);
+		color: var(--text-primary);
+	}
+
+	&__content {
+		margin-top: var(--unit-4);
+	}
+
+	&__footer {
+		margin-top: var(--unit-6);
+		text-align: right;
+	}
+}

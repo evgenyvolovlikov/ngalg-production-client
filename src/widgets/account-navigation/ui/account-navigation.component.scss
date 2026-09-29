@@ -7,7 +7,7 @@
 
 .account-nav {
 	display: flex;
-	gap: var(--unit-1);
+	gap: var(--unit-2);
 	width: 100%;
 	flex-flow: row nowrap;
 
@@ -18,9 +18,14 @@
 
 	@include m.media-below('md') {
 		width: 100%;
-		padding-right: var(--unit-4);
-		padding-bottom: var(--unit-4);
-		padding-left: var(--unit-4);
+		padding: var(--unit-2) var(--unit-4);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-light);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-sm);
+		transition:
+			box-shadow var(--transition-base),
+			border-color var(--transition-base);
 	}
 
 	&__link {
