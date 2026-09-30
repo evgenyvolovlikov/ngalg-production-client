@@ -525,276 +525,6 @@ vercel.json
 <files>
 This section contains the contents of the repository's files.
 
-<file path="src/shared/ui/toast/index.ts">
-export { ToastComponent } from './toast.component';
-export { ToastStore } from './toast.store';
-export type { ToastType } from './toast.types';
-</file>
-
-<file path="src/shared/ui/toast/toast.component.html">
-@if (store.toasts().length > 0) {
-	<div class="toast-container" role="region" aria-live="polite" aria-label="Уведомления">
-		@for (toast of store.toasts(); track toast.id) {
-			<div class="toast" [attr.data-type]="toast.type" role="alert">
-				<span class="toast__icon" aria-hidden="true">
-					<app-icon [name]="iconFor(toast.type)" size="m" />
-				</span>
-				<span class="toast__message">{{ toast.message }}</span>
-				<button
-					type="button"
-					class="toast__close"
-					(click)="store.dismiss(toast.id)"
-					aria-label="Закрыть"
-				>
-					<app-icon name="xmark" size="s" />
-				</button>
-			</div>
-		}
-	</div>
-}
-</file>
-
-<file path="src/shared/ui/toast/toast.component.scss">
-@use 'media' as m;
-
-:host {
-	position: fixed;
-	z-index: var(--z-toast);
-	inset: 0;
-	pointer-events: none;
-}
-
-.toast-container {
-	position: fixed;
-	right: var(--unit-6);
-	bottom: var(--unit-6);
-	display: flex;
-	flex-direction: column;
-	gap: var(--unit-3);
-	max-width: 24rem;
-	pointer-events: none;
-
-	@include m.media-below('sm') {
-		right: var(--unit-4);
-		left: var(--unit-4);
-		max-width: none;
-	}
-}
-
-.toast {
-	display: flex;
-	gap: var(--unit-3);
-	align-items: center;
-	padding: var(--unit-3) var(--unit-4);
-	border-radius: var(--radius-md);
-	box-shadow: var(--shadow-md);
-	animation: toast-slide-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	pointer-events: auto;
-
-	&--leaving {
-		animation: toast-slide-out 0.3s ease-in forwards;
-		pointer-events: none;
-	}
-
-	&__icon {
-		display: flex;
-		flex-shrink: 0;
-		justify-content: center;
-		align-items: center;
-		width: var(--unit-6);
-		height: var(--unit-6);
-		border-radius: 50%;
-		font-size: var(--font-size-sm);
-	}
-
-	&__message {
-		flex-grow: 1;
-		min-width: 0;
-		font-size: var(--font-size-sm);
-		font-weight: var(--font-weight-medium);
-		line-height: var(--line-height-snug);
-		overflow-wrap: anywhere;
-	}
-
-	&__close {
-		display: flex;
-		flex-shrink: 0;
-		justify-content: center;
-		align-items: center;
-		width: var(--unit-5);
-		height: var(--unit-5);
-		padding: 0;
-		background-color: transparent;
-		border: none;
-		border-radius: var(--radius-sm);
-		opacity: 0.7;
-		color: inherit;
-		transition: opacity var(--transition-fast);
-		cursor: pointer;
-
-		&:hover {
-			opacity: 1;
-		}
-	}
-
-	&[data-type='success'] {
-		background-color: var(--bg-card);
-		border: 1px solid var(--status-success);
-		color: var(--text-primary);
-
-		.toast__icon {
-			background-color: var(--status-success);
-			color: var(--text-on-dark);
-		}
-	}
-
-	&[data-type='error'] {
-		background-color: var(--bg-card);
-		border: 1px solid var(--status-error);
-		color: var(--text-primary);
-
-		.toast__icon {
-			background-color: var(--status-error);
-			color: var(--text-on-dark);
-		}
-	}
-
-	&[data-type='warning'] {
-		background-color: var(--bg-card);
-		border: 1px solid var(--status-warning);
-		color: var(--text-primary);
-
-		.toast__icon {
-			background-color: var(--status-warning);
-			color: var(--text-on-dark);
-		}
-	}
-
-	&[data-type='info'] {
-		background-color: var(--bg-card);
-		border: 1px solid var(--brand-primary);
-		color: var(--text-primary);
-
-		.toast__icon {
-			background-color: var(--brand-primary);
-			color: var(--text-on-dark);
-		}
-	}
-}
-
-@keyframes toast-slide-in {
-	from {
-		opacity: 0;
-		transform: translateX(100%);
-	}
-
-	to {
-		opacity: 1;
-		transform: translateX(0);
-	}
-}
-
-@keyframes toast-slide-out {
-	from {
-		opacity: 1;
-		transform: translateX(0);
-	}
-
-	to {
-		opacity: 0;
-		transform: translateX(100%);
-	}
-}
-</file>
-
-<file path="src/shared/ui/toast/toast.component.ts">
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-
-import { IconComponent } from '../icon/icon.component';
-import { IconName } from '../icon/icon.types';
-import { ToastStore } from './toast.store';
-import { ToastType } from './toast.types';
-
-@Component({
-	selector: 'app-toast',
-	standalone: true,
-	imports: [IconComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './toast.component.html',
-	styleUrl: './toast.component.scss',
-})
-export class ToastComponent {
-	protected readonly store = inject(ToastStore);
-
-	private readonly iconMap: Record<ToastType, IconName> = {
-		success: 'check',
-		error: 'circle-xmark-fill',
-		warning: 'triangle-exclamation-fill',
-		info: 'circle-info-fill',
-	};
-
-	protected iconFor(type: ToastType): IconName {
-		return this.iconMap[type];
-	}
-}
-</file>
-
-<file path="src/shared/ui/toast/toast.store.ts">
-import { Injectable, signal } from '@angular/core';
-
-import { ToastItem, ToastType } from './toast.types';
-
-@Injectable({ providedIn: 'root' })
-export class ToastStore {
-	private nextId = 0;
-
-	public readonly toasts = signal<ToastItem[]>([]);
-
-	public show(message: string, type: ToastType = 'info', duration = 5000): void {
-		const id = this.nextId++;
-		const toast: ToastItem = { id, message, type };
-
-		this.toasts.update((list) => [...list, toast]);
-
-		setTimeout(() => this.dismiss(id), duration);
-	}
-
-	public success(message: string, duration?: number): void {
-		this.show(message, 'success', duration);
-	}
-
-	public error(message: string, duration?: number): void {
-		this.show(message, 'error', duration);
-	}
-
-	public warning(message: string, duration?: number): void {
-		this.show(message, 'warning', duration);
-	}
-
-	public info(message: string, duration?: number): void {
-		this.show(message, 'info', duration);
-	}
-
-	public dismiss(id: number): void {
-		this.toasts.update((list) => list.filter((t) => t.id !== id));
-	}
-
-	public clear(): void {
-		this.toasts.set([]);
-	}
-}
-</file>
-
-<file path="src/shared/ui/toast/toast.types.ts">
-export type ToastType = 'success' | 'error' | 'warning' | 'info';
-
-export interface ToastItem {
-	readonly id: number;
-	readonly message: string;
-	readonly type: ToastType;
-}
-</file>
-
 <file path="preparation/angular-theory-questions/index.md">
 # 300 Вопросов для Собеседования по Angular (Полная База)
 
@@ -2947,88 +2677,6 @@ export class GoogleOauthButtonComponent {
 }
 </file>
 
-<file path="src/features/create-category/ui/create-category.component.ts">
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-
-import { ArticleNavigationApiService } from '@entities/article-navigation';
-
-import { ButtonComponent } from '@shared/ui/button';
-import { InputComponent } from '@shared/ui/input';
-import { SelectComponent } from '@shared/ui/select';
-import { ToastStore } from '@shared/ui/toast';
-
-@Component({
-	selector: 'app-create-category',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [ReactiveFormsModule, InputComponent, ButtonComponent, SelectComponent],
-	template: `
-		<form [formGroup]="form" (ngSubmit)="submit()" class="admin-form-container">
-			<h3 class="admin-form-container__title">Новая категория</h3>
-
-			<app-select formControlName="sectionId" label="Родительская секция">
-				<option value="" disabled>Выберите секцию</option>
-				@for (section of navigationTree(); track section.id) {
-					<option [value]="section.id">{{ section.title }}</option>
-				}
-			</app-select>
-
-			<div class="form-row form-row--2-cols">
-				<app-input formControlName="title" label="Название категории"></app-input>
-				<app-input
-					formControlName="orderIndex"
-					type="number"
-					label="Порядок сортировки"
-				></app-input>
-			</div>
-
-			<button app-button type="submit" [disabled]="form.invalid">Создать категорию</button>
-		</form>
-	`,
-	styleUrl: './create-category.component.scss',
-})
-export class CreateCategoryComponent {
-	private readonly fb = inject(NonNullableFormBuilder);
-	private readonly navigationApi = inject(ArticleNavigationApiService);
-	private readonly destroyRef = inject(DestroyRef);
-	private readonly toastStore = inject(ToastStore);
-
-	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
-		initialValue: [],
-	});
-
-	protected form = this.fb.group({
-		sectionId: ['', Validators.required],
-		title: ['', [Validators.required, Validators.minLength(2)]],
-		orderIndex: [0],
-	});
-
-	submit(): void {
-		if (this.form.invalid) return;
-
-		const dto = {
-			title: this.form.controls.title.value,
-			sectionId: this.form.controls.sectionId.value,
-		};
-
-		this.navigationApi
-			.createCategory(dto)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: () => {
-					this.toastStore.success('Категория успешно создана');
-					this.form.reset();
-				},
-				error: (err) => {
-					this.toastStore.error(err?.message ?? 'Ошибка при создании категории');
-				},
-			});
-	}
-}
-</file>
-
 <file path="src/features/create-category/index.ts">
 export * from './ui/create-category.component';
 </file>
@@ -3045,73 +2693,6 @@ export * from './ui/create-category.component';
 		font-weight: var(--font-weight-bold);
 		line-height: var(--line-height-tight);
 		color: var(--text-primary);
-	}
-}
-</file>
-
-<file path="src/features/create-section/ui/create-section.component.ts">
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-
-import { ArticleNavigationApiService, CreateSectionDto } from '@entities/article-navigation';
-
-import { ButtonComponent } from '@shared/ui/button';
-import { InputComponent } from '@shared/ui/input';
-import { ToastStore } from '@shared/ui/toast';
-
-@Component({
-	selector: 'app-create-section',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [ReactiveFormsModule, InputComponent, ButtonComponent],
-	template: `
-		<form [formGroup]="form" (ngSubmit)="submit()" class="admin-form-container">
-			<h3 class="admin-form-container__title">Новая секция</h3>
-
-			<app-input formControlName="title" label="Название секции"></app-input>
-			<app-input
-				formControlName="orderIndex"
-				type="number"
-				label="Порядок сортировки"
-			></app-input>
-
-			<button app-button type="submit" [disabled]="form.invalid">Создать секцию</button>
-		</form>
-	`,
-
-	styleUrl: './create-section.component.scss',
-})
-export class CreateSectionComponent {
-	private readonly fb = inject(NonNullableFormBuilder);
-	private readonly api = inject(ArticleNavigationApiService);
-	private readonly destroyRef = inject(DestroyRef);
-	private readonly toastStore = inject(ToastStore);
-
-	protected form = this.fb.group({
-		title: ['', [Validators.required, Validators.minLength(2)]],
-		orderIndex: [0],
-	});
-
-	protected submit(): void {
-		if (this.form.invalid) return;
-
-		const dto: CreateSectionDto = {
-			title: this.form.controls.title.value,
-		};
-
-		this.api
-			.createSection(dto)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: () => {
-					this.toastStore.success('Секция успешно создана');
-					this.form.reset();
-				},
-				error: (err) => {
-					this.toastStore.error(err?.message ?? 'Ошибка при создании секции');
-				},
-			});
 	}
 }
 </file>
@@ -3792,139 +3373,6 @@ export class ArticleNoteBlockFormComponent {
 }
 </file>
 
-<file path="src/features/manage-article/ui/article-creation/article-form.component.html">
-<form class="article-form" [formGroup]="form()" (ngSubmit)="onSubmit()">
-	<header class="article-form__header">
-		<h1 class="article-form__title">{{ isEditMode() ? "Редактирование статьи" : "Новая статья" }}</h1>
-		<div class="article-form__actions">
-			<button app-button type="button" variant="outline" (click)="onCancel()">Отмена</button>
-			<button
-				app-button
-				type="submit"
-				variant="filled"
-				[loading]="isSubmitting()"
-				[disabled]="isSubmitting() || form().invalid"
-			>
-				Сохранить
-			</button>
-		</div>
-	</header>
-
-	<!-- ОСНОВНАЯ ИНФОРМАЦИЯ -->
-	<fieldset class="form-section">
-		<legend class="form-section__title">Основная информация</legend>
-
-		<div class="form-row form-row--2-cols">
-			<app-input formControlName="title" label="Заголовок" />
-			<app-input formControlName="slug" label="Slug (URL)" />
-		</div>
-
-		<div class="form-row form-row--3-cols">
-			<app-select formControlName="categoryId" label="Категория">
-				<option value="">Выберите категорию</option>
-
-				@for (section of navigationTree(); track section.id) {
-					<optgroup [label]="section.title">
-						@for (category of section.items; track category.id) {
-							<option [value]="category.id">{{ category.title }}</option>
-						}
-					</optgroup>
-				}
-			</app-select>
-
-			<app-select formControlName="status" label="Статус">
-				@for (opt of statusOptions; track opt.value) {
-					<option [value]="opt.value">{{ opt.label }}</option>
-				}
-			</app-select>
-
-			<app-select formControlName="level" label="Уровень">
-				@for (opt of levelOptions; track opt.value) {
-					<option [value]="opt.value">{{ opt.label }}</option>
-				}
-			</app-select>
-		</div>
-
-		<div class="form-row form-row--2-cols">
-			<app-input formControlName="problemId" label="ID Задачи (Problem ID)" />
-			<app-input type="number" formControlName="readingTimeMinutes" label="Время чтения (мин)" />
-		</div>
-
-		<div class="form-row">
-			<app-textarea formControlName="leadText" label="Лид-абзац" [rows]="2"></app-textarea>
-		</div>
-
-		<div class="form-row">
-			<app-textarea formControlName="description" label="Полное описание" [rows]="4"></app-textarea>
-		</div>
-	</fieldset>
-
-	<!-- ОБЛОЖКА -->
-	<fieldset formGroupName="coverImage" class="form-section">
-		<legend class="form-section__title">Обложка</legend>
-		<div class="form-row">
-			<app-input formControlName="url" label="URL изображения" />
-		</div>
-		<div class="form-row form-row--2-cols">
-			<app-input formControlName="alt" label="Alt текст" />
-			<app-input formControlName="caption" label="Подпись (необязательно)" />
-		</div>
-	</fieldset>
-
-	<!-- ТЕГИ И СЕО -->
-	<div class="form-row form-row--2-cols">
-		<fieldset class="form-section">
-			<legend class="form-section__title">Теги</legend>
-			<app-tags-input formControlName="tags" placeholder="Введите тег и нажмите Enter"></app-tags-input>
-		</fieldset>
-
-		<fieldset class="form-section" formGroupName="seo">
-			<legend class="form-section__title">SEO Настройки</legend>
-			<app-textarea formControlName="description" label="SEO Описание" [rows]="2"></app-textarea>
-
-			<app-tags-input formControlName="keywords" placeholder="Введите ключевое слово"></app-tags-input>
-		</fieldset>
-	</div>
-
-	<!-- КОНТЕНТНЫЕ БЛОКИ -->
-	<fieldset class="form-section">
-		<legend class="form-section__title">Контентные блоки</legend>
-
-		<div class="block-toolbar">
-			@for (block of availableBlocks; track block.type) {
-				<button app-button type="button" size="m" variant="outline" (click)="addBlock(block.type)">
-					+ {{ block.label }}
-				</button>
-			}
-		</div>
-
-		<div formArrayName="blocks" class="blocks-container">
-			@for (block of blocksFormArray.controls; track block; let blockIndex = $index) {
-				<div class="block-card" [formGroupName]="blockIndex">
-					<div class="block-card__header">
-						<span class="block-card__type">{{ block.controls.type.value | uppercase }}</span>
-						<button app-button type="button" variant="clear" size="m" (click)="removeBlock(blockIndex)">
-							Удалить
-						</button>
-					</div>
-
-					<div formGroupName="data" class="block-card__body">
-						<app-article-block-form-renderer
-							[type]="block.controls.type.value"
-							[dataFormGroup]="block.controls.data"
-						/>
-					</div>
-				</div>
-			}
-
-			@if (blocksFormArray.length === 0) {
-				<div class="empty-state">Блоков пока нет. Добавьте контент, используя панель выше.</div>
-			}
-		</div>
-	</fieldset>
-</form>
-</file>
-
 <file path="src/features/manage-article/ui/article-creation/article-form.component.scss">
 @use 'media' as m;
 
@@ -4316,96 +3764,6 @@ export { ManageArticleComponent } from './ui/manage-article.component';
 				width: 100%;
 			}
 		}
-	}
-}
-</file>
-
-<file path="src/features/update-username/ui/update-username-card.component.ts">
-import {
-	ChangeDetectionStrategy,
-	Component,
-	DestroyRef,
-	OnInit,
-	inject,
-	signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-
-import { UserApiService, UserStore } from '@entities/user';
-
-import { ButtonComponent } from '@shared/ui/button';
-import { CardComponent } from '@shared/ui/card';
-import { IconComponent } from '@shared/ui/icon';
-import { InputComponent } from '@shared/ui/input';
-import { ToastStore } from '@shared/ui/toast';
-
-@Component({
-	selector: 'app-update-username-card',
-	standalone: true,
-	imports: [ReactiveFormsModule, ButtonComponent, CardComponent, IconComponent, InputComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	templateUrl: './update-username-card.component.html',
-	styleUrl: './update-username-card.component.scss',
-})
-export class UpdateUsernameCardComponent implements OnInit {
-	private readonly fb = inject(NonNullableFormBuilder);
-	private readonly userApiService = inject(UserApiService);
-	private readonly userStore = inject(UserStore);
-	private readonly destroyRef = inject(DestroyRef);
-	private readonly toastStore = inject(ToastStore);
-
-	protected readonly isEditing = signal(false);
-	protected readonly isSaving = signal(false);
-	protected readonly errorMessage = signal<string | null>(null);
-
-	protected readonly form = this.fb.group({
-		username: ['', [Validators.required, Validators.minLength(2)]],
-	});
-
-	ngOnInit(): void {
-		this.resetForm();
-	}
-
-	protected onEdit(): void {
-		this.isEditing.set(true);
-		this.resetForm();
-	}
-
-	protected onCancel(): void {
-		this.isEditing.set(false);
-		this.errorMessage.set(null);
-	}
-
-	protected onSave(): void {
-		if (this.form.invalid) return;
-
-		this.isSaving.set(true);
-		this.errorMessage.set(null);
-
-		const newUsername = this.form.controls.username.value;
-
-		this.userApiService
-			.updateUsername(newUsername)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: () => {
-					this.toastStore.success('Псевдоним успешно обновлён');
-					this.isSaving.set(false);
-					this.isEditing.set(false);
-				},
-				error: (err) => {
-					this.toastStore.error(err?.message ?? 'Ошибка при обновлении username');
-					this.errorMessage.set(err?.message ?? 'Не удалось обновить username');
-					this.isSaving.set(false);
-				},
-			});
-	}
-
-	private resetForm(): void {
-		this.form.setValue({
-			username: this.userStore.profile()?.username ?? '',
-		});
 	}
 }
 </file>
@@ -6224,6 +5582,271 @@ export * from './textarea.component';
 }
 </file>
 
+<file path="src/shared/ui/toast/index.ts">
+export { ToastComponent } from './toast.component';
+export { ToastStore } from './toast.store';
+export type { ToastType } from './toast.types';
+</file>
+
+<file path="src/shared/ui/toast/toast.component.html">
+@if (store.toasts().length > 0) {
+	<div class="toast-container" role="region" aria-live="polite" aria-label="Уведомления">
+		@for (toast of store.toasts(); track toast.id) {
+			<div class="toast" [attr.data-type]="toast.type" role="alert">
+				<span class="toast__icon" aria-hidden="true">
+					<app-icon [name]="iconFor(toast.type)" size="m" />
+				</span>
+				<span class="toast__message">{{ toast.message }}</span>
+				<button type="button" class="toast__close" (click)="store.dismiss(toast.id)" aria-label="Закрыть">
+					<app-icon name="xmark" size="s" />
+				</button>
+			</div>
+		}
+	</div>
+}
+</file>
+
+<file path="src/shared/ui/toast/toast.component.scss">
+@use 'media' as m;
+
+:host {
+	position: fixed;
+	z-index: var(--z-toast);
+	inset: 0;
+	pointer-events: none;
+}
+
+.toast-container {
+	position: fixed;
+	right: var(--unit-6);
+	bottom: var(--unit-6);
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-3);
+	max-width: 24rem;
+	pointer-events: none;
+
+	@include m.media-below('sm') {
+		right: var(--unit-4);
+		left: var(--unit-4);
+		max-width: none;
+	}
+}
+
+.toast {
+	display: flex;
+	gap: var(--unit-3);
+	align-items: center;
+	padding: var(--unit-3) var(--unit-4);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-md);
+	animation: toast-slide-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+	pointer-events: auto;
+
+	&--leaving {
+		animation: toast-slide-out 0.3s ease-in forwards;
+		pointer-events: none;
+	}
+
+	&__icon {
+		display: flex;
+		flex-shrink: 0;
+		justify-content: center;
+		align-items: center;
+		width: var(--unit-6);
+		height: var(--unit-6);
+		border-radius: 50%;
+		font-size: var(--font-size-sm);
+	}
+
+	&__message {
+		flex-grow: 1;
+		min-width: 0;
+		font-size: var(--font-size-sm);
+		font-weight: var(--font-weight-medium);
+		line-height: var(--line-height-snug);
+		overflow-wrap: anywhere;
+	}
+
+	&__close {
+		display: flex;
+		flex-shrink: 0;
+		justify-content: center;
+		align-items: center;
+		width: var(--unit-5);
+		height: var(--unit-5);
+		padding: 0;
+		background-color: transparent;
+		border: none;
+		border-radius: var(--radius-sm);
+		opacity: 0.7;
+		color: inherit;
+		transition: opacity var(--transition-fast);
+		cursor: pointer;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	&[data-type='success'] {
+		background-color: var(--bg-card);
+		border: 1px solid var(--status-success);
+		color: var(--text-primary);
+
+		.toast__icon {
+			background-color: var(--status-success);
+			color: var(--text-on-dark);
+		}
+	}
+
+	&[data-type='error'] {
+		background-color: var(--bg-card);
+		border: 1px solid var(--status-error);
+		color: var(--text-primary);
+
+		.toast__icon {
+			background-color: var(--status-error);
+			color: var(--text-on-dark);
+		}
+	}
+
+	&[data-type='warning'] {
+		background-color: var(--bg-card);
+		border: 1px solid var(--status-warning);
+		color: var(--text-primary);
+
+		.toast__icon {
+			background-color: var(--status-warning);
+			color: var(--text-on-dark);
+		}
+	}
+
+	&[data-type='info'] {
+		background-color: var(--bg-card);
+		border: 1px solid var(--brand-primary);
+		color: var(--text-primary);
+
+		.toast__icon {
+			background-color: var(--brand-primary);
+			color: var(--text-on-dark);
+		}
+	}
+}
+
+@keyframes toast-slide-in {
+	from {
+		opacity: 0;
+		transform: translateX(100%);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes toast-slide-out {
+	from {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateX(100%);
+	}
+}
+</file>
+
+<file path="src/shared/ui/toast/toast.component.ts">
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
+import { IconComponent } from '../icon/icon.component';
+import { IconName } from '../icon/icon.types';
+import { ToastStore } from './toast.store';
+import { ToastType } from './toast.types';
+
+@Component({
+	selector: 'app-toast',
+	standalone: true,
+	imports: [IconComponent],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './toast.component.html',
+	styleUrl: './toast.component.scss',
+})
+export class ToastComponent {
+	protected readonly store = inject(ToastStore);
+
+	private readonly iconMap: Record<ToastType, IconName> = {
+		success: 'check',
+		error: 'circle-xmark-fill',
+		warning: 'triangle-exclamation-fill',
+		info: 'circle-info-fill',
+	};
+
+	protected iconFor(type: ToastType): IconName {
+		return this.iconMap[type];
+	}
+}
+</file>
+
+<file path="src/shared/ui/toast/toast.store.ts">
+import { Injectable, signal } from '@angular/core';
+
+import { ToastItem, ToastType } from './toast.types';
+
+@Injectable({ providedIn: 'root' })
+export class ToastStore {
+	private nextId = 0;
+
+	public readonly toasts = signal<ToastItem[]>([]);
+
+	public show(message: string, type: ToastType = 'info', duration = 5000): void {
+		const id = this.nextId++;
+		const toast: ToastItem = { id, message, type };
+
+		this.toasts.update((list) => [...list, toast]);
+
+		setTimeout(() => this.dismiss(id), duration);
+	}
+
+	public success(message: string, duration?: number): void {
+		this.show(message, 'success', duration);
+	}
+
+	public error(message: string, duration?: number): void {
+		this.show(message, 'error', duration);
+	}
+
+	public warning(message: string, duration?: number): void {
+		this.show(message, 'warning', duration);
+	}
+
+	public info(message: string, duration?: number): void {
+		this.show(message, 'info', duration);
+	}
+
+	public dismiss(id: number): void {
+		this.toasts.update((list) => list.filter((t) => t.id !== id));
+	}
+
+	public clear(): void {
+		this.toasts.set([]);
+	}
+}
+</file>
+
+<file path="src/shared/ui/toast/toast.types.ts">
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+export interface ToastItem {
+	readonly id: number;
+	readonly message: string;
+	readonly type: ToastType;
+}
+</file>
+
 <file path="src/shared/ui/video-player/index.ts">
 export * from './video-player.component';
 </file>
@@ -6742,22 +6365,6 @@ fill="#000000" stroke="none">
 }
 </file>
 
-<file path="src/app/ui/app.component.ts">
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-
-import { ToastComponent } from '@shared/ui/toast';
-
-@Component({
-	selector: 'app-root',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	template: `<router-outlet /> <app-toast />`,
-	imports: [RouterOutlet, ToastComponent],
-})
-export class AppComponent {}
-</file>
-
 <file path="src/entities/article/ui/article-detalization/article-blocks/article-block-complexity/article-block-complexity.component.html">
 <div class="article-block-complexity">
 	<dl class="article-block-complexity__grid">
@@ -7163,6 +6770,155 @@ export const environment = {
 }
 </file>
 
+<file path="src/features/create-category/ui/create-category.component.ts">
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { ArticleNavigationApiService } from '@entities/article-navigation';
+
+import { ButtonComponent } from '@shared/ui/button';
+import { InputComponent } from '@shared/ui/input';
+import { SelectComponent } from '@shared/ui/select';
+import { ToastStore } from '@shared/ui/toast';
+
+@Component({
+	selector: 'app-create-category',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [ReactiveFormsModule, InputComponent, ButtonComponent, SelectComponent],
+	template: `
+		<form [formGroup]="form" (ngSubmit)="submit()" class="admin-form-container">
+			<h3 class="admin-form-container__title">Новая категория</h3>
+
+			<app-select formControlName="sectionId" label="Родительская секция">
+				<option value="" disabled>Выберите секцию</option>
+				@for (section of navigationTree(); track section.id) {
+					<option [value]="section.id">{{ section.title }}</option>
+				}
+			</app-select>
+
+			<div class="form-row form-row--2-cols">
+				<app-input formControlName="title" label="Название категории"></app-input>
+				<app-input
+					formControlName="orderIndex"
+					type="number"
+					label="Порядок сортировки"
+				></app-input>
+			</div>
+
+			<button app-button type="submit" [disabled]="form.invalid">Создать категорию</button>
+		</form>
+	`,
+	styleUrl: './create-category.component.scss',
+})
+export class CreateCategoryComponent {
+	private readonly fb = inject(NonNullableFormBuilder);
+	private readonly navigationApi = inject(ArticleNavigationApiService);
+	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
+
+	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
+		initialValue: [],
+	});
+
+	protected form = this.fb.group({
+		sectionId: ['', Validators.required],
+		title: ['', [Validators.required, Validators.minLength(2)]],
+		orderIndex: [0],
+	});
+
+	submit(): void {
+		if (this.form.invalid) return;
+
+		const dto = {
+			title: this.form.controls.title.value,
+			sectionId: this.form.controls.sectionId.value,
+		};
+
+		this.navigationApi
+			.createCategory(dto)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.toastStore.success('Категория успешно создана');
+					this.form.reset();
+				},
+				error: (err) => {
+					this.toastStore.error(err?.message ?? 'Ошибка при создании категории');
+				},
+			});
+	}
+}
+</file>
+
+<file path="src/features/create-section/ui/create-section.component.ts">
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { ArticleNavigationApiService, CreateSectionDto } from '@entities/article-navigation';
+
+import { ButtonComponent } from '@shared/ui/button';
+import { InputComponent } from '@shared/ui/input';
+import { ToastStore } from '@shared/ui/toast';
+
+@Component({
+	selector: 'app-create-section',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [ReactiveFormsModule, InputComponent, ButtonComponent],
+	template: `
+		<form [formGroup]="form" (ngSubmit)="submit()" class="admin-form-container">
+			<h3 class="admin-form-container__title">Новая секция</h3>
+
+			<app-input formControlName="title" label="Название секции"></app-input>
+			<app-input
+				formControlName="orderIndex"
+				type="number"
+				label="Порядок сортировки"
+			></app-input>
+
+			<button app-button type="submit" [disabled]="form.invalid">Создать секцию</button>
+		</form>
+	`,
+
+	styleUrl: './create-section.component.scss',
+})
+export class CreateSectionComponent {
+	private readonly fb = inject(NonNullableFormBuilder);
+	private readonly api = inject(ArticleNavigationApiService);
+	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
+
+	protected form = this.fb.group({
+		title: ['', [Validators.required, Validators.minLength(2)]],
+		orderIndex: [0],
+	});
+
+	protected submit(): void {
+		if (this.form.invalid) return;
+
+		const dto: CreateSectionDto = {
+			title: this.form.controls.title.value,
+		};
+
+		this.api
+			.createSection(dto)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.toastStore.success('Секция успешно создана');
+					this.form.reset();
+				},
+				error: (err) => {
+					this.toastStore.error(err?.message ?? 'Ошибка при создании секции');
+				},
+			});
+	}
+}
+</file>
+
 <file path="src/features/lesson-navigation/ui/lesson-navigation-controls.component.html">
 <div class="lesson-nav-controls">
 	@if (nextLesson(); as next) {
@@ -7294,6 +7050,139 @@ export class ArticleTextBlockFormComponent {
 }
 </file>
 
+<file path="src/features/manage-article/ui/article-creation/article-form.component.html">
+<form class="article-form" [formGroup]="form()" (ngSubmit)="onSubmit()">
+	<header class="article-form__header">
+		<h1 class="article-form__title">{{ isEditMode() ? "Редактирование статьи" : "Новая статья" }}</h1>
+		<div class="article-form__actions">
+			<button app-button type="button" variant="outline" (click)="onCancel()">Отмена</button>
+			<button
+				app-button
+				type="submit"
+				variant="filled"
+				[loading]="isSubmitting()"
+				[disabled]="isSubmitting() || form().invalid"
+			>
+				Сохранить
+			</button>
+		</div>
+	</header>
+
+	<!-- ОСНОВНАЯ ИНФОРМАЦИЯ -->
+	<fieldset class="form-section">
+		<legend class="form-section__title">Основная информация</legend>
+
+		<div class="form-row form-row--2-cols">
+			<app-input formControlName="title" label="Заголовок" />
+			<app-input formControlName="slug" label="Slug (URL)" />
+		</div>
+
+		<div class="form-row form-row--3-cols">
+			<app-select formControlName="categoryId" label="Категория">
+				<option value="">Выберите категорию</option>
+
+				@for (section of navigationTree(); track section.id) {
+					<optgroup [label]="section.title">
+						@for (category of section.items; track category.id) {
+							<option [value]="category.id">{{ category.title }}</option>
+						}
+					</optgroup>
+				}
+			</app-select>
+
+			<app-select formControlName="status" label="Статус">
+				@for (opt of statusOptions; track opt.value) {
+					<option [value]="opt.value">{{ opt.label }}</option>
+				}
+			</app-select>
+
+			<app-select formControlName="level" label="Уровень">
+				@for (opt of levelOptions; track opt.value) {
+					<option [value]="opt.value">{{ opt.label }}</option>
+				}
+			</app-select>
+		</div>
+
+		<div class="form-row form-row--2-cols">
+			<app-input formControlName="problemId" label="ID Задачи (Problem ID)" />
+			<app-input type="number" formControlName="readingTimeMinutes" label="Время чтения (мин)" />
+		</div>
+
+		<div class="form-row">
+			<app-textarea formControlName="leadText" label="Лид-абзац" [rows]="2"></app-textarea>
+		</div>
+
+		<div class="form-row">
+			<app-textarea formControlName="description" label="Полное описание" [rows]="4"></app-textarea>
+		</div>
+	</fieldset>
+
+	<!-- ОБЛОЖКА -->
+	<fieldset formGroupName="coverImage" class="form-section">
+		<legend class="form-section__title">Обложка</legend>
+		<div class="form-row">
+			<app-input formControlName="url" label="URL изображения" />
+		</div>
+		<div class="form-row form-row--2-cols">
+			<app-input formControlName="alt" label="Alt текст" />
+			<app-input formControlName="caption" label="Подпись (необязательно)" />
+		</div>
+	</fieldset>
+
+	<!-- ТЕГИ И СЕО -->
+	<div class="form-row form-row--2-cols">
+		<fieldset class="form-section">
+			<legend class="form-section__title">Теги</legend>
+			<app-tags-input formControlName="tags" placeholder="Введите тег и нажмите Enter"></app-tags-input>
+		</fieldset>
+
+		<fieldset class="form-section" formGroupName="seo">
+			<legend class="form-section__title">SEO Настройки</legend>
+			<app-textarea formControlName="description" label="SEO Описание" [rows]="2"></app-textarea>
+
+			<app-tags-input formControlName="keywords" placeholder="Введите ключевое слово"></app-tags-input>
+		</fieldset>
+	</div>
+
+	<!-- КОНТЕНТНЫЕ БЛОКИ -->
+	<fieldset class="form-section">
+		<legend class="form-section__title">Контентные блоки</legend>
+
+		<div class="block-toolbar">
+			@for (block of availableBlocks; track block.type) {
+				<button app-button type="button" size="m" variant="outline" (click)="addBlock(block.type)">
+					+ {{ block.label }}
+				</button>
+			}
+		</div>
+
+		<div formArrayName="blocks" class="blocks-container">
+			@for (block of blocksFormArray.controls; track block; let blockIndex = $index) {
+				<div class="block-card" [formGroupName]="blockIndex">
+					<div class="block-card__header">
+						<span class="block-card__type">{{ block.controls.type.value | uppercase }}</span>
+						<button app-button type="button" variant="clear" size="m" (click)="removeBlock(blockIndex)">
+							Удалить
+						</button>
+					</div>
+
+					<div formGroupName="data" class="block-card__body">
+						<app-article-block-form-renderer
+							[type]="block.controls.type.value"
+							[dataFormGroup]="block.controls.data"
+						/>
+					</div>
+				</div>
+			}
+
+			@if (blocksFormArray.length === 0) {
+				<div class="empty-state">Блоков пока нет. Добавьте контент, используя панель выше.</div>
+			}
+		</div>
+	</fieldset>
+</form>
+</file>
+
 <file path="src/features/mark-lesson-watched/ui/mark-lesson-watched.component.html">
 <app-checkbox [checked]="isCompleted()" (checkedChange)="onToggle()"> Просмотрено </app-checkbox>
 </file>
@@ -7317,6 +7206,96 @@ export class MarkLessonWatchedComponent {
 
 	protected onToggle(): void {
 		this.toggleComplete.emit(this.lessonId());
+	}
+}
+</file>
+
+<file path="src/features/update-username/ui/update-username-card.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	OnInit,
+	inject,
+	signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { UserApiService, UserStore } from '@entities/user';
+
+import { ButtonComponent } from '@shared/ui/button';
+import { CardComponent } from '@shared/ui/card';
+import { IconComponent } from '@shared/ui/icon';
+import { InputComponent } from '@shared/ui/input';
+import { ToastStore } from '@shared/ui/toast';
+
+@Component({
+	selector: 'app-update-username-card',
+	standalone: true,
+	imports: [ReactiveFormsModule, ButtonComponent, CardComponent, IconComponent, InputComponent],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './update-username-card.component.html',
+	styleUrl: './update-username-card.component.scss',
+})
+export class UpdateUsernameCardComponent implements OnInit {
+	private readonly fb = inject(NonNullableFormBuilder);
+	private readonly userApiService = inject(UserApiService);
+	private readonly userStore = inject(UserStore);
+	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
+
+	protected readonly isEditing = signal(false);
+	protected readonly isSaving = signal(false);
+	protected readonly errorMessage = signal<string | null>(null);
+
+	protected readonly form = this.fb.group({
+		username: ['', [Validators.required, Validators.minLength(2)]],
+	});
+
+	ngOnInit(): void {
+		this.resetForm();
+	}
+
+	protected onEdit(): void {
+		this.isEditing.set(true);
+		this.resetForm();
+	}
+
+	protected onCancel(): void {
+		this.isEditing.set(false);
+		this.errorMessage.set(null);
+	}
+
+	protected onSave(): void {
+		if (this.form.invalid) return;
+
+		this.isSaving.set(true);
+		this.errorMessage.set(null);
+
+		const newUsername = this.form.controls.username.value;
+
+		this.userApiService
+			.updateUsername(newUsername)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.toastStore.success('Псевдоним успешно обновлён');
+					this.isSaving.set(false);
+					this.isEditing.set(false);
+				},
+				error: (err) => {
+					this.toastStore.error(err?.message ?? 'Ошибка при обновлении username');
+					this.errorMessage.set(err?.message ?? 'Не удалось обновить username');
+					this.isSaving.set(false);
+				},
+			});
+	}
+
+	private resetForm(): void {
+		this.form.setValue({
+			username: this.userStore.profile()?.username ?? '',
+		});
 	}
 }
 </file>
@@ -8773,6 +8752,22 @@ export class AccountLayoutComponent {
 }
 </file>
 
+<file path="src/app/ui/app.component.ts">
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+import { ToastComponent } from '@shared/ui/toast';
+
+@Component({
+	selector: 'app-root',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	template: `<router-outlet /> <app-toast />`,
+	imports: [RouterOutlet, ToastComponent],
+})
+export class AppComponent {}
+</file>
+
 <file path="src/entities/article/api/article-api.service.ts">
 import { Injectable } from '@angular/core';
 
@@ -8979,22 +8974,52 @@ export class ArticleNavigationApiService extends BaseApiService {
 								<ul class="article-nav__list">
 									@for (article of category.children; track article.id) {
 										<li class="article-nav__list-item">
-											<a
-												app-link
-												variant="secondary"
-												(click)="onArticleClick(article.id)"
-												[class.is-selected]="article.id === selectedId()"
-												[class.is-clickable]="true"
-												class="article-nav__link"
-											>
-												<span class="article-nav__link-text">{{ article.title }}</span>
+											<div class="article-nav__item-row">
+												<a
+													app-link
+													variant="secondary"
+													(click)="onArticleClick(article.id)"
+													[class.is-selected]="article.id === selectedId()"
+													[class.is-clickable]="true"
+													class="article-nav__link"
+												>
+													<span class="article-nav__link-text">{{ article.title }}</span>
 
-												@if (article.tag) {
-													<app-badge size="sm" variant="outline">
-														{{ article.tag }}
-													</app-badge>
+													@if (article.tag) {
+														<app-badge size="sm" variant="outline">
+															{{ article.tag }}
+														</app-badge>
+													}
+												</a>
+
+												@if (isAdmin()) {
+													<div class="article-nav__actions">
+														<button
+															app-button
+															type="button"
+															variant="clear"
+															size="s"
+															(click)="onEditArticle(article.id, $event)"
+															aria-label="Редактировать статью"
+															title="Редактировать"
+														>
+															<app-icon name="pencil-to-square" size="s" />
+														</button>
+														<button
+															app-button
+															type="button"
+															variant="clear"
+															color="error"
+															size="s"
+															(click)="onDeleteArticle(article.id, $event)"
+															aria-label="Удалить статью"
+															title="Удалить"
+														>
+															<app-icon name="trash-bin" size="s" />
+														</button>
+													</div>
 												}
-											</a>
+											</div>
 										</li>
 									}
 								</ul>
@@ -10322,6 +10347,33 @@ export type UpdateArticleDto = Partial<CreateArticleDto>;
 		display: block;
 	}
 
+	&__item-wrapper {
+		display: flex;
+		align-items: center;
+		border-radius: var(--radius-sm);
+		transition: background-color var(--transition-fast);
+
+		&:hover {
+			.article-nav__actions {
+				opacity: 1;
+			}
+		}
+
+		.article-nav__link {
+			flex: 1;
+			min-width: 0;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		flex-shrink: 0;
+		gap: var(--unit-1);
+		align-items: center;
+		opacity: 0;
+		transition: opacity var(--transition-fast);
+	}
+
 	&__link {
 		display: flex;
 		gap: var(--unit-2);
@@ -10342,6 +10394,25 @@ export type UpdateArticleDto = Partial<CreateArticleDto>;
 		font-size: var(--font-size-sm);
 		line-height: var(--line-height-tight);
 	}
+
+	&__item-row {
+		display: flex;
+		gap: var(--unit-1);
+		align-items: center;
+		border-radius: var(--radius-sm);
+		transition: background-color var(--transition-fast);
+
+		&:hover {
+			.article-nav__actions {
+				opacity: 1;
+			}
+		}
+
+		.article-nav__link {
+			flex: 1;
+			min-width: 0;
+		}
+	}
 }
 </file>
 
@@ -10352,13 +10423,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { AccordionComponent } from '@shared/ui/accordion/accordion.component';
 import { AppLinkComponent } from '@shared/ui/app-link';
 import { BadgeComponent } from '@shared/ui/badge';
+import { ButtonComponent } from '@shared/ui/button';
+import { IconComponent } from '@shared/ui/icon';
 
 import { ArticleNavigationApiService } from '../../../api/article-navigation-api.service';
 
 @Component({
 	selector: 'app-article-drawer-navigation',
 	standalone: true,
-	imports: [AppLinkComponent, BadgeComponent, AccordionComponent],
+	imports: [AppLinkComponent, BadgeComponent, AccordionComponent, ButtonComponent, IconComponent],
 	templateUrl: './article-drawer-navigation.component.html',
 	styleUrl: './article-drawer-navigation.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10368,10 +10441,24 @@ export class ArticleDrawerNavigationComponent {
 
 	readonly navigationTree = toSignal(this.navigationApi.navigationTree$);
 	readonly selectedId = input<string | null>(null);
+	readonly isAdmin = input<boolean>(false);
+
 	readonly articleSelected = output<string | number>();
+	readonly editArticle = output<string>();
+	readonly deleteArticle = output<string>();
 
 	public onArticleClick(id: string | number): void {
 		this.articleSelected.emit(id);
+	}
+
+	public onEditArticle(id: string, event: Event): void {
+		event.stopPropagation();
+		this.editArticle.emit(id);
+	}
+
+	public onDeleteArticle(id: string, event: Event): void {
+		event.stopPropagation();
+		this.deleteArticle.emit(id);
 	}
 }
 </file>
@@ -11116,7 +11203,10 @@ export * from './model/course-page.store';
 			<div class="drawer-inner-content__scroll-wrapper">
 				<app-article-drawer-navigation
 					[selectedId]="selectedArticleId()"
+					[isAdmin]="isAdmin()"
 					(articleSelected)="onArticleSelected($event)"
+					(editArticle)="onEditArticle($event)"
+					(deleteArticle)="requestDeleteArticle($event)"
 				/>
 			</div>
 		</div>
@@ -11147,6 +11237,34 @@ export * from './model/course-page.store';
 		</div>
 	</div>
 </app-drawer>
+
+@if (deleteTargetId()) {
+	<app-modal [isOpen]="true" size="s" (isOpenChange)="!$event && cancelDelete()">
+		<div class="delete-confirm">
+			<p class="delete-confirm__title">Удалить статью?</p>
+			<p class="delete-confirm__text">Это действие необратимо.</p>
+			<div class="delete-confirm__actions">
+				<button app-button type="button" variant="outline" [disabled]="isDeleting()" (click)="cancelDelete()">
+					Отмена
+				</button>
+				<button
+					app-button
+					type="button"
+					variant="filled"
+					color="error"
+					[disabled]="isDeleting()"
+					(click)="confirmDelete()"
+				>
+					@if (!isDeleting()) {
+						<span>Удалить</span>
+					} @else {
+						<span>Удаление…</span>
+					}
+				</button>
+			</div>
+		</div>
+	</app-modal>
+}
 </file>
 
 <file path="tsconfig.app.json">
@@ -11312,155 +11430,6 @@ export * from './model/lesson.types';
 export * from './api/lesson-api.service';
 export * from './ui/lesson-card/lesson-card.component';
 export * from './ui/lesson-header/lesson-header.component';
-</file>
-
-<file path="src/features/manage-article/ui/manage-article.component.ts">
-import {
-	ChangeDetectionStrategy,
-	Component,
-	DestroyRef,
-	OnInit,
-	computed,
-	inject,
-	input,
-	signal,
-} from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-import { finalize } from 'rxjs';
-
-import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '@entities/article';
-import { ArticleNavigationApiService } from '@entities/article-navigation';
-
-import { RouteBuilder } from '@shared/config/routes.config';
-import { ToastStore } from '@shared/ui/toast';
-
-import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
-import { ArticleFormComponent } from './article-creation/article-form.component';
-
-@Component({
-	selector: 'app-manage-article',
-	standalone: true,
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [ReactiveFormsModule, ArticleFormComponent],
-	template: `
-		<app-article-form
-			[form]="articleForm"
-			[isEditMode]="isEditMode()"
-			[isSubmitting]="isSubmitting()"
-			[navigationTree]="navigationTree()"
-			(save)="handleSave()"
-			(cancel)="handleCancel()"
-		/>
-	`,
-})
-export class ManageArticleComponent implements OnInit {
-	readonly articleId = input<string | null>(null);
-
-	protected readonly isSubmitting = signal<boolean>(false);
-
-	private readonly fb = inject(NonNullableFormBuilder);
-	private readonly router = inject(Router);
-	private readonly articleApi = inject(ArticleApiService);
-	private readonly navigationApi = inject(ArticleNavigationApiService);
-	private readonly destroyRef = inject(DestroyRef);
-	private readonly toastStore = inject(ToastStore);
-
-	protected readonly articleForm = createInitialArticleForm(this.fb);
-
-	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
-		initialValue: [],
-	});
-
-	readonly isEditMode = computed(() => !!this.articleId());
-
-	ngOnInit(): void {
-		const id = this.articleId();
-		if (!id) return;
-
-		this.articleApi
-			.getArticleById(id)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: (article) => this.patchForm(article),
-				error: (err) =>
-					console.error('Не удалось загрузить статью для редактирования', err),
-			});
-	}
-
-	private patchForm(article: Article): void {
-		this.articleForm.patchValue({
-			title: article.title,
-			slug: article.slug,
-			categoryId: article.categoryId,
-			status: article.status,
-			level: article.level,
-			leadText: article.leadText,
-			description: article.description,
-			// problemId: article.problemId ?? null,
-			readingTimeMinutes: article.readingTimeMinutes,
-			coverImage: {
-				url: article.coverImage?.url ?? '',
-				alt: article.coverImage?.alt ?? '',
-				caption: article.coverImage?.caption ?? null,
-			},
-			tags: article.tags,
-			seo: {
-				description: article.seo?.description ?? null,
-				keywords: article.seo?.keywords ?? [],
-			},
-		});
-
-		populateArticleBlocks(this.fb, this.articleForm.controls.blocks, article.blocks);
-	}
-
-	private buildPayload(): CreateArticleDto {
-		const raw = this.articleForm.getRawValue();
-
-		return {
-			...raw,
-			readingTimeMinutes: Number(raw.readingTimeMinutes) || 0,
-			problemId: raw.problemId || undefined,
-		} as CreateArticleDto;
-	}
-
-	protected handleCancel(): void {
-		this.router.navigateByUrl(RouteBuilder.COURSE_DETAILS('frontend'));
-	}
-
-	protected handleSave(): void {
-		if (this.articleForm.invalid) {
-			this.articleForm.markAllAsTouched();
-			return;
-		}
-
-		const id = this.articleId();
-		const payload = this.buildPayload();
-
-		this.isSubmitting.set(true);
-
-		const request$ = this.isEditMode()
-			? this.articleApi.updateArticle(id!, payload as UpdateArticleDto)
-			: this.articleApi.createArticle(payload);
-
-		request$
-			.pipe(
-				finalize(() => this.isSubmitting.set(false)),
-				takeUntilDestroyed(this.destroyRef),
-			)
-			.subscribe({
-				next: () => {
-					this.toastStore.success(
-						this.isEditMode() ? 'Статья обновлена' : 'Статья создана',
-					);
-				},
-				error: (err) =>
-					this.toastStore.error(err?.message ?? 'Ошибка при сохранении статьи'),
-			});
-	}
-}
 </file>
 
 <file path="src/shared/layouts/sidebar-layout/sidebar-layout.component.scss">
@@ -11727,6 +11696,32 @@ export class ManageArticleComponent implements OnInit {
 .back {
 	margin-bottom: var(--unit-8);
 }
+
+.delete-confirm {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+	text-align: center;
+
+	&__title {
+		margin: 0;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+
+	&__text {
+		margin: 0;
+		font-size: var(--font-size-sm);
+		color: var(--text-muted);
+	}
+
+	&__actions {
+		display: flex;
+		gap: var(--unit-3);
+		justify-content: center;
+	}
+}
 </file>
 
 <file path="src/widgets/course-sidebar/ui/course-sidebar.component.html">
@@ -11918,6 +11913,155 @@ export * from './ui/course-progress/course-progress.component';
 export * from './ui/course-progress-card/course-progress-card.component';
 </file>
 
+<file path="src/features/manage-article/ui/manage-article.component.ts">
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	OnInit,
+	computed,
+	inject,
+	input,
+	signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { finalize } from 'rxjs';
+
+import { Article, ArticleApiService, CreateArticleDto, UpdateArticleDto } from '@entities/article';
+import { ArticleNavigationApiService } from '@entities/article-navigation';
+
+import { RouteBuilder } from '@shared/config/routes.config';
+import { ToastStore } from '@shared/ui/toast';
+
+import { createInitialArticleForm, populateArticleBlocks } from '../model/article-form.factory';
+import { ArticleFormComponent } from './article-creation/article-form.component';
+
+@Component({
+	selector: 'app-manage-article',
+	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	imports: [ReactiveFormsModule, ArticleFormComponent],
+	template: `
+		<app-article-form
+			[form]="articleForm"
+			[isEditMode]="isEditMode()"
+			[isSubmitting]="isSubmitting()"
+			[navigationTree]="navigationTree()"
+			(save)="handleSave()"
+			(cancel)="handleCancel()"
+		/>
+	`,
+})
+export class ManageArticleComponent implements OnInit {
+	readonly articleId = input<string | null>(null);
+
+	protected readonly isSubmitting = signal<boolean>(false);
+
+	private readonly fb = inject(NonNullableFormBuilder);
+	private readonly router = inject(Router);
+	private readonly articleApi = inject(ArticleApiService);
+	private readonly navigationApi = inject(ArticleNavigationApiService);
+	private readonly destroyRef = inject(DestroyRef);
+	private readonly toastStore = inject(ToastStore);
+
+	protected readonly articleForm = createInitialArticleForm(this.fb);
+
+	protected readonly navigationTree = toSignal(this.navigationApi.navigationTree$, {
+		initialValue: [],
+	});
+
+	readonly isEditMode = computed(() => !!this.articleId());
+
+	ngOnInit(): void {
+		const id = this.articleId();
+		if (!id) return;
+
+		this.articleApi
+			.getArticleById(id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (article) => this.patchForm(article),
+				error: (err) =>
+					console.error('Не удалось загрузить статью для редактирования', err),
+			});
+	}
+
+	private patchForm(article: Article): void {
+		this.articleForm.patchValue({
+			title: article.title,
+			slug: article.slug,
+			categoryId: article.categoryId,
+			status: article.status,
+			level: article.level,
+			leadText: article.leadText,
+			description: article.description,
+			// problemId: article.problemId ?? null,
+			readingTimeMinutes: article.readingTimeMinutes,
+			coverImage: {
+				url: article.coverImage?.url ?? '',
+				alt: article.coverImage?.alt ?? '',
+				caption: article.coverImage?.caption ?? null,
+			},
+			tags: article.tags,
+			seo: {
+				description: article.seo?.description ?? null,
+				keywords: article.seo?.keywords ?? [],
+			},
+		});
+
+		populateArticleBlocks(this.fb, this.articleForm.controls.blocks, article.blocks);
+	}
+
+	private buildPayload(): CreateArticleDto {
+		const raw = this.articleForm.getRawValue();
+
+		return {
+			...raw,
+			readingTimeMinutes: Number(raw.readingTimeMinutes) || 0,
+			problemId: raw.problemId || undefined,
+		} as CreateArticleDto;
+	}
+
+	protected handleCancel(): void {
+		this.router.navigateByUrl(RouteBuilder.COURSE_DETAILS('frontend'));
+	}
+
+	protected handleSave(): void {
+		if (this.articleForm.invalid) {
+			this.articleForm.markAllAsTouched();
+			return;
+		}
+
+		const id = this.articleId();
+		const payload = this.buildPayload();
+
+		this.isSubmitting.set(true);
+
+		const request$ = this.isEditMode()
+			? this.articleApi.updateArticle(id!, payload as UpdateArticleDto)
+			: this.articleApi.createArticle(payload);
+
+		request$
+			.pipe(
+				finalize(() => this.isSubmitting.set(false)),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: () => {
+					this.toastStore.success(
+						this.isEditMode() ? 'Статья обновлена' : 'Статья создана',
+					);
+				},
+				error: (err) =>
+					this.toastStore.error(err?.message ?? 'Ошибка при сохранении статьи'),
+			});
+	}
+}
+</file>
+
 <file path="src/styles/_reset.scss">
 *,
 *::before,
@@ -12078,14 +12222,23 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
-import { ArticleViewComponent } from '@entities/article';
-import { ArticleDrawerNavigationComponent } from '@entities/article-navigation';
+import { ArticleApiService, ArticleViewComponent } from '@entities/article';
+import {
+	ArticleDrawerNavigationComponent,
+	ArticleNavigationApiService,
+} from '@entities/article-navigation';
+import { UserStore } from '@entities/user';
 
+import { RouteBuilder } from '@shared/config/routes.config';
 import { ScrollLockService } from '@shared/lib/services/scroll-lock.service';
 import { ButtonComponent } from '@shared/ui/button';
 import { DrawerComponent } from '@shared/ui/drawer';
 import { IconComponent } from '@shared/ui/icon';
+import { ModalComponent } from '@shared/ui/modal';
+import { ToastStore } from '@shared/ui/toast';
 
 @Component({
 	selector: 'app-articles-drawer-sidebar',
@@ -12099,15 +12252,25 @@ import { IconComponent } from '@shared/ui/icon';
 		ButtonComponent,
 		ArticleDrawerNavigationComponent,
 		ArticleViewComponent,
+		ModalComponent,
 	],
 })
 export class ArticlesDrawerSidebarComponent {
 	private readonly destroyRef = inject(DestroyRef);
+	private readonly scrollLock = inject(ScrollLockService);
+	private readonly router = inject(Router);
+	private readonly articleApi = inject(ArticleApiService);
+	private readonly navigationApi = inject(ArticleNavigationApiService);
+	private readonly userStore = inject(UserStore);
+	private readonly toastStore = inject(ToastStore);
 
 	protected readonly isArticlesOpen = signal<boolean>(false);
 	protected readonly selectedArticleId = signal<string | null>(null);
+	protected readonly deleteTargetId = signal<string | null>(null);
+	protected readonly isDeleting = signal<boolean>(false);
 
-	private readonly scrollLock = inject(ScrollLockService);
+	protected readonly isAdmin = this.userStore.isAdmin;
+
 	private lockActive = false;
 
 	constructor() {
@@ -12147,6 +12310,47 @@ export class ArticlesDrawerSidebarComponent {
 
 	protected backToNavigation(): void {
 		this.selectedArticleId.set(null);
+	}
+
+	protected onEditArticle(id: string): void {
+		this.router.navigateByUrl(RouteBuilder.ARTICLE_EDIT(id));
+	}
+
+	protected requestDeleteArticle(id: string): void {
+		this.deleteTargetId.set(id);
+	}
+
+	protected cancelDelete(): void {
+		this.deleteTargetId.set(null);
+	}
+
+	protected confirmDelete(): void {
+		const id = this.deleteTargetId();
+		if (!id) return;
+
+		this.isDeleting.set(true);
+
+		this.articleApi
+			.deleteArticle(id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.toastStore.success('Статья удалена');
+					this.isDeleting.set(false);
+					this.deleteTargetId.set(null);
+
+					if (this.selectedArticleId() === id) {
+						this.selectedArticleId.set(null);
+					}
+
+					this.navigationApi.refresh();
+				},
+				error: (err) => {
+					this.toastStore.error(err?.message ?? 'Ошибка при удалении статьи');
+					this.isDeleting.set(false);
+					this.deleteTargetId.set(null);
+				},
+			});
 	}
 }
 </file>
@@ -12593,46 +12797,6 @@ export class CourseSidebarComponent {
 </app-drawer>
 </file>
 
-<file path="src/widgets/header/ui/header.component.ts">
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { AuthByOauthComponent } from '@features/auth-by-oauth';
-
-import { UserStore } from '@entities/user';
-
-import { RouteBuilder } from '@shared/config/routes.config';
-import { AppLogoComponent } from '@shared/ui/app-logo';
-import { ButtonComponent } from '@shared/ui/button';
-import { IconComponent } from '@shared/ui/icon';
-
-@Component({
-	selector: 'app-header',
-	standalone: true,
-	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent, IconComponent],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class HeaderComponent {
-	private readonly router = inject(Router);
-	protected readonly userStore = inject(UserStore);
-	protected readonly isAuthOpen = signal<boolean>(false);
-
-	protected openAuth(): void {
-		this.isAuthOpen.set(true);
-	}
-
-	protected openProfile(): void {
-		this.router.navigate(['/', 'account', 'overview']);
-	}
-
-	protected createArticle(): void {
-		this.router.navigate([RouteBuilder.ARTICLE_CREATE()]);
-	}
-}
-</file>
-
 <file path="src/shared/config/routes.config.ts">
 import { IconName } from '../ui/icon';
 
@@ -12711,6 +12875,46 @@ export type IconName =
 	| 'person-fill'
 	| 'gear'
 	| 'trash-bin';
+</file>
+
+<file path="src/widgets/header/ui/header.component.ts">
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AuthByOauthComponent } from '@features/auth-by-oauth';
+
+import { UserStore } from '@entities/user';
+
+import { RouteBuilder } from '@shared/config/routes.config';
+import { AppLogoComponent } from '@shared/ui/app-logo';
+import { ButtonComponent } from '@shared/ui/button';
+import { IconComponent } from '@shared/ui/icon';
+
+@Component({
+	selector: 'app-header',
+	standalone: true,
+	imports: [AuthByOauthComponent, ButtonComponent, AppLogoComponent, IconComponent],
+	templateUrl: './header.component.html',
+	styleUrl: './header.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HeaderComponent {
+	private readonly router = inject(Router);
+	protected readonly userStore = inject(UserStore);
+	protected readonly isAuthOpen = signal<boolean>(false);
+
+	protected openAuth(): void {
+		this.isAuthOpen.set(true);
+	}
+
+	protected openProfile(): void {
+		this.router.navigate(['/', 'account', 'overview']);
+	}
+
+	protected createArticle(): void {
+		this.router.navigate([RouteBuilder.ARTICLE_CREATE()]);
+	}
+}
 </file>
 
 <file path="src/pages/course-page/ui/course-page.component.ts">

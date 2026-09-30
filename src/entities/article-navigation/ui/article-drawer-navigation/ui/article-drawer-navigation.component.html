@@ -17,22 +17,52 @@
 								<ul class="article-nav__list">
 									@for (article of category.children; track article.id) {
 										<li class="article-nav__list-item">
-											<a
-												app-link
-												variant="secondary"
-												(click)="onArticleClick(article.id)"
-												[class.is-selected]="article.id === selectedId()"
-												[class.is-clickable]="true"
-												class="article-nav__link"
-											>
-												<span class="article-nav__link-text">{{ article.title }}</span>
+											<div class="article-nav__item-row">
+												<a
+													app-link
+													variant="secondary"
+													(click)="onArticleClick(article.id)"
+													[class.is-selected]="article.id === selectedId()"
+													[class.is-clickable]="true"
+													class="article-nav__link"
+												>
+													<span class="article-nav__link-text">{{ article.title }}</span>
 
-												@if (article.tag) {
-													<app-badge size="sm" variant="outline">
-														{{ article.tag }}
-													</app-badge>
+													@if (article.tag) {
+														<app-badge size="sm" variant="outline">
+															{{ article.tag }}
+														</app-badge>
+													}
+												</a>
+
+												@if (isAdmin()) {
+													<div class="article-nav__actions">
+														<button
+															app-button
+															type="button"
+															variant="clear"
+															size="s"
+															(click)="onEditArticle(article.id, $event)"
+															aria-label="Редактировать статью"
+															title="Редактировать"
+														>
+															<app-icon name="pencil-to-square" size="s" />
+														</button>
+														<button
+															app-button
+															type="button"
+															variant="clear"
+															color="error"
+															size="s"
+															(click)="onDeleteArticle(article.id, $event)"
+															aria-label="Удалить статью"
+															title="Удалить"
+														>
+															<app-icon name="trash-bin" size="s" />
+														</button>
+													</div>
 												}
-											</a>
+											</div>
 										</li>
 									}
 								</ul>

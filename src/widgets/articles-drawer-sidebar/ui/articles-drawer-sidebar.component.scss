@@ -86,3 +86,29 @@
 .back {
 	margin-bottom: var(--unit-8);
 }
+
+.delete-confirm {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-4);
+	text-align: center;
+
+	&__title {
+		margin: 0;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-bold);
+		color: var(--text-primary);
+	}
+
+	&__text {
+		margin: 0;
+		font-size: var(--font-size-sm);
+		color: var(--text-muted);
+	}
+
+	&__actions {
+		display: flex;
+		gap: var(--unit-3);
+		justify-content: center;
+	}
+}

@@ -26,7 +26,10 @@
 			<div class="drawer-inner-content__scroll-wrapper">
 				<app-article-drawer-navigation
 					[selectedId]="selectedArticleId()"
+					[isAdmin]="isAdmin()"
 					(articleSelected)="onArticleSelected($event)"
+					(editArticle)="onEditArticle($event)"
+					(deleteArticle)="requestDeleteArticle($event)"
 				/>
 			</div>
 		</div>
@@ -57,3 +60,31 @@
 		</div>
 	</div>
 </app-drawer>
+
+@if (deleteTargetId()) {
+	<app-modal [isOpen]="true" size="xs" (isOpenChange)="!$event && cancelDelete()">
+		<div class="delete-confirm">
+			<p class="delete-confirm__title">Удалить статью?</p>
+			<p class="delete-confirm__text">Это действие необратимо.</p>
+			<div class="delete-confirm__actions">
+				<button app-button type="button" variant="outline" [disabled]="isDeleting()" (click)="cancelDelete()">
+					Отмена
+				</button>
+				<button
+					app-button
+					type="button"
+					variant="filled"
+					color="error"
+					[disabled]="isDeleting()"
+					(click)="confirmDelete()"
+				>
+					@if (!isDeleting()) {
+						<span>Удалить</span>
+					} @else {
+						<span>Удаление…</span>
+					}
+				</button>
+			</div>
+		</div>
+	</app-modal>
+}
